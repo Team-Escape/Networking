@@ -2,10 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirror.Game.Lobby
+namespace Mirror.EscapeGame
 {
     public class NetworkManagerLobby : NetworkManager
     {
+        [SerializeField] bool _allPlayersReady;
+
+        public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
+
+        public void ResetPlayerID()
+        {
+            for (int i = 0; i < roomSlots.Count; i++)
+            {
+                roomSlots[i].id = i;
+            }
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
