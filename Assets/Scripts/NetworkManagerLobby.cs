@@ -15,6 +15,7 @@ namespace Mirror.EscapeGame
             for (int i = 0; i < roomSlots.Count; i++)
             {
                 roomSlots[i].id = i;
+                Debug.Log(roomSlots[i].gameObject.name + " id: " + i);
             }
         }
 

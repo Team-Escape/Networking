@@ -8,6 +8,25 @@ namespace Mirror.EscapeGame
     {
         public int id = 0;
 
+        public Canvas container;
+        public Transform roleUI;
+        public Transform mapUI;
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                CmdTest();
+            }
+        }
+
+        [Command]
+        public void CmdTest()
+        {
+            NetworkManagerLobby lobby = NetworkManager.singleton as NetworkManagerLobby;
+            lobby.ResetPlayerID();
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
