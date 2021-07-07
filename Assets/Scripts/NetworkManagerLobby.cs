@@ -20,6 +20,13 @@ namespace Mirror.EscapeGame
             }
         }
 
+        public override void OnServerAddPlayer(NetworkConnection conn)
+        {
+            base.OnServerAddPlayer(conn);
+            GameObject p = Instantiate(playerPrefab);
+            NetworkServer.Spawn(p, conn);
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();

@@ -129,12 +129,10 @@ namespace Mirror.EscapeGame
             if (input.GetButtonDown("SelectR"))
             {
                 selectIndex++;
-                CmdSetSelectIndex(selectIndex);
             }
             if (input.GetButtonDown("SelectL"))
             {
                 selectIndex--;
-                CmdSetSelectIndex(selectIndex);
             }
             if (input.GetButtonDown("SelectU"))
             {
