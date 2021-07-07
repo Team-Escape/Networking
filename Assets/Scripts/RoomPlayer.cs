@@ -36,7 +36,9 @@ namespace Mirror.EscapeGame
             ActiveUI(id, selectIndex, selectState, false);
             if (isLocalPlayer)
                 CmdActiveUI(id, selectIndex, selectState, false);
+
             selectIndex += additive;
+
             ActiveUI(id, selectIndex, selectState, true);
             if (isLocalPlayer)
                 CmdActiveUI(id, selectIndex, selectState, true);
