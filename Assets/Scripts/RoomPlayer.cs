@@ -18,7 +18,7 @@ namespace Mirror.EscapeGame
         /// <summary>
         /// Player current select state, 0 : Role, 1 : Map, 2: Waiting For Other players 
         /// </summary>
-        [SyncVar]
+        [SyncVar(hook = nameof(OnStateChaned))]
         public int selectState = 0;
 
         public Canvas container;
@@ -28,6 +28,43 @@ namespace Mirror.EscapeGame
         Player input;
 
         [Command]
+        public void CmdSetSelectIndex(int val)
+        {
+            selectIndex = val;
+            SetSelectIndex(val);
+        }
+
+        public void SetSelectIndex(int val)
+        {
+            if (isServer)
+            {
+                selectIndex = val;
+            }
+            else
+            {
+                CmdSetSelectIndex(val);
+            }
+        }
+
+        public void OnStateChaned(int val, int newVal)
+        {
+            switch (newVal)
+            {
+                case 0:
+                    break;
+                case 1:
+                    ActiveUI(id, selectIndex, val, false);
+                    CmdActiveUI(id, selectIndex, val, false);
+                    SetSelectIndex(0);
+                    break;
+                case 2:
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        [Command]
         public void CmdConfirm()
         {
             switch (selectState)
@@ -35,13 +72,11 @@ namespace Mirror.EscapeGame
                 case 0:
                     selectState++;
                     roleIndex = selectIndex;
-                    selectIndex = 0;
                     Confirm();
                     break;
                 case 1:
                     selectState++;
                     mapIndex = selectIndex;
-                    selectIndex = 0;
                     Confirm();
                     break;
                 case 2:
@@ -59,12 +94,10 @@ namespace Mirror.EscapeGame
                     case 0:
                         selectState++;
                         roleIndex = selectIndex;
-                        selectIndex = 0;
                         break;
                     case 1:
                         selectState++;
                         mapIndex = selectIndex;
-                        selectIndex = 0;
                         break;
                     case 2:
                     default:
