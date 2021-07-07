@@ -123,15 +123,21 @@ namespace Mirror.EscapeGame
             }
         }
 
+        [Client]
+        public void CliSetSelected(int n) => selectIndex = n;
+
         private void Update()
         {
             if (input.GetButtonDown("SelectR"))
             {
                 selectIndex++;
+                if (isClient) CliSetSelected(selectIndex);
+
             }
             if (input.GetButtonDown("SelectL"))
             {
                 selectIndex--;
+                if (isClient) CliSetSelected(selectIndex);
             }
             if (input.GetButtonDown("SelectU"))
             {
