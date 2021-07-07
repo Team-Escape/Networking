@@ -131,13 +131,21 @@ namespace Mirror.EscapeGame
             if (input.GetButtonDown("SelectR"))
             {
                 selectIndex++;
-                if (isClient) CliSetSelected(selectIndex);
+                if (isClient)
+                {
+                    Debug.Log("isclient");
+                    CliSetSelected(selectIndex);
+                }
 
             }
             if (input.GetButtonDown("SelectL"))
             {
                 selectIndex--;
-                if (isClient) CliSetSelected(selectIndex);
+                if (isClient)
+                {
+                    Debug.Log("isclient");
+                    CliSetSelected(selectIndex);
+                }
             }
             if (input.GetButtonDown("SelectU"))
             {
@@ -187,6 +195,7 @@ namespace Mirror.EscapeGame
         public override void OnStopClient()
         {
             base.OnStopClient();
+            ResetUI();
         }
         #endregion
     }
