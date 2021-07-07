@@ -8,7 +8,7 @@ namespace Mirror.EscapeGame
     {
         [SyncVar]
         public int id = 0;
-        [SyncVar(hook = nameof(OnSelectChaned))]
+        [SyncVar]
         public int selectIndex = 0;
         [SyncVar]
         public int roleIndex = 0;
@@ -25,9 +25,8 @@ namespace Mirror.EscapeGame
 
         public void OnSelectChaned(int val, int newVal)
         {
-            Debug.Log("Val: " + newVal);
-            ActiveUI(id, val, selectState, false);
-            ActiveUI(id, newVal, selectState, true);
+            RpcActiveUI(id, val, selectState, false);
+            RpcActiveUI(id, newVal, selectState, true);
         }
 
         [Command]
@@ -43,6 +42,7 @@ namespace Mirror.EscapeGame
                 if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
                 if (selectIndex + additive < 0) return;
                 BroadCastToAll("Valqowpfjwpqof");
+                OnSelectChaned(selectIndex, selectIndex + additive);
                 selectIndex += additive;
             }
             else
