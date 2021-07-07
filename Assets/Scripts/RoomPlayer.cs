@@ -27,7 +27,9 @@ namespace Mirror.EscapeGame
         {
             if (isServer == false) return;
             ActiveUI(id, val, selectState, false);
+            RpcActiveUI(id, val, selectState, false);
             ActiveUI(id, newVal, selectState, true);
+            RpcActiveUI(id, newVal, selectState, true);
         }
 
         [Command]
