@@ -8,7 +8,7 @@ namespace Mirror.EscapeGame
     {
         [SyncVar]
         public int id = 0;
-        [SyncVar]
+        [SyncVar(hook = nameof(OnSelectChaned))]
         public int selectIndex = 0;
         [SyncVar]
         public int roleIndex = 0;
