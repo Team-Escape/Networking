@@ -29,11 +29,12 @@ namespace Mirror.EscapeGame
             if (selectIndex + additive < 0) return;
 
             ActiveUI(id, selectIndex, selectState, false);
+            CmdActiveUI(id, selectIndex, selectState, false);
 
             selectIndex += additive;
 
             ActiveUI(id, selectIndex, selectState, true);
-
+            CmdActiveUI(id, selectIndex, selectState, true);
         }
 
         public void SyncUI(List<RoomPlayer> players)
@@ -58,18 +59,7 @@ namespace Mirror.EscapeGame
         [ClientRpc]
         public void RpcActiveUI(int id, int index, int select, bool isActive)
         {
-            switch (selectState)
-            {
-                case 0:
-                    roleUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
-                    break;
-                case 1:
-                    mapUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
-                    break;
-                case 2:
-                default:
-                    return;
-            }
+            ActiveUI(id, index, select, isActive);
         }
 
         public void ActiveUI(int id, int index, int selectState, bool isActive)
@@ -78,11 +68,9 @@ namespace Mirror.EscapeGame
             {
                 case 0:
                     roleUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
-                    CmdActiveUI(id, selectIndex, selectState, isActive);
                     break;
                 case 1:
                     mapUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
-                    CmdActiveUI(id, selectIndex, selectState, isActive);
                     break;
                 case 2:
                 default:
@@ -128,26 +116,31 @@ namespace Mirror.EscapeGame
 
         private void Update()
         {
-            if (input.GetButtonDown("SelectR"))
+            if (input == null) return;
+            if (isLocalPlayer)
             {
-                Select(1);
+                if (input.GetButtonDown("SelectR"))
+                {
+                    Select(1);
+                }
+                else if (input.GetButtonDown("SelectL"))
+                {
+                    Select(-1);
+                }
+                else if (input.GetButtonDown("SelectU"))
+                {
+                }
+                else if (input.GetButtonDown("SelectD"))
+                {
+                }
+                else if (input.GetButtonDown("Confirm"))
+                {
+                }
+                else if (input.GetButtonDown("Cancel"))
+                {
+                }
             }
-            else if (input.GetButtonDown("SelectL"))
-            {
-                Select(-1);
-            }
-            else if (input.GetButtonDown("SelectU"))
-            {
-            }
-            else if (input.GetButtonDown("SelectD"))
-            {
-            }
-            else if (input.GetButtonDown("Confirm"))
-            {
-            }
-            else if (input.GetButtonDown("Cancel"))
-            {
-            }
+
         }
 
         private void Awake()
