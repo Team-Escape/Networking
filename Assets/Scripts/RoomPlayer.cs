@@ -26,6 +26,12 @@ namespace Mirror.EscapeGame
         public System.Action<int, int> OnSelectChangedAction;
         public void OnSelectChanged(int val, int newVal)
         {
+            CmdOnSelectedChanged(val, newVal);
+        }
+
+        [Command]
+        public void CmdOnSelectedChanged(int val, int newVal)
+        {
             OnSelectChangedAction(val, newVal);
         }
 
