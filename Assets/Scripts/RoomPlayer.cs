@@ -133,8 +133,7 @@ namespace Mirror.EscapeGame
                 selectIndex++;
                 if (isClient)
                 {
-                    Debug.Log("isclient");
-                    CliSetSelected(selectIndex);
+                    CmdOnSelectedChanged(selectIndex, selectIndex);
                 }
 
             }
@@ -143,8 +142,7 @@ namespace Mirror.EscapeGame
                 selectIndex--;
                 if (isClient)
                 {
-                    Debug.Log("isclient");
-                    CliSetSelected(selectIndex);
+                    CmdOnSelectedChanged(selectIndex, selectIndex);
                 }
             }
             if (input.GetButtonDown("SelectU"))

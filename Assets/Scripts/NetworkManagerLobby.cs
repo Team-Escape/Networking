@@ -9,9 +9,6 @@ namespace Mirror.EscapeGame
         public Canvas container;
         public Transform roleUI;
         public Transform mapUI;
-
-        // [SerializeField] bool _allPlayersReady;
-
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
 
         public void OnSelectChanged(int val, int newVal)
