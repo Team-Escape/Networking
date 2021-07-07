@@ -33,15 +33,15 @@ namespace Mirror.EscapeGame
             switch (selectState)
             {
                 case 0:
+                    selectState++;
                     roleIndex = selectIndex;
                     selectIndex = 0;
-                    selectState++;
                     Confirm();
                     break;
                 case 1:
+                    selectState++;
                     mapIndex = selectIndex;
                     selectIndex = 0;
-                    selectState++;
                     Confirm();
                     break;
                 case 2:
@@ -57,14 +57,14 @@ namespace Mirror.EscapeGame
                 switch (selectState)
                 {
                     case 0:
+                        selectState++;
                         roleIndex = selectIndex;
                         selectIndex = 0;
-                        selectState++;
                         break;
                     case 1:
+                        selectState++;
                         mapIndex = selectIndex;
                         selectIndex = 0;
-                        selectState++;
                         break;
                     case 2:
                     default:
