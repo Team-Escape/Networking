@@ -25,29 +25,32 @@ namespace Mirror.EscapeGame
 
         public void OnSelectChaned(int val, int newVal)
         {
+            if (isServer == false) return;
+            // ActiveUI(id, val, selectState, false);
             RpcActiveUI(id, val, selectState, false);
+            // ActiveUI(id, newVal, selectState, true);
             RpcActiveUI(id, newVal, selectState, true);
         }
 
         [Command]
-        public void CmdSetSelect(int val)
+        public void CmdSelect(int val)
         {
             Select(val);
+            selectIndex += val;
         }
 
         public void Select(int additive)
         {
+            if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
+            if (selectIndex + additive < 0) return;
+
             if (isServer)
             {
-                if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
-                if (selectIndex + additive < 0) return;
-                BroadCastToAll("Valqowpfjwpqof");
-                OnSelectChaned(selectIndex, selectIndex + additive);
                 selectIndex += additive;
             }
-            else
+            else if (isClient)
             {
-                CmdSetSelect(selectIndex);
+                CmdSelect(additive);
             }
         }
 
