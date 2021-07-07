@@ -25,23 +25,15 @@ namespace Mirror.EscapeGame
 
         public void Select(int additive)
         {
-            if (selectState == 0)
-                if (selectIndex + additive >= roleUI.childCount || roleIndex + additive < 0)
-                    return;
-
-            if (selectState == 1)
-                if (selectIndex + additive >= mapUI.childCount || roleIndex + additive < 0)
-                    return;
+            if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
+            if (selectIndex + additive < 0) return;
 
             ActiveUI(id, selectIndex, selectState, false);
-            if (isLocalPlayer)
-                CmdActiveUI(id, selectIndex, selectState, false);
 
             selectIndex += additive;
 
             ActiveUI(id, selectIndex, selectState, true);
-            if (isLocalPlayer)
-                CmdActiveUI(id, selectIndex, selectState, true);
+
         }
 
         public void SyncUI(List<RoomPlayer> players)
@@ -66,7 +58,18 @@ namespace Mirror.EscapeGame
         [ClientRpc]
         public void RpcActiveUI(int id, int index, int select, bool isActive)
         {
-            ActiveUI(id, index, select, isActive);
+            switch (selectState)
+            {
+                case 0:
+                    roleUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
+                    break;
+                case 1:
+                    mapUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
+                    break;
+                case 2:
+                default:
+                    return;
+            }
         }
 
         public void ActiveUI(int id, int index, int selectState, bool isActive)
@@ -75,9 +78,11 @@ namespace Mirror.EscapeGame
             {
                 case 0:
                     roleUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
+                    CmdActiveUI(id, selectIndex, selectState, isActive);
                     break;
                 case 1:
                     mapUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
+                    CmdActiveUI(id, selectIndex, selectState, isActive);
                     break;
                 case 2:
                 default:
@@ -127,20 +132,20 @@ namespace Mirror.EscapeGame
             {
                 Select(1);
             }
-            if (input.GetButtonDown("SelectL"))
+            else if (input.GetButtonDown("SelectL"))
             {
                 Select(-1);
             }
-            if (input.GetButtonDown("SelectU"))
+            else if (input.GetButtonDown("SelectU"))
             {
             }
-            if (input.GetButtonDown("SelectD"))
+            else if (input.GetButtonDown("SelectD"))
             {
             }
-            if (input.GetButtonDown("Confirm"))
+            else if (input.GetButtonDown("Confirm"))
             {
             }
-            if (input.GetButtonDown("Cancel"))
+            else if (input.GetButtonDown("Cancel"))
             {
             }
         }
