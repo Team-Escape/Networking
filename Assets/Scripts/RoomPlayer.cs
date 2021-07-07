@@ -25,9 +25,8 @@ namespace Mirror.EscapeGame
 
         public void OnSelectChaned(int val, int newVal)
         {
-            Debug.Log("Value :" + newVal);
-            RpcActiveUI(id, val, selectState, false);
-            RpcActiveUI(id, newVal, selectState, true);
+            ActiveUI(id, val, selectState, false);
+            ActiveUI(id, newVal, selectState, true);
         }
 
         [Command]
