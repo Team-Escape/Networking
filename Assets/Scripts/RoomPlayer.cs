@@ -11,9 +11,9 @@ namespace Mirror.EscapeGame
         [SyncVar(hook = nameof(OnSelectChaned))]
         public int selectIndex = 0;
         [SyncVar]
-        public int roleIndex = 0;
+        public string selectedRoleName = "";
         [SyncVar]
-        public int mapIndex = 0;
+        public string selectedMapName = "";
 
         /// <summary>
         /// Player current select state, 0 : Role, 1 : Map, 2: Waiting For Other players 
@@ -27,40 +27,78 @@ namespace Mirror.EscapeGame
 
         Player input;
 
-        [Command]
-        public void CmdSetSelectIndex(int val)
-        {
-            selectIndex = val;
-            SetSelectIndex(val);
-        }
+        [ClientRpc]
+        public void BroadCastToAll(string msg) => Debug.Log(msg);
 
+        [Server]
         public void SetSelectIndex(int val)
         {
-            if (isServer)
-            {
-                selectIndex = val;
-            }
-            else
-            {
-                CmdSetSelectIndex(val);
-            }
+            if (isServer == false) return;
+            selectIndex = val;
+            RpcSetSelectIndex(val);
         }
+
+        [ClientRpc]
+        public void RpcSetSelectIndex(int val) => selectIndex = val;
 
         public void OnStateChaned(int val, int newVal)
         {
+            if (isServer == false) return;
             switch (newVal)
             {
                 case 0:
-                    break;
                 case 1:
+                    selectedRoleName = roleUI.GetChild(selectIndex).name;
                     ActiveUI(id, selectIndex, val, false);
                     CmdActiveUI(id, selectIndex, val, false);
-                    SetSelectIndex(0);
+                    ActiveUI(id, 0, newVal, true);
+                    CmdActiveUI(id, 0, newVal, true);
                     break;
                 case 2:
+                    selectedMapName = mapUI.GetChild(selectIndex).name;
+                    ActiveUI(id, selectIndex, val, false);
+                    CmdActiveUI(id, selectIndex, val, false);
                     break;
                 default:
                     return;
+            }
+            SetSelectIndex(0);
+        }
+
+        [Command]
+        public void CmdCancel()
+        {
+            switch (selectState)
+            {
+                case 1:
+                case 2:
+                    selectState--;
+                    Cancel();
+                    break;
+                case 0:
+                default:
+                    return;
+            }
+        }
+
+        public void Cancel()
+        {
+            if (isServer)
+            {
+                switch (selectState)
+                {
+                    case 1:
+                    case 2:
+                        selectState--;
+                        break;
+                    case 0:
+                    default:
+                        return;
+                }
+            }
+            else
+            {
+                CmdCancel();
             }
         }
 
@@ -71,12 +109,10 @@ namespace Mirror.EscapeGame
             {
                 case 0:
                     selectState++;
-                    roleIndex = selectIndex;
                     Confirm();
                     break;
                 case 1:
                     selectState++;
-                    mapIndex = selectIndex;
                     Confirm();
                     break;
                 case 2:
@@ -93,11 +129,9 @@ namespace Mirror.EscapeGame
                 {
                     case 0:
                         selectState++;
-                        roleIndex = selectIndex;
                         break;
                     case 1:
                         selectState++;
-                        mapIndex = selectIndex;
                         break;
                     case 2:
                     default:
@@ -113,10 +147,19 @@ namespace Mirror.EscapeGame
         public void OnSelectChaned(int val, int newVal)
         {
             if (isServer == false) return;
-            ActiveUI(id, val, selectState, false);
-            RpcActiveUI(id, val, selectState, false);
-            ActiveUI(id, newVal, selectState, true);
-            RpcActiveUI(id, newVal, selectState, true);
+
+            int maxIndex = (selectState == 0) ? roleUI.childCount : mapUI.childCount;
+
+            if (val < maxIndex)
+            {
+                ActiveUI(id, val, selectState, false);
+                RpcActiveUI(id, val, selectState, false);
+            }
+            if (newVal < maxIndex)
+            {
+                ActiveUI(id, newVal, selectState, true);
+                RpcActiveUI(id, newVal, selectState, true);
+            }
         }
 
         [Command]
@@ -129,7 +172,8 @@ namespace Mirror.EscapeGame
         public void Select(int additive)
         {
             if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
-            if (selectIndex + additive < 0) return;
+            else if (selectState == 1 && selectIndex + additive >= mapUI.childCount) return;
+            else if (selectIndex + additive < 0) return;
 
             if (isServer)
             {
@@ -140,9 +184,6 @@ namespace Mirror.EscapeGame
                 CmdSelect(additive);
             }
         }
-
-        [ClientRpc]
-        public void BroadCastToAll(string msg) => Debug.Log(msg);
 
         public void SyncUI(List<RoomPlayer> players)
         {
@@ -157,6 +198,7 @@ namespace Mirror.EscapeGame
             }
         }
 
+        #region ActiveUI
         [Command]
         public void CmdActiveUI(int id, int index, int select, bool isActive)
         {
@@ -174,9 +216,11 @@ namespace Mirror.EscapeGame
             switch (selectState)
             {
                 case 0:
+                    if (index >= roleUI.childCount) return;
                     roleUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
                     break;
                 case 1:
+                    if (index >= mapUI.childCount) return;
                     mapUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
                     break;
                 case 2:
@@ -184,7 +228,9 @@ namespace Mirror.EscapeGame
                     return;
             }
         }
+        #endregion
 
+        #region ResetUI
         [Command]
         public void CmdResetUI()
         {
@@ -220,6 +266,8 @@ namespace Mirror.EscapeGame
                 i++;
             }
         }
+        #endregion
+
         private void Update()
         {
             if (input == null) return;
@@ -245,6 +293,7 @@ namespace Mirror.EscapeGame
                 }
                 else if (input.GetButtonDown("Cancel"))
                 {
+                    Cancel();
                 }
             }
 

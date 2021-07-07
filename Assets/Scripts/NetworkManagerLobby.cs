@@ -48,7 +48,6 @@ namespace Mirror.EscapeGame
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
-            ResetPlayerID();
         }
 
     }
