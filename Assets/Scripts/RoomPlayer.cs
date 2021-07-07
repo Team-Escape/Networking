@@ -39,10 +39,10 @@ namespace Mirror.EscapeGame
 
         public void Select(int additive)
         {
-            if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
-            if (selectIndex + additive < 0) return;
             if (isServer)
             {
+                if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
+                if (selectIndex + additive < 0) return;
                 selectIndex += additive;
             }
             else
