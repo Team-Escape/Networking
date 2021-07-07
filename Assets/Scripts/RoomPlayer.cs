@@ -8,7 +8,7 @@ namespace Mirror.EscapeGame
     {
         [SyncVar]
         public int id = 0;
-        [SyncVar(hook = nameof(OnSelectedChanged))]
+        [SyncVar]
         public int selectIndex = 0;
         [SyncVar]
         public int roleIndex = 0;
@@ -23,12 +23,13 @@ namespace Mirror.EscapeGame
 
         Player input;
 
-        public void OnSelectedChanged(int val, int newVal)
+        public void Select(int additive)
         {
-            ActiveUI(id, val, selectState, false);
-            CmdActiveUI(id, val, selectState, false);
-            ActiveUI(id, newVal, selectState, true);
-            CmdActiveUI(id, newVal, selectState, true);
+            ActiveUI(id, selectIndex, selectState, false);
+            CmdActiveUI(id, selectIndex, selectState, false);
+            selectIndex += additive;
+            ActiveUI(id, selectIndex, selectState, true);
+            CmdActiveUI(id, selectIndex, selectState, true);
         }
 
         public void SelectRole(int additive)
@@ -119,20 +120,15 @@ namespace Mirror.EscapeGame
             }
         }
 
-        [Command]
-        public void CmdSetSelectIndex(int n) => RpcSetSelectIndex(n);
-        [ClientRpc]
-        public void RpcSetSelectIndex(int n) => selectIndex = n;
-
         private void Update()
         {
             if (input.GetButtonDown("SelectR"))
             {
-                selectIndex++;
+                Select(1);
             }
             if (input.GetButtonDown("SelectL"))
             {
-                selectIndex--;
+                Select(-1);
             }
             if (input.GetButtonDown("SelectU"))
             {
