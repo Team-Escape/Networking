@@ -14,6 +14,10 @@ namespace Mirror.EscapeGame
         public int roleIndex = 0;
         [SyncVar]
         public int mapIndex = 0;
+
+        /// <summary>
+        /// Player current select state, 0 : Role, 1 : Map, 2: Waiting For Other players 
+        /// </summary>
         [SyncVar]
         public int selectState = 0;
 
@@ -22,6 +26,56 @@ namespace Mirror.EscapeGame
         public Transform mapUI;
 
         Player input;
+
+        [Command]
+        public void CmdConfirm()
+        {
+            switch (selectState)
+            {
+                case 0:
+                    roleIndex = selectIndex;
+                    selectIndex = 0;
+                    selectState++;
+                    Confirm();
+                    break;
+                case 1:
+                    mapIndex = selectIndex;
+                    selectIndex = 0;
+                    selectState++;
+                    Confirm();
+                    break;
+                case 2:
+                default:
+                    return;
+            }
+        }
+
+        public void Confirm()
+        {
+            if (isServer)
+            {
+                switch (selectState)
+                {
+                    case 0:
+                        roleIndex = selectIndex;
+                        selectIndex = 0;
+                        selectState++;
+                        break;
+                    case 1:
+                        mapIndex = selectIndex;
+                        selectIndex = 0;
+                        selectState++;
+                        break;
+                    case 2:
+                    default:
+                        return;
+                }
+            }
+            else if (isClient)
+            {
+                CmdConfirm();
+            }
+        }
 
         public void OnSelectChaned(int val, int newVal)
         {
@@ -133,7 +187,6 @@ namespace Mirror.EscapeGame
                 i++;
             }
         }
-
         private void Update()
         {
             if (input == null) return;
@@ -155,6 +208,7 @@ namespace Mirror.EscapeGame
                 }
                 else if (input.GetButtonDown("Confirm"))
                 {
+                    Confirm();
                 }
                 else if (input.GetButtonDown("Cancel"))
                 {
