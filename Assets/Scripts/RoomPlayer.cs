@@ -119,19 +119,22 @@ namespace Mirror.EscapeGame
             }
         }
 
-        [Client]
-        public void CliSetSelected(int n) => selectIndex = n;
+        [Command]
+        public void CmdSetSelectIndex(int n) => RpcSetSelectIndex(n);
+        [ClientRpc]
+        public void RpcSetSelectIndex(int n) => selectIndex = n;
 
         private void Update()
         {
             if (input.GetButtonDown("SelectR"))
             {
                 selectIndex++;
-
+                CmdSetSelectIndex(selectIndex);
             }
             if (input.GetButtonDown("SelectL"))
             {
                 selectIndex--;
+                CmdSetSelectIndex(selectIndex);
             }
             if (input.GetButtonDown("SelectU"))
             {
