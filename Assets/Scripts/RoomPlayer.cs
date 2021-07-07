@@ -8,7 +8,7 @@ namespace Mirror.EscapeGame
     {
         [SyncVar]
         public int id = 0;
-        [SyncVar]
+        [SyncVar(hook = nameof(OnSelectChaned))]
         public int selectIndex = 0;
         [SyncVar]
         public int roleIndex = 0;
@@ -23,18 +23,19 @@ namespace Mirror.EscapeGame
 
         Player input;
 
+        public void OnSelectChaned(int val, int newVal)
+        {
+            ActiveUI(id, val, selectState, false);
+            CmdActiveUI(id, val, selectState, false);
+            ActiveUI(id, newVal, selectState, true);
+            CmdActiveUI(id, newVal, selectState, true);
+        }
+
         public void Select(int additive)
         {
             if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
             if (selectIndex + additive < 0) return;
-
-            ActiveUI(id, selectIndex, selectState, false);
-            CmdActiveUI(id, selectIndex, selectState, false);
-
             selectIndex += additive;
-
-            ActiveUI(id, selectIndex, selectState, true);
-            CmdActiveUI(id, selectIndex, selectState, true);
         }
 
         public void SyncUI(List<RoomPlayer> players)
@@ -148,7 +149,7 @@ namespace Mirror.EscapeGame
             input = ReInput.players.GetPlayer(0);
         }
 
-        #region Mirro virtual func
+        #region Mirror virtual func
         public override void OnStartServer()
         {
             base.OnStartServer();
