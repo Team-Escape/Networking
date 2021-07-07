@@ -60,12 +60,12 @@ namespace Mirror.EscapeGame
         public void SyncUI(List<RoomPlayer> players)
         {
             ResetUI();
-            if (isLocalPlayer)
+            if (isLocalPlayer && players.Count > 1)
                 CmdResetUI();
             foreach (RoomPlayer p in players)
             {
                 ActiveUI(p.id, p.selectIndex, p.selectState, true);
-                if (isLocalPlayer)
+                if (isLocalPlayer && players.Count > 1)
                     CmdActiveUI(p.id, p.selectIndex, p.selectState, true);
             }
         }
