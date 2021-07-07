@@ -8,7 +8,7 @@ namespace Mirror.EscapeGame
     {
         [SyncVar]
         public int id = 0;
-        [SyncVar(hook = nameof(OnSelectChanged))]
+        [SyncVar(hook = nameof(OnSelectedChanged))]
         public int selectIndex = 0;
         [SyncVar]
         public int roleIndex = 0;
@@ -23,16 +23,12 @@ namespace Mirror.EscapeGame
 
         Player input;
 
-        public System.Action<int, int> OnSelectChangedAction;
-        public void OnSelectChanged(int val, int newVal)
+        public void OnSelectedChanged(int val, int newVal)
         {
-            CmdOnSelectedChanged(val, newVal);
-        }
-
-        [Command]
-        public void CmdOnSelectedChanged(int val, int newVal)
-        {
-            OnSelectChangedAction(val, newVal);
+            ActiveUI(id, val, selectState, false);
+            CmdActiveUI(id, val, selectState, false);
+            ActiveUI(id, newVal, selectState, true);
+            CmdActiveUI(id, newVal, selectState, true);
         }
 
         public void SelectRole(int additive)
@@ -71,9 +67,9 @@ namespace Mirror.EscapeGame
             ActiveUI(id, index, select, isActive);
         }
 
-        public void ActiveUI(int id, int index, int select, bool isActive)
+        public void ActiveUI(int id, int index, int selectState, bool isActive)
         {
-            switch (select)
+            switch (selectState)
             {
                 case 0:
                     roleUI.GetChild(index).GetChild(id + 1).gameObject.SetActive(isActive);
@@ -131,19 +127,11 @@ namespace Mirror.EscapeGame
             if (input.GetButtonDown("SelectR"))
             {
                 selectIndex++;
-                if (isClient)
-                {
-                    CmdOnSelectedChanged(selectIndex, selectIndex);
-                }
 
             }
             if (input.GetButtonDown("SelectL"))
             {
                 selectIndex--;
-                if (isClient)
-                {
-                    CmdOnSelectedChanged(selectIndex, selectIndex);
-                }
             }
             if (input.GetButtonDown("SelectU"))
             {
@@ -186,8 +174,6 @@ namespace Mirror.EscapeGame
 
                 room.roomSlots.Add(this);
                 room.ResetPlayerID();
-
-                OnSelectChangedAction = room.OnSelectChanged;
             }
         }
         public override void OnStopClient()
