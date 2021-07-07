@@ -176,6 +176,11 @@ namespace Mirror.EscapeGame
         public override void OnStopClient()
         {
             base.OnStopClient();
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                room.roomSlots.Remove(this);
+                room.ResetPlayerID();
+            }
             ResetUI();
         }
         #endregion
