@@ -25,15 +25,6 @@ namespace Mirror.EscapeGame
 
         public void Select(int additive)
         {
-            ActiveUI(id, selectIndex, selectState, false);
-            CmdActiveUI(id, selectIndex, selectState, false);
-            selectIndex += additive;
-            ActiveUI(id, selectIndex, selectState, true);
-            CmdActiveUI(id, selectIndex, selectState, true);
-        }
-
-        public void SelectRole(int additive)
-        {
             if (selectState == 0)
                 if (selectIndex + additive >= roleUI.childCount || roleIndex + additive < 0)
                     return;
@@ -42,17 +33,23 @@ namespace Mirror.EscapeGame
                 if (selectIndex + additive >= mapUI.childCount || roleIndex + additive < 0)
                     return;
 
+            ActiveUI(id, selectIndex, selectState, false);
+            CmdActiveUI(id, selectIndex, selectState, false);
             selectIndex += additive;
+            ActiveUI(id, selectIndex, selectState, true);
+            CmdActiveUI(id, selectIndex, selectState, true);
         }
 
         public void SyncUI(List<RoomPlayer> players)
         {
             ResetUI();
-            CmdResetUI();
+            if (isLocalPlayer)
+                CmdResetUI();
             foreach (RoomPlayer p in players)
             {
                 ActiveUI(p.id, p.selectIndex, p.selectState, true);
-                CmdActiveUI(p.id, p.selectIndex, p.selectState, true);
+                if (isLocalPlayer)
+                    CmdActiveUI(p.id, p.selectIndex, p.selectState, true);
             }
         }
 
