@@ -6,7 +6,11 @@ namespace Mirror.EscapeGame
 {
     public class NetworkManagerLobby : NetworkManager
     {
-        [SerializeField] bool _allPlayersReady;
+        public Canvas container;
+        public Transform roleUI;
+        public Transform mapUI;
+
+        // [SerializeField] bool _allPlayersReady;
 
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
 
@@ -15,7 +19,7 @@ namespace Mirror.EscapeGame
             for (int i = 0; i < roomSlots.Count; i++)
             {
                 roomSlots[i].id = i;
-                Debug.Log(roomSlots[i].gameObject.name + " id: " + i);
+                roomSlots[i].SyncUI(roomSlots);
             }
         }
 
