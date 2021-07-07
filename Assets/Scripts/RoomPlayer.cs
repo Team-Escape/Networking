@@ -26,17 +26,15 @@ namespace Mirror.EscapeGame
         public void OnSelectChaned(int val, int newVal)
         {
             if (isServer == false) return;
-            // ActiveUI(id, val, selectState, false);
-            RpcActiveUI(id, val, selectState, false);
-            // ActiveUI(id, newVal, selectState, true);
-            RpcActiveUI(id, newVal, selectState, true);
+            ActiveUI(id, val, selectState, false);
+            ActiveUI(id, newVal, selectState, true);
         }
 
         [Command]
         public void CmdSelect(int val)
         {
-            Select(val);
             selectIndex += val;
+            Select(val);
         }
 
         public void Select(int additive)
