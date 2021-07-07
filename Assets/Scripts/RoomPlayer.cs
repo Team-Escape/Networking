@@ -31,11 +31,24 @@ namespace Mirror.EscapeGame
             CmdActiveUI(id, newVal, selectState, true);
         }
 
+        [Command]
+        public void CmdSetSelect(int val)
+        {
+            Select(val);
+        }
+
         public void Select(int additive)
         {
             if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
             if (selectIndex + additive < 0) return;
-            selectIndex += additive;
+            if (isServer)
+            {
+                selectIndex += additive;
+            }
+            else
+            {
+                CmdSetSelect(selectIndex);
+            }
         }
 
         public void SyncUI(List<RoomPlayer> players)
