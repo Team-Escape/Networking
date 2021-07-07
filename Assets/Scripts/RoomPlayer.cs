@@ -36,28 +36,23 @@ namespace Mirror.EscapeGame
             Select(val);
         }
 
-        [Command]
-        public void CmdSetSelectIndex(int val) => RpcSetSelectIndex(val);
-
-        [ClientRpc]
-        public void RpcSetSelectIndex(int val) => selectIndex = val;
-
         public void Select(int additive)
         {
             if (isServer)
             {
                 if (selectState == 0 && selectIndex + additive >= roleUI.childCount) return;
                 if (selectIndex + additive < 0) return;
+                BroadCastToAll("Valqowpfjwpqof");
                 selectIndex += additive;
-                RpcSetSelectIndex(selectIndex);
-                Debug.Log("Val : " + selectIndex);
             }
             else
             {
-                Debug.Log("@!#qwfwq");
                 CmdSetSelect(selectIndex);
             }
         }
+
+        [ClientRpc]
+        public void BroadCastToAll(string msg) => Debug.Log(msg);
 
         public void SyncUI(List<RoomPlayer> players)
         {
