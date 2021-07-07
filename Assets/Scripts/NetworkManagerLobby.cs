@@ -14,6 +14,15 @@ namespace Mirror.EscapeGame
 
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
 
+        public void OnSelectChanged(int val, int newVal)
+        {
+            Debug.Log(val);
+            for (int i = 0; i < roomSlots.Count; i++)
+            {
+                roomSlots[i].SyncUI(roomSlots);
+            }
+        }
+
         public void ResetPlayerID()
         {
             for (int i = 0; i < roomSlots.Count; i++)

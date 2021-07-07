@@ -1,20 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Rewired;
 namespace Mirror.EscapeGame
 {
     public class RoomPlayer : NetworkBehaviour
     {
+        [SyncVar]
         public int id = 0;
+        [SyncVar(hook = nameof(OnSelectChanged))]
         public int selectIndex = 0;
+        [SyncVar]
         public int roleIndex = 0;
+        [SyncVar]
         public int mapIndex = 0;
+        [SyncVar]
         public int selectState = 0;
 
         public Canvas container;
         public Transform roleUI;
         public Transform mapUI;
+
+        Player input;
+
+        public System.Action<int, int> OnSelectChangedAction;
+        public void OnSelectChanged(int val, int newVal)
+        {
+            OnSelectChangedAction(val, newVal);
+        }
+
+        public void SelectRole(int additive)
+        {
+            if (selectState == 0)
+                if (selectIndex + additive >= roleUI.childCount || roleIndex + additive < 0)
+                    return;
+
+            if (selectState == 1)
+                if (selectIndex + additive >= mapUI.childCount || roleIndex + additive < 0)
+                    return;
+
+            selectIndex += additive;
+        }
 
         public void SyncUI(List<RoomPlayer> players)
         {
@@ -93,37 +119,42 @@ namespace Mirror.EscapeGame
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.L))
+            if (input.GetButtonDown("SelectR"))
             {
-                CmdTest();
+                selectIndex++;
+            }
+            if (input.GetButtonDown("SelectL"))
+            {
+                selectIndex--;
+            }
+            if (input.GetButtonDown("SelectU"))
+            {
+            }
+            if (input.GetButtonDown("SelectD"))
+            {
+            }
+            if (input.GetButtonDown("Confirm"))
+            {
+            }
+            if (input.GetButtonDown("Cancel"))
+            {
             }
         }
 
-        [Command]
-        public void CmdTest()
+        private void Awake()
         {
-            NetworkManagerLobby lobby = NetworkManager.singleton as NetworkManagerLobby;
-            lobby.ResetPlayerID();
+            input = ReInput.players.GetPlayer(0);
         }
 
-        private void Start()
-        {
-            if (NetworkManager.singleton is NetworkManagerLobby room)
-            {
-
-            }
-        }
-
+        #region Mirro virtual func
         public override void OnStartServer()
         {
             base.OnStartServer();
         }
-
         public override void OnStopServer()
         {
             base.OnStopServer();
         }
-
         public override void OnStartClient()
         {
             base.OnStartClient();
@@ -138,13 +169,14 @@ namespace Mirror.EscapeGame
                 room.roomSlots.Add(this);
                 room.ResetPlayerID();
 
+                OnSelectChangedAction = room.OnSelectChanged;
             }
         }
-
         public override void OnStopClient()
         {
             base.OnStopClient();
         }
+        #endregion
     }
 
 }
