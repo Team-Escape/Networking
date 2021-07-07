@@ -106,19 +106,17 @@ namespace Mirror.EscapeGame
             lobby.ResetPlayerID();
         }
 
+        private void Start()
+        {
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+
+            }
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
-            if (NetworkManager.singleton is NetworkManagerLobby room)
-            {
-                DontDestroyOnLoad(this);
-                room.roomSlots.Add(this);
-                room.ResetPlayerID();
-
-                container = room.container;
-                roleUI = room.roleUI;
-                mapUI = room.mapUI;
-            }
         }
 
         public override void OnStopServer()
@@ -129,7 +127,18 @@ namespace Mirror.EscapeGame
         public override void OnStartClient()
         {
             base.OnStartClient();
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                DontDestroyOnLoad(this);
 
+                container = room.container;
+                roleUI = room.roleUI;
+                mapUI = room.mapUI;
+
+                room.roomSlots.Add(this);
+                room.ResetPlayerID();
+
+            }
         }
 
         public override void OnStopClient()
