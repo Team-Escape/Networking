@@ -34,10 +34,12 @@ namespace Mirror.EscapeGame
                     return;
 
             ActiveUI(id, selectIndex, selectState, false);
-            CmdActiveUI(id, selectIndex, selectState, false);
+            if (isLocalPlayer)
+                CmdActiveUI(id, selectIndex, selectState, false);
             selectIndex += additive;
             ActiveUI(id, selectIndex, selectState, true);
-            CmdActiveUI(id, selectIndex, selectState, true);
+            if (isLocalPlayer)
+                CmdActiveUI(id, selectIndex, selectState, true);
         }
 
         public void SyncUI(List<RoomPlayer> players)
