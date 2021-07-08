@@ -29,7 +29,6 @@ namespace Mirror.EscapeGame
         public Transform mapUI;
 
         Player input;
-        bool isSelecting = false;
 
         [ClientRpc]
         public void BroadCastToAll(string msg) => Debug.Log(msg);
@@ -52,9 +51,6 @@ namespace Mirror.EscapeGame
             {
                 case 0:
                 case 1:
-                    if (isSelecting) return;
-                    isSelecting = true;
-                    this.AbleToDo(0.1f, () => isSelecting = false);
                     selectedRoleName = roleUI.GetChild(selectIndex).name;
                     ActiveUI(id, selectIndex, val, false);
                     RpcActiveUI(id, selectIndex, val, false);
@@ -98,7 +94,7 @@ namespace Mirror.EscapeGame
                 {
                     case 1:
                     case 2:
-                        selectState--;
+                        // selectState--;
                         break;
                     case 0:
                     default:
@@ -117,11 +113,8 @@ namespace Mirror.EscapeGame
             switch (selectState)
             {
                 case 0:
-                    selectState++;
-                    Confirm();
-                    break;
                 case 1:
-                    selectState++;
+                    // selectState++;
                     Confirm();
                     break;
                 case 2:
