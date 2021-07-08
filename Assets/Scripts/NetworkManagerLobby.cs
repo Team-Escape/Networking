@@ -67,6 +67,8 @@ namespace Mirror.EscapeGame
             }
             else
             {
+                // Setup Map and other settings.
+
                 foreach (RoomPlayer player in roomSlots)
                 {
                     NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
@@ -74,7 +76,7 @@ namespace Mirror.EscapeGame
                     if (NetworkServer.active)
                     {
                         GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                        NetworkServer.ReplacePlayerForConnection(identity.connectionToClient, go);
+                        NetworkServer.Spawn(go);
                     }
                 }
             }
