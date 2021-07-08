@@ -43,7 +43,6 @@ namespace Mirror.EscapeGame
         public void NextLevel()
         {
             if (CheckAllPlayerReady == false) return;
-
             gameScene = MapPoll();
             SceneManager.LoadSceneAsync(gameScene, LoadSceneMode.Additive);
         }
