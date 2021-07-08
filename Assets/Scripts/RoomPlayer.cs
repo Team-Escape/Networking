@@ -53,6 +53,7 @@ namespace Mirror.EscapeGame
                 case 0:
                 case 1:
                     if (isSelecting) return;
+                    isSelecting = true;
                     this.AbleToDo(0.1f, () => isSelecting = false);
                     selectedRoleName = roleUI.GetChild(selectIndex).name;
                     ActiveUI(id, selectIndex, val, false);
