@@ -36,6 +36,7 @@ namespace Mirror.EscapeGame
                 if (polls.ContainsKey(key)) continue;
                 polls.Add(key, roomSlots.FindAll(x => x.selectedMapName == key).Count);
             }
+
             string mapName = polls.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
             return mapName;
         }
@@ -44,7 +45,7 @@ namespace Mirror.EscapeGame
         {
             if (CheckAllPlayerReady == false) return;
             gameScene = MapPoll();
-            SceneManager.LoadSceneAsync(gameScene, LoadSceneMode.Additive);
+            ServerChangeScene(gameScene);
         }
 
         public void ResetPlayerID()
