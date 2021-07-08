@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
+
 namespace Mirror.EscapeGame
 {
     public class RoomPlayer : NetworkBehaviour
@@ -52,14 +53,14 @@ namespace Mirror.EscapeGame
                 case 1:
                     selectedRoleName = roleUI.GetChild(selectIndex).name;
                     ActiveUI(id, selectIndex, val, false);
-                    CmdActiveUI(id, selectIndex, val, false);
+                    RpcActiveUI(id, selectIndex, val, false);
                     ActiveUI(id, 0, newVal, true);
-                    CmdActiveUI(id, 0, newVal, true);
+                    RpcActiveUI(id, 0, newVal, true);
                     break;
                 case 2:
                     selectedMapName = mapUI.GetChild(selectIndex).name;
                     ActiveUI(id, selectIndex, val, false);
-                    CmdActiveUI(id, selectIndex, val, false);
+                    RpcActiveUI(id, selectIndex, val, false);
                     isReady = true;
                     (NetworkManager.singleton as NetworkManagerLobby).NextLevel();
 
