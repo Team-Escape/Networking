@@ -46,6 +46,17 @@ namespace Mirror.EscapeGame
             if (CheckAllPlayerReady == false) return;
             gameScene = MapPoll();
             ServerChangeScene(gameScene);
+
+            foreach (RoomPlayer player in roomSlots)
+            {
+                NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
+
+                if (NetworkServer.active)
+                {
+                    GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
+                    NetworkServer.ReplacePlayerForConnection(identity.connectionToClient, go);
+                }
+            }
         }
 
         public void ResetPlayerID()
