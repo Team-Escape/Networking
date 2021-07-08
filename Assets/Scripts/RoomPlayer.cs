@@ -14,6 +14,8 @@ namespace Mirror.EscapeGame
         public string selectedRoleName = "";
         [SyncVar]
         public string selectedMapName = "";
+        [SyncVar]
+        public bool isReady = false;
 
         /// <summary>
         /// Player current select state, 0 : Role, 1 : Map, 2: Waiting For Other players 
@@ -58,6 +60,9 @@ namespace Mirror.EscapeGame
                     selectedMapName = mapUI.GetChild(selectIndex).name;
                     ActiveUI(id, selectIndex, val, false);
                     CmdActiveUI(id, selectIndex, val, false);
+                    isReady = true;
+                    (NetworkManager.singleton as NetworkManagerLobby).NextLevel();
+
                     break;
                 default:
                     return;

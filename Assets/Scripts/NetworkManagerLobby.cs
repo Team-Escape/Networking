@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Mirror.EscapeGame
 {
@@ -10,6 +12,41 @@ namespace Mirror.EscapeGame
         public Transform roleUI;
         public Transform mapUI;
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
+
+        string gameScene = "";
+
+        public bool CheckAllPlayerReady
+        {
+            get
+            {
+                foreach (RoomPlayer player in roomSlots)
+                {
+                    if (player.isReady == false) return false;
+                }
+                return true;
+            }
+        }
+
+        public string MapPoll()
+        {
+            var polls = new Dictionary<string, int>();
+            foreach (RoomPlayer p in roomSlots)
+            {
+                string key = p.selectedMapName;
+                if (polls.ContainsKey(key)) continue;
+                polls.Add(key, roomSlots.FindAll(x => x.selectedMapName == key).Count);
+            }
+            string mapName = polls.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            return mapName;
+        }
+
+        public void NextLevel()
+        {
+            if (CheckAllPlayerReady == false) return;
+
+            gameScene = MapPoll();
+            SceneManager.LoadSceneAsync(gameScene, LoadSceneMode.Additive);
+        }
 
         public void ResetPlayerID()
         {
@@ -43,6 +80,7 @@ namespace Mirror.EscapeGame
         public override void OnClientConnect(NetworkConnection conn)
         {
             base.OnClientConnect(conn);
+            Debug.Log(conn);
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
