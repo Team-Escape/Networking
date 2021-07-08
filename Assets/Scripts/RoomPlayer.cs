@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
+using UnityEngine.SceneManagement;
 
 namespace Mirror.EscapeGame
 {
@@ -62,7 +63,7 @@ namespace Mirror.EscapeGame
                     ActiveUI(id, selectIndex, val, false);
                     RpcActiveUI(id, selectIndex, val, false);
                     isReady = true;
-                    (NetworkManager.singleton as NetworkManagerLobby).NextLevel();
+                    NextLevel();
                     break;
                 default:
                     return;
@@ -71,13 +72,15 @@ namespace Mirror.EscapeGame
         }
 
         [Command]
+        public void NextLevel() => (NetworkManager.singleton as NetworkManagerLobby).NextLevel();
+
+        [Command]
         public void CmdCancel()
         {
             switch (selectState)
             {
                 case 1:
                 case 2:
-                    selectState--;
                     Cancel();
                     break;
                 case 0:
@@ -94,7 +97,7 @@ namespace Mirror.EscapeGame
                 {
                     case 1:
                     case 2:
-                        // selectState--;
+                        selectState--;
                         break;
                     case 0:
                     default:
@@ -114,7 +117,6 @@ namespace Mirror.EscapeGame
             {
                 case 0:
                 case 1:
-                    // selectState++;
                     Confirm();
                     break;
                 case 2:

@@ -27,12 +27,9 @@ namespace Mirror.Examples.Additive
 
         IEnumerator LoadSubScenes()
         {
-            Debug.Log("Loading Scenes");
-
             foreach (string sceneName in subScenes)
             {
                 yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-                // Debug.Log($"Loaded {sceneName}");
             }
         }
 
