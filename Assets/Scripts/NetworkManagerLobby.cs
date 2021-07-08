@@ -12,6 +12,7 @@ namespace Mirror.EscapeGame
         public Transform roleUI;
         public Transform mapUI;
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
+        public string lobbyName = "LobbyScene";
 
         string gameScene = "";
 
@@ -46,17 +47,6 @@ namespace Mirror.EscapeGame
             if (CheckAllPlayerReady == false) return;
             gameScene = MapPoll();
             ServerChangeScene(gameScene);
-
-            foreach (RoomPlayer player in roomSlots)
-            {
-                NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
-
-                if (NetworkServer.active)
-                {
-                    GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                    NetworkServer.ReplacePlayerForConnection(identity.connectionToClient, go);
-                }
-            }
         }
 
         public void ResetPlayerID()
@@ -65,6 +55,28 @@ namespace Mirror.EscapeGame
             {
                 roomSlots[i].id = i;
                 roomSlots[i].SyncUI(roomSlots);
+            }
+        }
+
+        public override void OnClientSceneChanged(NetworkConnection conn)
+        {
+            base.OnClientSceneChanged(conn);
+            if (IsSceneActive(lobbyName))
+            {
+
+            }
+            else
+            {
+                foreach (RoomPlayer player in roomSlots)
+                {
+                    NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
+
+                    if (NetworkServer.active)
+                    {
+                        GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
+                        NetworkServer.ReplacePlayerForConnection(identity.connectionToClient, go);
+                    }
+                }
             }
         }
 
