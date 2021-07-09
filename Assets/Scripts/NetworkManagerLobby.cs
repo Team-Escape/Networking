@@ -61,7 +61,7 @@ namespace Mirror.EscapeGame
         public override void OnServerSceneChanged(string sceneName)
         {
             base.OnServerSceneChanged(sceneName);
-            Debug.Log(sceneName);
+
             if (sceneName == lobbyName)
             {
 
@@ -83,16 +83,18 @@ namespace Mirror.EscapeGame
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
             base.OnClientSceneChanged(conn);
-            Debug.Log(conn);
+
             if (IsSceneActive(lobbyName))
             {
 
             }
             else
             {
+                foreach (RoomPlayer player in roomSlots)
+                {
+                    player.ChangeInputMap("Gameplay");
+                }
                 // Setup Map and other settings.
-
-
             }
         }
 
@@ -119,7 +121,6 @@ namespace Mirror.EscapeGame
         public override void OnClientConnect(NetworkConnection conn)
         {
             base.OnClientConnect(conn);
-            Debug.Log("client: " + conn);
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)

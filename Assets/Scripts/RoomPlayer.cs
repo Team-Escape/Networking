@@ -33,6 +33,7 @@ namespace Mirror.EscapeGame
 
         public void ChangeInputMap(string name)
         {
+            BroadCastToAll("owqpfjopqwjf");
             input.SelectTheMap(name);
             CmdChangeInputMap(name);
         }
