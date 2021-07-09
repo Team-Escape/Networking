@@ -58,10 +58,11 @@ namespace Mirror.EscapeGame
             }
         }
 
-        public override void OnClientSceneChanged(NetworkConnection conn)
+        public override void OnServerChangeScene(string newSceneName)
         {
-            base.OnClientSceneChanged(conn);
-            if (IsSceneActive(lobbyName))
+            base.OnServerChangeScene(newSceneName);
+
+            if (newSceneName == lobbyName)
             {
 
             }
@@ -78,6 +79,12 @@ namespace Mirror.EscapeGame
                     NetworkServer.ReplacePlayerForConnection(_conn, go);
                 }
             }
+        }
+
+        public override void OnClientSceneChanged(NetworkConnection conn)
+        {
+            base.OnClientSceneChanged(conn);
+
         }
 
         public override void OnStartServer()
