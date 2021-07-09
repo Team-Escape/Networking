@@ -31,7 +31,11 @@ namespace Mirror.EscapeGame
 
         Player input;
 
-        public void ChangeInputMap(string name) => RpcChangeInputMap(name);
+        public void ChangeInputMap(string name)
+        {
+            input.SelectTheMap(name);
+            CmdChangeInputMap(name);
+        }
         [Command]
         public void CmdChangeInputMap(string name) => RpcChangeInputMap(name);
         [ClientRpc]
