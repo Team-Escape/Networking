@@ -72,20 +72,14 @@ namespace Mirror.EscapeGame
                 foreach (RoomPlayer player in roomSlots)
                 {
                     NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
-
                     if (NetworkServer.active)
                     {
+                        NetworkServer.SetClientReady(identity.connectionToServer);
                         GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                        SpawnGameplay(go);
+                        NetworkServer.Spawn(go);
                     }
                 }
             }
-        }
-
-        [Command]
-        public void SpawnGameplay(GameObject go)
-        {
-            NetworkServer.Spawn(go);
         }
 
         public override void OnStartServer()
