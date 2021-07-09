@@ -63,7 +63,6 @@ namespace Mirror.EscapeGame
                     ActiveUI(id, selectIndex, val, false);
                     RpcActiveUI(id, selectIndex, val, false);
                     isReady = true;
-                    NextLevel();
                     break;
                 default:
                     return;

@@ -42,6 +42,11 @@ namespace Mirror.EscapeGame
             return mapName;
         }
 
+        private void Update()
+        {
+            if (CheckAllPlayerReady) NextLevel();
+        }
+
         public void NextLevel()
         {
             if (CheckAllPlayerReady == false) return;
