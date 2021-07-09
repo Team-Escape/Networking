@@ -52,6 +52,7 @@ namespace Mirror.EscapeGame
             {
                 case 0:
                 case 1:
+                    isReady = false;
                     selectedRoleName = roleUI.GetChild(selectIndex).name;
                     ActiveUI(id, selectIndex, val, false);
                     RpcActiveUI(id, selectIndex, val, false);
@@ -71,7 +72,6 @@ namespace Mirror.EscapeGame
             SetSelectIndex(0);
         }
 
-        [Command]
         public void NextLevel() => (NetworkManager.singleton as NetworkManagerLobby).NextLevel();
 
         [Command]
