@@ -407,11 +407,14 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 8377677904169980873, guid: 33809ecb7c71446699553223882809ca, type: 3}
+  - {fileID: 439219978861978733, guid: 5d296aeed83b340a1afd56733efc9827, type: 3}
   container: {fileID: 1933535873}
   roleUI: {fileID: 1871684725}
   mapUI: {fileID: 286035320}
   roomSlots: []
+  lobbyName: LobbyScene
 --- !u!1 &1687258581
 GameObject:
   m_ObjectHideFlags: 0
