@@ -58,6 +58,28 @@ namespace Mirror.EscapeGame
             }
         }
 
+        public override void OnServerSceneChanged(string sceneName)
+        {
+            base.OnServerSceneChanged(sceneName);
+            Debug.Log(sceneName);
+            if (sceneName == lobbyName)
+            {
+
+            }
+            else
+            {
+                foreach (RoomPlayer player in roomSlots)
+                {
+                    var _conn = player.connectionToClient;
+                    NetworkServer.SetClientReady(_conn);
+                    player.BroadCastToAll(player.selectedRoleName);
+                    GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
+                    player.ChangeInputMap("Gameplay");
+                    NetworkServer.ReplacePlayerForConnection(_conn, go);
+                }
+            }
+        }
+
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
             base.OnClientSceneChanged(conn);
@@ -70,19 +92,7 @@ namespace Mirror.EscapeGame
             {
                 // Setup Map and other settings.
 
-                foreach (RoomPlayer player in roomSlots)
-                {
-                    Debug.Log(player.connectionToClient + ":,:" + conn);
-                    if (player.connectionToClient.connectionId == conn.connectionId)
-                    {
-                        Debug.Log("qowpfjopqwjfpwqojf90213");
-                        var _conn = player.connectionToClient;
-                        player.BroadCastToAll(player.selectedRoleName);
-                        GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                        player.ChangeInputMap("Gameplay");
-                        NetworkServer.ReplacePlayerForConnection(_conn, go);
-                    }
-                }
+
             }
         }
 
