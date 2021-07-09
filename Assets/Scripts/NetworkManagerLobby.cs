@@ -71,14 +71,11 @@ namespace Mirror.EscapeGame
 
                 foreach (RoomPlayer player in roomSlots)
                 {
-                    if (NetworkServer.active)
-                    {
-                        var _conn = player.connectionToClient;
-                        player.BroadCastToAll(player.selectedRoleName);
-                        GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                        player.ChangeInputMap("Gameplay");
-                        NetworkServer.ReplacePlayerForConnection(_conn, go);
-                    }
+                    var _conn = player.connectionToClient;
+                    player.BroadCastToAll(player.selectedRoleName);
+                    GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
+                    player.ChangeInputMap("Gameplay");
+                    NetworkServer.ReplacePlayerForConnection(_conn, go);
                 }
             }
         }
