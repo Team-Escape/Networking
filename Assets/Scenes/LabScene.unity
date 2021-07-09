@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -38495,8 +38495,8 @@ MonoBehaviour:
   endPoint: {fileID: 4137489029212549534}
   entrance: {fileID: 6533381837228201566}
   exit: {fileID: 6033701286292143928}
-  hunterSpawn: {fileID: 0}
-  escapeSpawn: {fileID: 0}
+  hunterSpawn: {fileID: 789615053}
+  escapeSpawn: {fileID: 1315677341}
   polygonCollider2D: {fileID: 7559501930576553630}
 --- !u!61 &6676021362987306019
 BoxCollider2D:

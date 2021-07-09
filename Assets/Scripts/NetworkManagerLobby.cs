@@ -12,7 +12,7 @@ namespace Mirror.EscapeGame
         public Transform roleUI;
         public Transform mapUI;
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
-        public List<GameObject> gameplayPlayers = new List<GameObject>();
+        public List<GameplayPlayer> gameplayPlayers = new List<GameplayPlayer>();
 
         public string lobbyName = "LobbyScene";
 
@@ -76,7 +76,7 @@ namespace Mirror.EscapeGame
                     NetworkServer.SetClientReady(_conn);
                     player.BroadCastToAll(player.selectedRoleName);
                     GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                    gameplayPlayers.Add(go);
+                    gameplayPlayers.Add(go.GetComponent<GameplayPlayer>());
                     NetworkServer.ReplacePlayerForConnection(_conn, go);
                 }
             }
@@ -98,7 +98,7 @@ namespace Mirror.EscapeGame
                 }
 
                 Vector2 point = FindObjectOfType<RoomBlockData>().escapeSpawn.position;
-                foreach (GameObject go in gameplayPlayers)
+                foreach (GameplayPlayer go in gameplayPlayers)
                 {
                     go.transform.position = point;
                 }
