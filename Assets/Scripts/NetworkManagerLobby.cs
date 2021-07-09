@@ -76,7 +76,7 @@ namespace Mirror.EscapeGame
                     if (NetworkServer.active)
                     {
                         GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                        NetworkServer.Spawn(go);
+                        NetworkServer.Spawn(go, identity.connectionToServer);
                     }
                 }
             }
