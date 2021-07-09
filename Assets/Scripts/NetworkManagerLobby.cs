@@ -100,7 +100,7 @@ namespace Mirror.EscapeGame
                 Vector2 point = FindObjectOfType<RoomBlockData>().escapeSpawn.position;
                 foreach (GameplayPlayer go in gameplayPlayers)
                 {
-                    go.transform.position = point;
+                    go.Init(point);
                 }
                 // Setup Map and other settings.
             }

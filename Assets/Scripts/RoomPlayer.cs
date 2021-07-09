@@ -33,14 +33,6 @@ namespace Mirror.EscapeGame
 
         public void ChangeInputMap(string name)
         {
-            if (isLocalPlayer)
-            {
-                Debug.Log("12321412");
-            }
-            else
-            {
-                Debug.Log("Not local player");
-            }
             input.SelectTheMap(name);
             CmdChangeInputMap(name);
         }
