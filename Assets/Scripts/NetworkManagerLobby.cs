@@ -74,7 +74,6 @@ namespace Mirror.EscapeGame
                     NetworkServer.SetClientReady(_conn);
                     player.BroadCastToAll(player.selectedRoleName);
                     GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                    player.ChangeInputMap("Gameplay");
                     NetworkServer.ReplacePlayerForConnection(_conn, go);
                 }
             }
