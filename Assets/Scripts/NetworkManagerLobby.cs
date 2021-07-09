@@ -42,11 +42,6 @@ namespace Mirror.EscapeGame
             return mapName;
         }
 
-        private void Update()
-        {
-            if (CheckAllPlayerReady) NextLevel();
-        }
-
         public void NextLevel()
         {
             if (CheckAllPlayerReady == false) return;
@@ -79,6 +74,7 @@ namespace Mirror.EscapeGame
                     NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
                     if (NetworkServer.active)
                     {
+                        player.BroadCastToAll(player.selectedRoleName);
                         NetworkServer.SetClientReady(identity.connectionToServer);
                         GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
                         NetworkServer.Spawn(go);

@@ -63,6 +63,7 @@ namespace Mirror.EscapeGame
                     ActiveUI(id, selectIndex, val, false);
                     RpcActiveUI(id, selectIndex, val, false);
                     isReady = true;
+                    NextLevel();
                     break;
                 default:
                     return;
@@ -150,6 +151,7 @@ namespace Mirror.EscapeGame
         public void OnSelectChaned(int val, int newVal)
         {
             if (isServer == false) return;
+            if (roleUI == null || mapUI == null) return;
 
             int maxIndex = (selectState == 0) ? roleUI.childCount : mapUI.childCount;
 
@@ -307,6 +309,13 @@ namespace Mirror.EscapeGame
             input = ReInput.players.GetPlayer(0);
         }
 
+        public void GetSelectUI(NetworkManagerLobby room)
+        {
+            container = room.container;
+            roleUI = room.roleUI;
+            mapUI = room.mapUI;
+        }
+
         #region Mirror virtual func
         public override void OnStartServer()
         {
@@ -323,10 +332,7 @@ namespace Mirror.EscapeGame
             {
                 DontDestroyOnLoad(this);
 
-                container = room.container;
-                roleUI = room.roleUI;
-                mapUI = room.mapUI;
-
+                GetSelectUI(room);
                 room.roomSlots.Add(this);
                 room.ResetPlayerID();
             }
