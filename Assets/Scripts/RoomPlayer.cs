@@ -30,6 +30,7 @@ namespace Mirror.EscapeGame
         public Transform mapUI;
 
         Player input;
+        public void ChangeInputMap(string name) => input.SelectTheMap(name);
 
         [ClientRpc]
         public void BroadCastToAll(string msg) => Debug.Log(msg);
@@ -343,9 +344,17 @@ namespace Mirror.EscapeGame
             if (NetworkManager.singleton is NetworkManagerLobby room)
             {
                 room.roomSlots.Remove(this);
-                room.ResetPlayerID();
+                string lobbyName = "LobbyScene";
+                if (SceneManager.GetActiveScene().name == lobbyName)
+                {
+                    room.ResetPlayerID();
+                    ResetUI();
+                }
+                else
+                {
+                    SceneManager.LoadScene(lobbyName);
+                }
             }
-            ResetUI();
         }
         #endregion
     }

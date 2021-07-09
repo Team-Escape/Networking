@@ -71,12 +71,13 @@ namespace Mirror.EscapeGame
 
                 foreach (RoomPlayer player in roomSlots)
                 {
-                    NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
                     if (NetworkServer.active)
                     {
+                        var _conn = player.connectionToClient;
                         player.BroadCastToAll(player.selectedRoleName);
                         GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
-                        NetworkServer.Spawn(go);
+                        player.ChangeInputMap("Gameplay");
+                        NetworkServer.ReplacePlayerForConnection(_conn, go);
                     }
                 }
             }
@@ -105,7 +106,7 @@ namespace Mirror.EscapeGame
         public override void OnClientConnect(NetworkConnection conn)
         {
             base.OnClientConnect(conn);
-            Debug.Log(conn);
+            Debug.Log("client: " + conn);
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
