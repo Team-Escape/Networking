@@ -27,10 +27,13 @@ namespace Mirror.EscapeGame
 
         public void Init(Vector2 spawn)
         {
-            transform.position = spawn;
+            if (isLocalPlayer)
+            {
+                transform.position = spawn;
 
-            SetCameraFollow();
-            CmdSetCameraFollow();
+                SetCameraFollow();
+                CmdSetCameraFollow();
+            }
         }
 
         // Update is called once per frame
