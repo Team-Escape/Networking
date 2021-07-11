@@ -55,6 +55,7 @@ namespace Mirror.EscapeGame
         public override void OnStartClient()
         {
             base.OnStartClient();
+            Debug.Log(this.gameObject.name + " spawn");
             if (NetworkManager.singleton is NetworkManagerLobby room)
             {
                 room.gameplayPlayers.Add(this);
