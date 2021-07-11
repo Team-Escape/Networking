@@ -109,12 +109,6 @@ namespace Mirror.EscapeGame
             }
         }
 
-        public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
-        {
-            base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
-            transition.MaskIn(null);
-        }
-
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
             base.OnClientSceneChanged(conn);
