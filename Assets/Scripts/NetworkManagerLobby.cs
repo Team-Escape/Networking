@@ -66,7 +66,15 @@ namespace Mirror.EscapeGame
 
             if (sceneName == lobbyName)
             {
-
+                if (gameplayPlayers.Count > 0)
+                {
+                    foreach (RoomPlayer player in roomSlots)
+                    {
+                        var _conn = player.connectionToClient;
+                        NetworkServer.SetClientReady(_conn);
+                        NetworkServer.ReplacePlayerForConnection(_conn, player.gameObject);
+                    }
+                }
             }
             else
             {
@@ -89,7 +97,13 @@ namespace Mirror.EscapeGame
 
             if (IsSceneActive(lobbyName))
             {
+                if (gameplayPlayers.Count > 0)
+                {
+                    foreach (RoomPlayer player in roomSlots)
+                    {
 
+                    }
+                }
             }
             else
             {
