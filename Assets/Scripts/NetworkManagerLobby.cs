@@ -21,7 +21,7 @@ namespace Mirror.EscapeGame
 
         string gameScene = "";
 
-        public void ChangeScene(string name) => SceneManager.LoadSceneAsync(name);
+        public void ChangeScene(string name) => ServerChangeScene(name);
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
