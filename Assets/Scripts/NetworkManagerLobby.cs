@@ -21,7 +21,8 @@ namespace Mirror.EscapeGame
 
         string gameScene = "";
 
-        public void ChangeScene(string name) => transition.MaskIn(() => SceneManager.LoadSceneAsync(name));
+        public void ChangeScene(string name) => transition.MaskIn(() => ServerChangeScene(gameScene));
+
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             transition.MaskOut();
@@ -65,7 +66,7 @@ namespace Mirror.EscapeGame
         {
             if (CheckAllPlayerReady == false) return;
             gameScene = MapPoll();
-            transition.MaskIn(() => ServerChangeScene(gameScene));
+            ChangeScene(gameScene);
         }
 
         public void ResetPlayerID()
@@ -106,6 +107,12 @@ namespace Mirror.EscapeGame
                     gameplayPlayers.Add(go.GetComponentInChildren<GameplayPlayer>());
                 }
             }
+        }
+
+        public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
+        {
+            base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+            transition.MaskIn(null);
         }
 
         public override void OnClientSceneChanged(NetworkConnection conn)
