@@ -77,6 +77,7 @@ namespace Mirror.EscapeGame
                     player.BroadCastToAll(player.selectedRoleName);
                     GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
                     NetworkServer.ReplacePlayerForConnection(_conn, go);
+                    Debug.Log("Go Gameplay spawn");
                 }
             }
         }

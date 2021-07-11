@@ -29,12 +29,18 @@ namespace Mirror.EscapeGame
         {
             if (isLocalPlayer)
             {
-                transform.position = spawn;
+                Init(spawn);
+                CmdInit(spawn);
 
                 SetCameraFollow();
                 CmdSetCameraFollow();
             }
         }
+
+        [Command]
+        public void CmdInit(Vector2 spawn) => RpcInit(spawn);
+        [ClientRpc]
+        public void RpcInit(Vector2 spawn) => Init(spawn);
 
         // Update is called once per frame
         void Update()
@@ -55,7 +61,9 @@ namespace Mirror.EscapeGame
         public override void OnStartClient()
         {
             base.OnStartClient();
-            Debug.Log(this.gameObject.name + " spawn");
+
+            Debug.Log("Gameplay spawn");
+
             if (NetworkManager.singleton is NetworkManagerLobby room)
             {
                 room.gameplayPlayers.Add(this);
