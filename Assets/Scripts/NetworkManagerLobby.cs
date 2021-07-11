@@ -66,7 +66,7 @@ namespace Mirror.EscapeGame
         {
             if (CheckAllPlayerReady == false) return;
             gameScene = MapPoll();
-            ChangeScene(gameScene);
+            transition.MaskIn(() => ChangeScene(gameScene));
         }
 
         public void ResetPlayerID()
