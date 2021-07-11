@@ -145,6 +145,13 @@ namespace Mirror.EscapeGame
         public override void OnStartClient()
         {
             base.OnStartClient();
+
+            transition = GetComponentInChildren<TransitionEffect>();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            if (!instance)
+                instance = this;
+            else
+                Destroy(gameObject);
         }
 
         public override void OnStopServer()
@@ -165,16 +172,6 @@ namespace Mirror.EscapeGame
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
-        }
-
-        private void Awake()
-        {
-            transition = GetComponentInChildren<TransitionEffect>();
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            if (!instance)
-                instance = this;
-            else
-                Destroy(gameObject);
         }
     }
 }
