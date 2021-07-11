@@ -22,19 +22,17 @@ namespace Mirror.EscapeGame
         private void Awake()
         {
             input = ReInput.players.GetPlayer(0);
-            Debug.Log(input);
         }
 
         public void Init(Vector2 spawn)
         {
-            if (isLocalPlayer)
-            {
-                Init(spawn);
+            Debug.Log("Init GamePlayer");
+            transform.position = spawn;
+            if (isClient)
                 CmdInit(spawn);
 
-                SetCameraFollow();
-                CmdSetCameraFollow();
-            }
+            SetCameraFollow();
+            CmdSetCameraFollow();
         }
 
         [Command]
@@ -55,27 +53,6 @@ namespace Mirror.EscapeGame
                 {
                     transform.position += Vector3.left;
                 }
-            }
-        }
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-
-            Debug.Log("Gameplay spawn");
-
-            if (NetworkManager.singleton is NetworkManagerLobby room)
-            {
-                room.gameplayPlayers.Add(this);
-            }
-        }
-
-        public override void OnStopClient()
-        {
-            base.OnStopClient();
-            if (NetworkManager.singleton is NetworkManagerLobby room)
-            {
-                room.gameplayPlayers.Remove(this);
             }
         }
     }

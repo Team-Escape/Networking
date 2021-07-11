@@ -74,9 +74,10 @@ namespace Mirror.EscapeGame
                 {
                     var _conn = player.connectionToClient;
                     NetworkServer.SetClientReady(_conn);
-                    player.BroadCastToAll(player.selectedRoleName);
+
                     GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
                     NetworkServer.ReplacePlayerForConnection(_conn, go);
+                    gameplayPlayers.Add(go.GetComponentInChildren<GameplayPlayer>());
                     Debug.Log("Go Gameplay spawn");
                 }
             }
@@ -98,6 +99,7 @@ namespace Mirror.EscapeGame
                 }
 
                 Vector2 point = FindObjectOfType<RoomBlockData>().escapeSpawn.position;
+                Debug.Log("How many players: " + gameplayPlayers.Count);
                 foreach (GameplayPlayer go in gameplayPlayers)
                 {
                     go.Init(point);
