@@ -3,7 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - MapObject
+  - Flag
+  - PlayerWeapon
+  - GadgetSpawner
+  - RoomTeleport
+  - StartItem
+  - Confier
+  - DashItem
+  - Fields
   layers:
   - Default
   - TransparentFX
@@ -13,22 +22,22 @@ TagManager:
   - UI
   - 
   - 
+  - Player
+  - PlayerCollider
+  - P1Cam
+  - P2Cam
+  - P3Cam
+  - P4Cam
+  - HunterGame
+  - Confier
   - 
+  - Ground
+  - IceGround
+  - SliemGround
+  - Box
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - StartItem
+  - Invisible
   - 
   - 
   - 

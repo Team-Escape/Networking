@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3044068183803313860}
   - component: {fileID: -5265404712054192825}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +59,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1181581535850427760}
   - component: {fileID: 3327550154463680328}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,8 @@ GameObject:
   - component: {fileID: 8825228035164295726}
   - component: {fileID: 1225834235013696554}
   - component: {fileID: 3022142495209290633}
-  m_Layer: 0
+  - component: {fileID: 8063000147802266735}
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,3 +255,24 @@ CapsuleCollider2D:
   m_Offset: {x: -0.119172454, y: -0.13506222}
   m_Size: {x: 0.7383449, y: 2.0730758}
   m_Direction: 0
+--- !u!50 &8063000147802266735
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4871972801453036704}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 4
