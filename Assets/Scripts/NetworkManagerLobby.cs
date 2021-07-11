@@ -25,7 +25,7 @@ namespace Mirror.EscapeGame
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            transition.MaskOut(null);
+            transition.MaskOut();
             if (scene.name == lobbyName)
             {
                 mainUI.SetActive(true);
@@ -124,7 +124,7 @@ namespace Mirror.EscapeGame
             else
             {
                 mainUI.SetActive(false);
-                transition.MaskOut(null);
+                transition.MaskOut();
                 foreach (RoomPlayer player in roomSlots)
                 {
                     player.ChangeInputMap("Gameplay");
