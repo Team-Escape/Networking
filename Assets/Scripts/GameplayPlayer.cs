@@ -51,6 +51,23 @@ namespace Mirror.EscapeGame
                 }
             }
         }
-    }
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                room.gameplayPlayers.Add(this);
+            }
+        }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                room.gameplayPlayers.Remove(this);
+            }
+        }
+    }
 }

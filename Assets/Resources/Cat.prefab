@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3044068183803313860}
-  - component: {fileID: 3482090490441176569}
+  - component: {fileID: -5265404712054192825}
   m_Layer: 0
   m_Name: Cat
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3482090490441176569
+--- !u!114 &-5265404712054192825
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
