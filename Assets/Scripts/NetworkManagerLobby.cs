@@ -8,15 +8,32 @@ namespace Mirror.EscapeGame
 {
     public class NetworkManagerLobby : NetworkManager
     {
+        public static NetworkManagerLobby instance;
+        public GameObject mainUI;
         public Canvas container;
         public Transform roleUI;
         public Transform mapUI;
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
         public List<GameplayPlayer> gameplayPlayers = new List<GameplayPlayer>();
+        TransitionEffect transition;
 
         public string lobbyName = "LobbyScene";
 
         string gameScene = "";
+
+        public void ChangeScene(string name) => transition.MaskIn(() => SceneManager.LoadSceneAsync(name));
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            transition.MaskOut();
+            if (scene.name == lobbyName)
+            {
+                mainUI.SetActive(true);
+            }
+            else
+            {
+                mainUI.SetActive(false);
+            }
+        }
 
         public bool CheckAllPlayerReady
         {
@@ -48,7 +65,7 @@ namespace Mirror.EscapeGame
         {
             if (CheckAllPlayerReady == false) return;
             gameScene = MapPoll();
-            ServerChangeScene(gameScene);
+            transition.MaskIn(() => ServerChangeScene(gameScene));
         }
 
         public void ResetPlayerID()
@@ -78,6 +95,7 @@ namespace Mirror.EscapeGame
             }
             else
             {
+                gameplayPlayers.Clear();
                 foreach (RoomPlayer player in roomSlots)
                 {
                     var _conn = player.connectionToClient;
@@ -86,7 +104,6 @@ namespace Mirror.EscapeGame
                     GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
                     NetworkServer.ReplacePlayerForConnection(_conn, go);
                     gameplayPlayers.Add(go.GetComponentInChildren<GameplayPlayer>());
-                    Debug.Log("Go Gameplay spawn");
                 }
             }
         }
@@ -97,28 +114,25 @@ namespace Mirror.EscapeGame
 
             if (IsSceneActive(lobbyName))
             {
-                if (gameplayPlayers.Count > 0)
+                foreach (RoomPlayer player in roomSlots)
                 {
-                    foreach (RoomPlayer player in roomSlots)
-                    {
-                        player.GetSelectUI(this);
-                    }
+                    player.ChangeInputMap("Default");
+                    player.GetSelectUI(this);
                 }
             }
             else
             {
+                mainUI.SetActive(false);
                 foreach (RoomPlayer player in roomSlots)
                 {
                     player.ChangeInputMap("Gameplay");
+                    Vector2 point = FindObjectOfType<RoomBlockData>().escapeSpawn.position;
+                    foreach (GameplayPlayer go in gameplayPlayers)
+                    {
+                        go.Init(point);
+                    }
                 }
 
-                Vector2 point = FindObjectOfType<RoomBlockData>().escapeSpawn.position;
-                Debug.Log("How many players: " + gameplayPlayers.Count);
-                foreach (GameplayPlayer go in gameplayPlayers)
-                {
-                    go.Init(point);
-                }
-                // Setup Map and other settings.
             }
         }
 
@@ -152,5 +166,14 @@ namespace Mirror.EscapeGame
             base.OnClientDisconnect(conn);
         }
 
+        private void Awake()
+        {
+            transition = GetComponentInChildren<TransitionEffect>();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            if (!instance)
+                instance = this;
+            else
+                Destroy(gameObject);
+        }
     }
 }

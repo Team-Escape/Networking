@@ -414,6 +414,7 @@ MonoBehaviour:
   roleUI: {fileID: 1871684725}
   mapUI: {fileID: 286035320}
   roomSlots: []
+  gameplayPlayers: []
   lobbyName: LobbyScene
 --- !u!1 &1687258581
 GameObject:
@@ -542,6 +543,27 @@ Canvas:
     type: 3}
   m_PrefabInstance: {fileID: 508606692}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2060020788 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4644437748202429237, guid: e3613ecd6b45a480bbf318b7de90d215,
+    type: 3}
+  m_PrefabInstance: {fileID: 508606692}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2060020789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060020788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff5d210fe005e446db5dea8d06d6fcab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 1933535873}
+  roleUI: {fileID: 1871684725}
+  mapUI: {fileID: 286035320}
 --- !u!1 &2138677391
 GameObject:
   m_ObjectHideFlags: 0
