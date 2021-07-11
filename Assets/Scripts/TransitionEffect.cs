@@ -27,13 +27,13 @@ public class TransitionEffect : MonoBehaviour
         StartCoroutine(WaitForPlay(name, callback));
     }
 
-    public void MaskOut()
+    public void MaskOut(System.Action callback)
     {
         if (isPlaying) return;
 
         string name = "MaskOut";
         PlayMaskAnimation(name);
-        StartCoroutine(WaitForPlay(name, () => UpdateMaskUI(false)));
+        StartCoroutine(WaitForPlay(name, () => { UpdateMaskUI(false); callback(); }));
     }
 
     IEnumerator WaitForPlay(string name, System.Action callback)

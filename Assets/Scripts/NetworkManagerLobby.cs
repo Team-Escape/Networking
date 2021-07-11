@@ -25,7 +25,7 @@ namespace Mirror.EscapeGame
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            transition.MaskOut();
+            transition.MaskOut(null);
             if (scene.name == lobbyName)
             {
                 mainUI.SetActive(true);
@@ -109,12 +109,6 @@ namespace Mirror.EscapeGame
             }
         }
 
-        public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
-        {
-            base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
-            transition.MaskIn(null);
-        }
-
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
             base.OnClientSceneChanged(conn);
@@ -130,6 +124,7 @@ namespace Mirror.EscapeGame
             else
             {
                 mainUI.SetActive(false);
+                transition.MaskOut(null);
                 foreach (RoomPlayer player in roomSlots)
                 {
                     player.ChangeInputMap("Gameplay");
@@ -139,9 +134,7 @@ namespace Mirror.EscapeGame
                         go.Init(point);
                     }
                 }
-
             }
-            transition.MaskOut();
         }
 
         public override void OnStartServer()
