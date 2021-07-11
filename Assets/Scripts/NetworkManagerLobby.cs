@@ -101,7 +101,7 @@ namespace Mirror.EscapeGame
                 {
                     foreach (RoomPlayer player in roomSlots)
                     {
-
+                        player.GetSelectUI(this);
                     }
                 }
             }
