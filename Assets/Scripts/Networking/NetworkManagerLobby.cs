@@ -133,7 +133,8 @@ namespace Mirror.EscapeGame
                     gameLogic.gameplayContainers[index].self = _gameplayer;
                     gameplayPlayers.Add(_gameplayer);
 
-                    NetworkServer.ReplacePlayerForConnection(_conn, go);
+                    // NetworkServer.ReplacePlayerForConnection(_conn, go);
+                    NetworkServer.Spawn(go);
                     index++;
                 }
             }
