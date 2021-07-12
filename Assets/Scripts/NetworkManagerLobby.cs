@@ -78,6 +78,12 @@ namespace Mirror.EscapeGame
             }
         }
 
+        public override void OnServerChangeScene(string newSceneName)
+        {
+            base.OnServerChangeScene(newSceneName);
+            transition.MaskIn(null);
+        }
+
         public override void OnServerSceneChanged(string sceneName)
         {
             base.OnServerSceneChanged(sceneName);
@@ -124,7 +130,6 @@ namespace Mirror.EscapeGame
             else
             {
                 mainUI.SetActive(false);
-                transition.MaskOut();
                 foreach (RoomPlayer player in roomSlots)
                 {
                     player.ChangeInputMap("Gameplay");
@@ -135,6 +140,7 @@ namespace Mirror.EscapeGame
                     }
                 }
             }
+            transition.MaskOut();
         }
 
         public override void OnStartServer()
