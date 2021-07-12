@@ -31,6 +31,39 @@ namespace Mirror.EscapeGame
 
         Player input;
 
+        [Command]
+        public void CmdMaskChangeScene(int mode) => RpcMaskChangeScene(mode);
+        [ClientRpc]
+        public void RpcMaskChangeScene(int mode) => MaskChangeScene(mode);
+
+        public void MaskChangeScene(int mode)
+        {
+            switch (mode)
+            {
+                case 0:
+                    FindObjectOfType<TransitionEffect>().MaskIn();
+                    break;
+                case 1:
+                    break;
+            }
+
+        }
+        public void MaskChangeScene(int mode, System.Action callback)
+        {
+            switch (mode)
+            {
+                case 0:
+                    FindObjectOfType<TransitionEffect>().MaskIn(callback);
+                    break;
+                case 1:
+                    break;
+            }
+            if (isServer)
+                RpcMaskChangeScene(mode);
+            else if (isClient)
+                CmdMaskChangeScene(mode);
+        }
+
         public void ChangeInputMap(string name)
         {
             input.SelectTheMap(name);

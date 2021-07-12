@@ -28,6 +28,15 @@ namespace Mirror.EscapeGame
             PlayMaskAnimation(name);
             StartCoroutine(WaitForPlay(name, callback));
         }
+        public void MaskIn()
+        {
+            if (isPlaying) return;
+
+            string name = "MaskIn";
+            UpdateMaskUI(true);
+            PlayMaskAnimation(name);
+            StartCoroutine(WaitForPlay(name, null));
+        }
 
         public void MaskOut()
         {
