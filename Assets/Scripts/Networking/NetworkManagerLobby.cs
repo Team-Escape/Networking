@@ -169,6 +169,7 @@ namespace Mirror.EscapeGame
                     Debug.Log(item);
                     Debug.Log(item.connectionToClient);
                     Debug.Log(item.connectionToServer);
+                    item.Init();
                 }
             }
             transition.MaskOut();

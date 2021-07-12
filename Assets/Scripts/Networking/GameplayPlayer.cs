@@ -35,14 +35,13 @@ namespace Mirror.EscapeGame
 
         private void OnEnable()
         {
-            if (isLocalPlayer)
-                SetCameraFollow();
+
         }
 
         public void Init()
         {
-            Debug.Log("jopj");
-            SetCameraFollow();
+            if (isLocalPlayer)
+                SetCameraFollow();
         }
 
         // Update is called once per frame
