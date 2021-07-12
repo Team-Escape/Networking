@@ -27,7 +27,6 @@ namespace Mirror.EscapeGame
         public void Init()
         {
             SetCameraFollow();
-            CmdSetCameraFollow();
         }
 
         [Command]
