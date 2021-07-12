@@ -161,7 +161,7 @@ namespace Mirror.EscapeGame
 
                 foreach (GameplayPlayer gameplayer in gameplayPlayers)
                 {
-                    gameplayer.Init();
+                    gameplayer.Init(gameplayer);
                 }
             }
             transition.MaskOut();
