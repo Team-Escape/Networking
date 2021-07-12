@@ -4,15 +4,10 @@ using UnityEngine;
 
 namespace Mirror.EscapeGame
 {
-    public class TransitionEffect : NetworkBehaviour
+    public class TransitionEffect : MonoBehaviour
     {
         bool isPlaying = false;
         [SerializeField] MaskTransitionContainer maskContainer = null;
-
-        [Command]
-        public void CmdMaskIn() => RpcMaskIn();
-        [Client]
-        public void RpcMaskIn() => MaskIn(null);
 
         public void UpdateMaskUI(bool state)
         {
@@ -27,7 +22,6 @@ namespace Mirror.EscapeGame
         public void MaskIn(System.Action callback)
         {
             if (isPlaying) return;
-            CmdMaskIn();
 
             string name = "MaskIn";
             UpdateMaskUI(true);
