@@ -16,6 +16,7 @@ namespace Mirror.EscapeGame
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
         public List<GameplayPlayer> gameplayPlayers = new List<GameplayPlayer>();
         TransitionEffect transition;
+        GameLogic gameLogic;
 
         public string lobbyName = "LobbyScene";
 
@@ -65,8 +66,14 @@ namespace Mirror.EscapeGame
         public void NextLevel()
         {
             if (CheckAllPlayerReady == false) return;
-            gameScene = MapPoll();
             // transition.MaskIn(() => ChangeScene(gameScene));
+            StartCoroutine(GameSetupCoroutine());
+        }
+
+        IEnumerator GameSetupCoroutine()
+        {
+            gameScene = MapPoll();
+            yield return null;
             foreach (RoomPlayer p in roomSlots)
             {
                 p.MaskChangeScene(0, () => ChangeScene(gameScene));
@@ -107,14 +114,27 @@ namespace Mirror.EscapeGame
             else
             {
                 gameplayPlayers.Clear();
+
+                int index = 0;
                 foreach (RoomPlayer player in roomSlots)
                 {
                     var _conn = player.connectionToClient;
                     NetworkServer.SetClientReady(_conn);
 
-                    GameObject go = Instantiate(Resources.Load(player.selectedRoleName) as GameObject);
+                    gameLogic.Init(roomSlots);
+
+                    GameObject go = Instantiate(
+                        Resources.Load(player.selectedRoleName) as GameObject,
+                        gameLogic.gameplayContainers[index].spawnPoint,
+                        Quaternion.identity
+                    );
+
+                    GameplayPlayer _gameplayer = go.GetComponent<GameplayPlayer>();
+                    gameLogic.gameplayContainers[index].self = _gameplayer;
+                    gameplayPlayers.Add(_gameplayer);
+
                     NetworkServer.ReplacePlayerForConnection(_conn, go);
-                    gameplayPlayers.Add(go.GetComponentInChildren<GameplayPlayer>());
+                    index++;
                 }
             }
         }
@@ -137,11 +157,11 @@ namespace Mirror.EscapeGame
                 foreach (RoomPlayer player in roomSlots)
                 {
                     player.ChangeInputMap("Gameplay");
-                    Vector2 point = FindObjectOfType<RoomBlockData>().escapeSpawn.position;
-                    foreach (GameplayPlayer go in gameplayPlayers)
-                    {
-                        go.Init(point);
-                    }
+                }
+
+                foreach (GameplayPlayer gameplayer in gameplayPlayers)
+                {
+                    gameplayer.Init();
                 }
             }
             transition.MaskOut();
@@ -186,6 +206,7 @@ namespace Mirror.EscapeGame
                 instance = this;
             else
                 Destroy(gameObject);
+            gameLogic = GetComponent<GameLogic>();
         }
     }
 }

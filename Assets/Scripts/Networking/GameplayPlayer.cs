@@ -24,23 +24,16 @@ namespace Mirror.EscapeGame
             input = ReInput.players.GetPlayer(0);
         }
 
-        public void Init(Vector2 spawn)
+        public void Init()
         {
-            Debug.Log("Init GamePlayer");
-            transform.position = spawn;
-            if (isClient)
-                CmdInit(spawn);
-            else if (isServer)
-                RpcInit(spawn);
-
             SetCameraFollow();
             CmdSetCameraFollow();
         }
 
         [Command]
-        public void CmdInit(Vector2 spawn) => RpcInit(spawn);
+        public void CmdInit() => RpcInit();
         [ClientRpc]
-        public void RpcInit(Vector2 spawn) => Init(spawn);
+        public void RpcInit() => Init();
 
         // Update is called once per frame
         void Update()

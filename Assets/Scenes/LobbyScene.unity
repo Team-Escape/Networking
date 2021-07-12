@@ -436,6 +436,7 @@ GameObject:
   - component: {fileID: 1217879791}
   - component: {fileID: 1217879790}
   - component: {fileID: 1217879789}
+  - component: {fileID: 1217879792}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -529,9 +530,8 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 8377677904169980873, guid: 33809ecb7c71446699553223882809ca, type: 3}
-  - {fileID: 439219978861978733, guid: 5d296aeed83b340a1afd56733efc9827, type: 3}
-  - {fileID: 0}
+  - {fileID: 826274041927097933, guid: 33809ecb7c71446699553223882809ca, type: 3}
+  - {fileID: 90159381089659435, guid: 5d296aeed83b340a1afd56733efc9827, type: 3}
   mainUI: {fileID: 1302591279}
   container: {fileID: 1933535873}
   roleUI: {fileID: 1871684725}
@@ -539,6 +539,18 @@ MonoBehaviour:
   roomSlots: []
   gameplayPlayers: []
   lobbyName: LobbyScene
+--- !u!114 &1217879792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217879787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4dbc9f4666dd4a6597b05b2cd2887a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1302591279
 GameObject:
   m_ObjectHideFlags: 0
