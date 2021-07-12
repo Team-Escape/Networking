@@ -35,7 +35,8 @@ namespace Mirror.EscapeGame
 
         private void OnEnable()
         {
-            SetCameraFollow();
+            if (isLocalPlayer)
+                SetCameraFollow();
         }
 
         public void Init()
