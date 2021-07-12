@@ -30,6 +30,8 @@ namespace Mirror.EscapeGame
             transform.position = spawn;
             if (isClient)
                 CmdInit(spawn);
+            else if (isServer)
+                RpcInit(spawn);
 
             SetCameraFollow();
             CmdSetCameraFollow();
