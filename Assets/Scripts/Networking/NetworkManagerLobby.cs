@@ -106,8 +106,7 @@ namespace Mirror.EscapeGame
                     foreach (RoomPlayer player in roomSlots)
                     {
                         var _conn = player.connectionToClient;
-                        NetworkServer.SetClientReady(_conn);
-                        NetworkServer.ReplacePlayerForConnection(_conn, player.gameObject);
+                        NetworkServer.ReplacePlayerForConnection(_conn, player.gameObject, true);
                     }
                 }
             }
@@ -119,7 +118,6 @@ namespace Mirror.EscapeGame
                 foreach (RoomPlayer player in roomSlots)
                 {
                     var _conn = player.connectionToClient;
-                    NetworkServer.SetClientReady(_conn);
 
                     gameLogic.Init(roomSlots);
 
@@ -133,8 +131,7 @@ namespace Mirror.EscapeGame
                     gameLogic.gameplayContainers[index].self = _gameplayer;
                     gameplayPlayers.Add(_gameplayer);
 
-                    // NetworkServer.ReplacePlayerForConnection(_conn, go);
-                    NetworkServer.Spawn(go);
+                    NetworkServer.ReplacePlayerForConnection(_conn, go, true);
                     index++;
                 }
             }
@@ -160,9 +157,18 @@ namespace Mirror.EscapeGame
                     player.ChangeInputMap("Gameplay");
                 }
 
-                foreach (GameplayPlayer gameplayer in gameplayPlayers)
+                Debug.Log(conn);
+                foreach (var item in roomSlots)
                 {
-                    gameplayer.Init(gameplayer);
+                    Debug.Log(item);
+                    Debug.Log(item.connectionToClient);
+                    Debug.Log(item.connectionToServer);
+                }
+                foreach (var item in gameplayPlayers)
+                {
+                    Debug.Log(item);
+                    Debug.Log(item.connectionToClient);
+                    Debug.Log(item.connectionToServer);
                 }
             }
             transition.MaskOut();

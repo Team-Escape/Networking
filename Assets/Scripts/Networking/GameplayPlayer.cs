@@ -12,6 +12,13 @@ namespace Mirror.EscapeGame
         public int teamID;
 
         Player input = null;
+        Rigidbody2D rb;
+
+
+        [Command]
+        public void CmdBroadCastToAll(string msg) => RpcBroadCastToAll(msg);
+        [ClientRpc]
+        public void RpcBroadCastToAll(string msg) => Debug.Log(msg);
 
         public void SetCameraFollow() => FindObjectOfType<CinemachineVirtualCamera>().Follow = transform;
         public void SetCameraFollow(Transform target) => FindObjectOfType<CinemachineVirtualCamera>().Follow = target;
@@ -23,11 +30,18 @@ namespace Mirror.EscapeGame
         private void Awake()
         {
             input = ReInput.players.GetPlayer(0);
+            rb = GetComponent<Rigidbody2D>();
         }
 
-        public void Init(GameplayPlayer target)
+        private void OnEnable()
         {
-            SetCameraFollow(target.transform);
+            SetCameraFollow();
+        }
+
+        public void Init()
+        {
+            Debug.Log("jopj");
+            SetCameraFollow();
         }
 
         // Update is called once per frame
@@ -37,11 +51,16 @@ namespace Mirror.EscapeGame
             {
                 if (input.GetButton("MoveR"))
                 {
-                    transform.position += Vector3.right;
+                    rb.velocity = Vector2.right;
                 }
                 else if (input.GetButton("MoveL"))
                 {
-                    transform.position += Vector3.left;
+                    rb.velocity = Vector2.left;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    CmdBroadCastToAll("oqfjopj");
                 }
             }
         }
