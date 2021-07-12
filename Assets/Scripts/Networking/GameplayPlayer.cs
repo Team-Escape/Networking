@@ -14,6 +14,9 @@ namespace Mirror.EscapeGame
         Player input = null;
 
         public void SetCameraFollow() => FindObjectOfType<CinemachineVirtualCamera>().Follow = transform;
+        [Command]
+        public void CmdSetCameraFollow() => RpcSetCameraFollow();
+        [ClientRpc]
         public void RpcSetCameraFollow() => SetCameraFollow();
 
         private void Awake()
@@ -26,6 +29,8 @@ namespace Mirror.EscapeGame
             SetCameraFollow();
             if (isServer)
                 RpcSetCameraFollow();
+            else if (isClient)
+                CmdSetCameraFollow();
         }
 
         // Update is called once per frame
