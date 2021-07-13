@@ -44,8 +44,6 @@ namespace Mirror.EscapeGame
             if (isLocalPlayer)
             {
                 SetCameraFollow();
-                CmdSetCameraFollow();
-                RpcSetCameraFollow();
             }
         }
 
@@ -67,6 +65,15 @@ namespace Mirror.EscapeGame
                 {
                     CmdBroadCastToAll("oqfjopj");
                 }
+            }
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            if (isLocalPlayer)
+            {
+                Init();
             }
         }
     }
