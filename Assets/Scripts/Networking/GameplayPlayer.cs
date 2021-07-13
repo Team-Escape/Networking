@@ -11,9 +11,10 @@ namespace Mirror.EscapeGame
         public int id;
         public int teamID;
 
+        [SerializeField] float speed = 10f;
+
         Player input = null;
         Rigidbody2D rb;
-
 
         [Command]
         public void CmdBroadCastToAll(string msg) => RpcBroadCastToAll(msg);
@@ -41,7 +42,7 @@ namespace Mirror.EscapeGame
         public void Init()
         {
             if (isLocalPlayer)
-                SetCameraFollow();
+                RpcSetCameraFollow();
         }
 
         // Update is called once per frame
@@ -51,11 +52,11 @@ namespace Mirror.EscapeGame
             {
                 if (input.GetButton("MoveR"))
                 {
-                    rb.velocity = Vector2.right;
+                    rb.velocity = Vector2.right * speed;
                 }
                 else if (input.GetButton("MoveL"))
                 {
-                    rb.velocity = Vector2.left;
+                    rb.velocity = Vector2.left * speed;
                 }
 
                 if (Input.GetKeyDown(KeyCode.Space))
