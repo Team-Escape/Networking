@@ -42,7 +42,11 @@ namespace Mirror.EscapeGame
         public void Init()
         {
             if (isLocalPlayer)
+            {
+                SetCameraFollow();
+                CmdSetCameraFollow();
                 RpcSetCameraFollow();
+            }
         }
 
         // Update is called once per frame
