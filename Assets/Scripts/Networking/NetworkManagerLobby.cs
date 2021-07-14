@@ -156,14 +156,6 @@ namespace Mirror.EscapeGame
                 {
                     player.ChangeInputMap("Gameplay");
                 }
-
-                foreach (var item in gameplayPlayers)
-                {
-                    Debug.Log(item);
-                    Debug.Log(item.connectionToClient);
-                    Debug.Log(item.connectionToServer);
-                    item.Init();
-                }
             }
             transition.MaskOut();
         }

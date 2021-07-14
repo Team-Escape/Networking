@@ -34,11 +34,6 @@ namespace Mirror.EscapeGame
             rb = GetComponent<Rigidbody2D>();
         }
 
-        private void OnEnable()
-        {
-
-        }
-
         public void Init()
         {
             if (isLocalPlayer)
@@ -59,11 +54,6 @@ namespace Mirror.EscapeGame
                 else if (input.GetButton("MoveL"))
                 {
                     rb.velocity = Vector2.left * speed;
-                }
-
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    CmdBroadCastToAll("oqfjopj");
                 }
             }
         }
