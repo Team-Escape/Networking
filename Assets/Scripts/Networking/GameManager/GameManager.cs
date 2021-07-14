@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Mirror.EscapeGame
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : NetworkBehaviour
     {
         Model model;
 
@@ -72,6 +72,7 @@ namespace Mirror.EscapeGame
             for (int i = 1; i < model.blocksList.Count; i++)
             {
                 GameObject go = Instantiate(model.blocksList[i]);
+                NetworkServer.Spawn(go);
                 model.blocksList[i] = go;
             }
 
@@ -84,9 +85,14 @@ namespace Mirror.EscapeGame
             yield return null;
         }
 
+        private void OnEnable()
+        {
+        }
+
         private void Awake()
         {
             model = GetComponent<Model>();
+            model.startRoom = FindObjectOfType<RoomBlockData>().transform;
             StartCoroutine(SetupRooms());
         }
     }

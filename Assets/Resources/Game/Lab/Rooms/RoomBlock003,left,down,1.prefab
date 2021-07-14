@@ -3153,6 +3153,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8372984381296196129}
   - component: {fileID: 8849343572244100780}
+  - component: {fileID: -3133725618964392372}
   m_Layer: 0
   m_Name: RoomBlock003,left,down,1
   m_TagString: Untagged
@@ -3195,6 +3196,23 @@ MonoBehaviour:
   entrance: {fileID: 7135239001727323215}
   exit: {fileID: 9107575734332402263}
   polygonCollider2D: {fileID: 6696956627215798937}
+--- !u!114 &-3133725618964392372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8372984381296196128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 
+  hasSpawned: 0
 --- !u!1 &8372984381322574238
 GameObject:
   m_ObjectHideFlags: 0

@@ -530,6 +530,7 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
+  - {fileID: 3050740319402938625, guid: 1dc086e6b026347ebafd628d173a6cb9, type: 3}
   - {fileID: 826274041927097933, guid: 33809ecb7c71446699553223882809ca, type: 3}
   - {fileID: 90159381089659435, guid: 5d296aeed83b340a1afd56733efc9827, type: 3}
   mainUI: {fileID: 1302591279}
@@ -538,6 +539,8 @@ MonoBehaviour:
   mapUI: {fileID: 286035320}
   roomSlots: []
   gameplayPlayers: []
+  labGamemanager: {fileID: 3050740319402938625, guid: 1dc086e6b026347ebafd628d173a6cb9,
+    type: 3}
   lobbyName: LobbyScene
 --- !u!114 &1217879792
 MonoBehaviour:
