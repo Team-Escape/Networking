@@ -8,19 +8,16 @@ namespace Mirror.EscapeGame
     {
         Model model;
 
-        [Command]
-        public void CmdSpawnRooms() => RpcSpawnRooms();
-
+        // [Command]
+        // public void CmdSpawnRoom() => RpcSpawnRoom();
         [ClientRpc]
-        public void RpcSpawnRooms()
-        {
-            StartCoroutine(SetupRooms());
-        }
+        public void RpcSpawnRoom(List<GameObject> blocks) => SpawnRooms(blocks);
 
         public IEnumerator SetupRooms()
         {
             yield return StartCoroutine(RandomRooms());
-            yield return StartCoroutine(SpawnRooms());
+            SpawnRooms(model.blocksList);
+            RpcSpawnRoom(model.blocksList);
         }
 
         public IEnumerator RandomRooms()
@@ -76,12 +73,12 @@ namespace Mirror.EscapeGame
             model.blocksList = blocks;
         }
 
-        public IEnumerator SpawnRooms()
+        public void SpawnRooms(List<GameObject> blocks)
         {
-            for (int i = 1; i < model.blocksList.Count; i++)
+            for (int i = 1; i < blocks.Count; i++)
             {
-                GameObject go = Instantiate(model.blocksList[i]);
-                NetworkServer.Spawn(go);
+                GameObject go = Instantiate(blocks[i]);
+                // NetworkServer.Spawn(go);
                 model.blocksList[i] = go;
             }
 
@@ -91,18 +88,12 @@ namespace Mirror.EscapeGame
                 Vector2 pos = (i == 1) ? model.blocksList[i - 1].GetComponent<RoomBlockData>().endPoint.position + new Vector3(100, 100, 0) : model.blocksList[i - 1].GetComponent<MapObjectData>().endpoint.position + new Vector3(100, 100, 0);
                 model.blocksList[i].transform.position = pos;
             }
-            yield return null;
-        }
-
-        private void OnEnable()
-        {
         }
 
         private void Awake()
         {
             model = GetComponent<Model>();
             model.startRoom = FindObjectOfType<RoomBlockData>().transform;
-            CmdSpawnRooms();
             StartCoroutine(SetupRooms());
         }
     }
