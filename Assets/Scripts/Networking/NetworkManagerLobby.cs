@@ -18,8 +18,7 @@ namespace Mirror.EscapeGame
         TransitionEffect transition;
         GameLogic gameLogic;
 
-        [SerializeField]
-        GameObject labGamemanager = null;
+        [SerializeField] GameObject labManager;
 
         public string lobbyName = "LobbyScene";
 
@@ -120,7 +119,7 @@ namespace Mirror.EscapeGame
                 switch (sceneName)
                 {
                     case "LabScene":
-                        NetworkServer.Spawn(Instantiate(labGamemanager));
+                        NetworkServer.Spawn(Instantiate(labManager), roomSlots[0].GetComponent<NetworkIdentity>().connectionToClient);
                         break;
                 }
 
@@ -142,6 +141,7 @@ namespace Mirror.EscapeGame
                     gameplayPlayers.Add(_gameplayer);
 
                     NetworkServer.ReplacePlayerForConnection(_conn, go, true);
+                    NetworkServer.SetClientReady(_conn);
                     index++;
                 }
             }

@@ -539,7 +539,7 @@ MonoBehaviour:
   mapUI: {fileID: 286035320}
   roomSlots: []
   gameplayPlayers: []
-  labGamemanager: {fileID: 3050740319402938625, guid: 1dc086e6b026347ebafd628d173a6cb9,
+  labManager: {fileID: 3050740319402938625, guid: 1dc086e6b026347ebafd628d173a6cb9,
     type: 3}
   lobbyName: LobbyScene
 --- !u!114 &1217879792

@@ -8,19 +8,15 @@ namespace Mirror.EscapeGame
     {
         Model model;
 
-        // [Command]
-        // public void CmdSpawnRoom() => RpcSpawnRoom();
-        [ClientRpc]
-        public void RpcSpawnRoom(List<GameObject> blocks) => SpawnRooms(blocks);
+        [Command] public void CmdSetupRooms() => SetupRooms();
 
-        public IEnumerator SetupRooms()
+        public void SetupRooms()
         {
-            yield return StartCoroutine(RandomRooms());
-            SpawnRooms(model.blocksList);
-            RpcSpawnRoom(model.blocksList);
+
+            SpawnRooms(RandomRooms());
         }
 
-        public IEnumerator RandomRooms()
+        public List<GameObject> RandomRooms()
         {
             int index = 1;
             List<GameObject> blocks = new List<GameObject>();
@@ -48,7 +44,6 @@ namespace Mirror.EscapeGame
                 }
                 blocks.Add(go);
                 index++;
-                yield return null;
             }
 
             GameObject go1 = null;
@@ -70,15 +65,16 @@ namespace Mirror.EscapeGame
             }
             blocks.Add(go1);
 
-            model.blocksList = blocks;
+            return blocks;
         }
 
         public void SpawnRooms(List<GameObject> blocks)
         {
-            for (int i = 1; i < blocks.Count; i++)
+            model.blocksList = blocks;
+            for (int i = 1; i < model.blocksList.Count; i++)
             {
                 GameObject go = Instantiate(blocks[i]);
-                // NetworkServer.Spawn(go);
+                NetworkServer.Spawn(go);
                 model.blocksList[i] = go;
             }
 
@@ -94,7 +90,13 @@ namespace Mirror.EscapeGame
         {
             model = GetComponent<Model>();
             model.startRoom = FindObjectOfType<RoomBlockData>().transform;
-            StartCoroutine(SetupRooms());
+
+        }
+
+        private void Start()
+        {
+            GetComponent<NetworkIdentity>().AssignClientAuthority(GetComponent<NetworkIdentity>().connectionToClient);
+            CmdSetupRooms();
         }
     }
 }
