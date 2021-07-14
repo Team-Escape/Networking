@@ -8,6 +8,15 @@ namespace Mirror.EscapeGame
     {
         Model model;
 
+        [Command]
+        public void CmdSpawnRooms() => RpcSpawnRooms();
+
+        [ClientRpc]
+        public void RpcSpawnRooms()
+        {
+            StartCoroutine(SetupRooms());
+        }
+
         public IEnumerator SetupRooms()
         {
             yield return StartCoroutine(RandomRooms());
@@ -93,6 +102,7 @@ namespace Mirror.EscapeGame
         {
             model = GetComponent<Model>();
             model.startRoom = FindObjectOfType<RoomBlockData>().transform;
+            CmdSpawnRooms();
             StartCoroutine(SetupRooms());
         }
     }
