@@ -530,8 +530,7 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs:
-  - {fileID: 3050740319402938625, guid: 1dc086e6b026347ebafd628d173a6cb9, type: 3}
+  spawnPrefabs: []
   mainUI: {fileID: 1302591279}
   container: {fileID: 1933535873}
   roleUI: {fileID: 1871684725}
@@ -566,8 +565,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   folderPaths:
-  - Game/Lab/Destination
+  - Roles
+  - Game/Managers
   - Game/Lab/Rooms
+  - Game/Lab/Destination
 --- !u!1 &1302591279
 GameObject:
   m_ObjectHideFlags: 0
