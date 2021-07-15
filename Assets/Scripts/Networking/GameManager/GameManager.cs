@@ -73,16 +73,10 @@ namespace Mirror.EscapeGame
             model.blocksList = blocks;
             for (int i = 1; i < model.blocksList.Count; i++)
             {
-                GameObject go = Instantiate(blocks[i]);
+                Vector2 pos = (i == 1) ? model.blocksList[i - 1].GetComponent<RoomBlockData>().endPoint.position + new Vector3(100, 100, 0) : model.blocksList[i - 1].GetComponent<MapObjectData>().endpoint.position + new Vector3(100, 100, 0);
+                GameObject go = Instantiate(blocks[i], pos, Quaternion.identity);
                 NetworkServer.Spawn(go);
                 model.blocksList[i] = go;
-            }
-
-            for (int i = 0; i < model.blocksList.Count; i++)
-            {
-                if (i == 0) continue;
-                Vector2 pos = (i == 1) ? model.blocksList[i - 1].GetComponent<RoomBlockData>().endPoint.position + new Vector3(100, 100, 0) : model.blocksList[i - 1].GetComponent<MapObjectData>().endpoint.position + new Vector3(100, 100, 0);
-                model.blocksList[i].transform.position = pos;
             }
         }
 
