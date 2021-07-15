@@ -131,7 +131,7 @@ namespace Mirror.EscapeGame
                     gameLogic.Init(roomSlots);
 
                     GameObject go = Instantiate(
-                        Resources.Load(player.selectedRoleName) as GameObject,
+                        Resources.Load("Roles/" + player.selectedRoleName) as GameObject,
                         gameLogic.gameplayContainers[index].spawnPoint,
                         Quaternion.identity
                     );
