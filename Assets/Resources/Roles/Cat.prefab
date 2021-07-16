@@ -12,9 +12,12 @@ GameObject:
   - component: {fileID: 5958199004369877891}
   - component: {fileID: 4081796362414648485}
   - component: {fileID: 691083207585977026}
-  - component: {fileID: 6043830375417688737}
   - component: {fileID: 7722609720299767042}
   - component: {fileID: 3258761028159185636}
+  - component: {fileID: 6043830375417688737}
+  - component: {fileID: 6260823422852365156}
+  - component: {fileID: 2154554585146204182}
+  - component: {fileID: 4619709470216960686}
   m_Layer: 8
   m_Name: Cat
   m_TagString: Player
@@ -127,22 +130,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6043830375417688737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 90159381089659435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1682ba397f644b6fb5958c385ce5bee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  id: 0
-  teamID: 0
 --- !u!70 &7722609720299767042
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -153,7 +140,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.119172454, y: -0.13506222}
@@ -180,6 +167,98 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &6043830375417688737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90159381089659435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1682ba397f644b6fb5958c385ce5bee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  id: 0
+  teamID: 0
+  speed: 10
+--- !u!114 &6260823422852365156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90159381089659435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a56b31adf0d24480a32425964cbe41f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2154554585146204182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90159381089659435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948c7c075fc7546c789371804628ea7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHealth: 3
+  maxHealth: 3
+  endurance: 3
+  walkSpeed: 15
+  jumpTime: 0.3
+  jumpForce: 15
+  wallJumpForce: {x: 10, y: 20}
+  wallJumpTime: 0.2
+  rebornDuration: 3
+  characterSize: 1
+  dashPower: 25
+  frontCheck: []
+  groundCheck: []
+  groundCheckDistance: 0.4
+  frontCheckDistance: 0.1
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 131072
+  whatIsIceGround:
+    serializedVersion: 2
+    m_Bits: 262144
+  whatIsSlimeGround:
+    serializedVersion: 2
+    m_Bits: 524288
+  whatIsBox:
+    serializedVersion: 2
+    m_Bits: 1048576
+  itemSpeedGain: 1
+  itemJumpGain: 1
+  groundSpeedGain: 1
+  groundJumpGain: 1
+  wallSlideGain: 1
+  wallSpeedGain: 1
+  wallJumpGain: 1
+  slideSpeedGain: 1
+  speedGain: 1
+  jumpGain: 1
+  stateSpeedGain: 1
+  stateJumpGain: 1
+--- !u!114 &4619709470216960686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90159381089659435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8affd023e26ea49bf90724278adcabde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7065071610601429086
 GameObject:
   m_ObjectHideFlags: 0

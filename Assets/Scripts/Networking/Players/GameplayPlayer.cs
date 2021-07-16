@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
 using Cinemachine;
+using Mirror.EscapeGame.Gameplayer;
 
 namespace Mirror.EscapeGame
 {
@@ -10,6 +11,7 @@ namespace Mirror.EscapeGame
     {
         public int id;
         public int teamID;
+        Control control;
 
         [SerializeField] float speed = 10f;
 
@@ -32,6 +34,7 @@ namespace Mirror.EscapeGame
         {
             input = ReInput.players.GetPlayer(0);
             rb = GetComponent<Rigidbody2D>();
+            control = GetComponent<Control>();
         }
 
         public void Init()
@@ -42,20 +45,24 @@ namespace Mirror.EscapeGame
             }
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (isLocalPlayer)
             {
-                if (input.GetButton("MoveR"))
-                {
-                    rb.velocity = Vector2.right * speed;
-                }
-                else if (input.GetButton("MoveL"))
-                {
-                    rb.velocity = Vector2.left * speed;
-                }
+                MoveInput();
             }
+        }
+
+        public void MoveInput()
+        {
+            float movement = input.GetAxis("Move Horizontal");
+            control.Move(movement);
+
+            if (input.GetButtonDown("Jump")) control.Jump(true);
+            else if (input.GetButtonUp("Jump")) control.Jump(false);
+
+            if (input.GetButtonDown("Run")) control.Run(true);
+            else if (input.GetButtonUp("Run")) control.Run(false);
         }
 
         public override void OnStartLocalPlayer()

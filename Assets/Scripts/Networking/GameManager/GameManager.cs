@@ -9,10 +9,8 @@ namespace Mirror.EscapeGame
     {
         Model model;
 
-        [Command] public void CmdSetupRooms() => SetupRooms();
-        [Command] public void CmdSetupStartItems() => SetupStartItems();
-
         #region Rooms
+        [Command] public void CmdSetupRooms() => SetupRooms();
         public void SetupRooms()
         {
             SpawnRooms(RandomRooms());
@@ -84,6 +82,8 @@ namespace Mirror.EscapeGame
         #endregion
 
         #region StartItems
+        [Command] public void CmdSetupStartItems() => SetupStartItems();
+        [ClientRpc] public void RpcSpawnStartItems(List<int> _startItems) => SpawnStartItems(_startItems);
         public void SetupStartItems()
         {
             RpcSpawnStartItems(RandomStartItem());
@@ -92,9 +92,6 @@ namespace Mirror.EscapeGame
         {
             return model.startItemContainers.RandomSeedInt(1);
         }
-
-        [ClientRpc] public void RpcSpawnStartItems(List<int> _startItems) => SpawnStartItems(_startItems);
-
         public void SpawnStartItems(List<int> _startItems)
         {
             Debug.Log("1oqwmropwr");

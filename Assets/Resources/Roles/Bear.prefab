@@ -12,9 +12,12 @@ GameObject:
   - component: {fileID: 1078743093102843179}
   - component: {fileID: 2165977314347486573}
   - component: {fileID: 6732117002413585427}
-  - component: {fileID: 3850306975562911602}
   - component: {fileID: 6155072099260753007}
   - component: {fileID: 8668485933966866272}
+  - component: {fileID: 3850306975562911602}
+  - component: {fileID: 38060079973457562}
+  - component: {fileID: 347737004964054947}
+  - component: {fileID: 2732809163246279462}
   m_Layer: 8
   m_Name: Bear
   m_TagString: Player
@@ -127,22 +130,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3850306975562911602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 826274041927097933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1682ba397f644b6fb5958c385ce5bee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  id: 0
-  teamID: 0
 --- !u!50 &6155072099260753007
 Rigidbody2D:
   serializedVersion: 4
@@ -180,6 +167,98 @@ CapsuleCollider2D:
   m_Offset: {x: -0.19862074, y: -0.13506222}
   m_Size: {x: 0.8972415, y: 2.0730758}
   m_Direction: 0
+--- !u!114 &3850306975562911602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826274041927097933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1682ba397f644b6fb5958c385ce5bee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  id: 0
+  teamID: 0
+  speed: 10
+--- !u!114 &38060079973457562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826274041927097933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a56b31adf0d24480a32425964cbe41f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &347737004964054947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826274041927097933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948c7c075fc7546c789371804628ea7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHealth: 3
+  maxHealth: 3
+  endurance: 3
+  walkSpeed: 15
+  jumpTime: 0.3
+  jumpForce: 15
+  wallJumpForce: {x: 10, y: 20}
+  wallJumpTime: 0.2
+  rebornDuration: 3
+  characterSize: 1
+  dashPower: 25
+  frontCheck: []
+  groundCheck: []
+  groundCheckDistance: 0.4
+  frontCheckDistance: 0.1
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 131072
+  whatIsIceGround:
+    serializedVersion: 2
+    m_Bits: 262144
+  whatIsSlimeGround:
+    serializedVersion: 2
+    m_Bits: 524288
+  whatIsBox:
+    serializedVersion: 2
+    m_Bits: 1048576
+  itemSpeedGain: 1
+  itemJumpGain: 1
+  groundSpeedGain: 1
+  groundJumpGain: 1
+  wallSlideGain: 1
+  wallSpeedGain: 1
+  wallJumpGain: 1
+  slideSpeedGain: 1
+  speedGain: 1
+  jumpGain: 1
+  stateSpeedGain: 1
+  stateJumpGain: 1
+--- !u!114 &2732809163246279462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826274041927097933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8affd023e26ea49bf90724278adcabde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7905045820629085951
 GameObject:
   m_ObjectHideFlags: 0

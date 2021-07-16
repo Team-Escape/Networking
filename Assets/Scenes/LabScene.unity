@@ -39119,7 +39119,7 @@ GameObject:
   - component: {fileID: 6676021362030160016}
   - component: {fileID: 6676021362030160017}
   - component: {fileID: 6676021362030160023}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Collider Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
