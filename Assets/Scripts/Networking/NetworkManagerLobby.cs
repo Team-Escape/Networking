@@ -68,7 +68,6 @@ namespace Mirror.EscapeGame
         public void NextLevel()
         {
             if (CheckAllPlayerReady == false) return;
-            // transition.MaskIn(() => ChangeScene(gameScene));
             StartCoroutine(GameSetupCoroutine());
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,10 +10,11 @@ namespace Mirror.EscapeGame
         Model model;
 
         [Command] public void CmdSetupRooms() => SetupRooms();
+        [Command] public void CmdSetupStartItems() => SetupStartItems();
 
+        #region Rooms
         public void SetupRooms()
         {
-
             SpawnRooms(RandomRooms());
         }
 
@@ -79,18 +81,48 @@ namespace Mirror.EscapeGame
                 model.blocksList[i] = go;
             }
         }
+        #endregion
 
+        #region StartItems
+        public void SetupStartItems()
+        {
+            RpcSpawnStartItems(RandomStartItem());
+        }
+        public List<int> RandomStartItem()
+        {
+            return model.startItemContainers.RandomSeedInt(1);
+        }
+
+        [ClientRpc] public void RpcSpawnStartItems(List<int> _startItems) => SpawnStartItems(_startItems);
+
+        public void SpawnStartItems(List<int> _startItems)
+        {
+            Debug.Log("1oqwmropwr");
+            for (int i = 0; i < model.starItems.Count; i++)
+            {
+                int rnd = _startItems[i];
+                var item = model.startItemContainers[rnd];
+                model.starItems[i].GetComponent<SpriteRenderer>().sprite = item.image;
+                model.starItems[i].name = item.name;
+            }
+        }
+        #endregion
+
+        #region NativeAPIs
         private void Awake()
         {
             model = GetComponent<Model>();
             model.startRoom = FindObjectOfType<RoomBlockData>().transform;
-
+            model.starItems = GameObject.FindGameObjectsWithTag("StartItem").ToList();
+            Debug.Log(model.starItems.Count);
         }
 
         private void Start()
         {
             GetComponent<NetworkIdentity>().AssignClientAuthority(GetComponent<NetworkIdentity>().connectionToClient);
             CmdSetupRooms();
+            CmdSetupStartItems();
         }
+        #endregion
     }
 }

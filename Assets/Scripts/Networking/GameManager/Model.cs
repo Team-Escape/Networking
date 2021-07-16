@@ -16,6 +16,9 @@ namespace Mirror.EscapeGame
         public Transform destinationRoomRight = null;
         public Transform destinationRoomLeft = null;
         public Transform destination = null;
+
+        public List<GameObject> starItems;
+        public List<StartItemContainer> startItemContainers;
     }
 
     [System.Serializable]
@@ -25,5 +28,12 @@ namespace Mirror.EscapeGame
         public List<GameObject> right = new List<GameObject>();
         public List<GameObject> up = new List<GameObject>();
         public List<GameObject> down = new List<GameObject>();
+    }
+
+    [System.Serializable]
+    public class StartItemContainer
+    {
+        public Sprite image;
+        public string name;
     }
 }

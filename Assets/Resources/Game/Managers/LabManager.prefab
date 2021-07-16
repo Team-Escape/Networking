@@ -123,3 +123,7 @@ MonoBehaviour:
   destinationRoomLeft: {fileID: 371592732266960633, guid: 1554de97877814e808ff1f2422549c99,
     type: 3}
   destination: {fileID: 0}
+  starItems: []
+  startItemContainers:
+  - image: {fileID: 21300000, guid: 4de3117fc0bae46549b5d624b4cc42c2, type: 3}
+    name: Book
