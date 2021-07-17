@@ -9,7 +9,8 @@ namespace Mirror.EscapeGame.Gameplayer
         #region Classes
         View view;
         Model model;
-        Mover mover = null;
+        Mover mover;
+        Combat combat;
         #endregion
 
         #region  UnityComponents
@@ -29,6 +30,8 @@ namespace Mirror.EscapeGame.Gameplayer
         {
             mover = new Mover();
             mover.Init(model, animator, rb, this.AbleToDo);
+            combat = new Combat();
+            combat.Init(model, animator, rb, this.AbleToDo);
         }
 
         bool isAttacking = false;
@@ -38,9 +41,8 @@ namespace Mirror.EscapeGame.Gameplayer
         {
             get
             {
-                return false;
-                // if (mover == null || combat == null) return true;
-                // else return false;
+                if (mover == null || combat == null) return true;
+                else return false;
             }
         }
 

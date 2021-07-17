@@ -24,6 +24,8 @@ namespace Mirror.EscapeGame.Gameplayer
         public FrontState CurrentFrontState { get; set; }
         public JumpState CurrentJumpState { get; set; }
 
+        public int teamID = 0;
+
         #region Checker
         private bool isFronted = false;
         public bool Fronted
