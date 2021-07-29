@@ -91,9 +91,12 @@ namespace Mirror.EscapeGame.GameplayerSpace
         }
         private void Update()
         {
-            ItemHandler();
-            MoveHandler();
-            CombatHandler();
+            if (isLocalPlayer)
+            {
+                ItemHandler();
+                MoveHandler();
+                CombatHandler();
+            }
         }
         #region OnTriggerFuncs
         private void OnTriggerEnter2D(Collider2D other)
