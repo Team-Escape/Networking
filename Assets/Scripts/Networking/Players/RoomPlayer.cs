@@ -394,7 +394,7 @@ namespace Mirror.EscapeGame
                 }
                 else
                 {
-                    room.ChangeScene(lobbyName);
+                    room.ServerChangeScene(lobbyName);
                     // StartCoroutine(LoadSceneAsync(lobbyName, ));
                 }
             }

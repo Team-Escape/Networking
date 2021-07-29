@@ -25,8 +25,6 @@ namespace Mirror.EscapeGame
 
         string gameScene = "";
 
-        public void ChangeScene(string name) => ServerChangeScene(name);
-
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             transition.MaskOut();
@@ -78,7 +76,7 @@ namespace Mirror.EscapeGame
             yield return null;
             foreach (RoomPlayer p in roomSlots)
             {
-                p.MaskChangeScene(0, () => ChangeScene(gameScene));
+                p.MaskChangeScene(0, () => ServerChangeScene(gameScene));
             }
         }
 
@@ -120,6 +118,9 @@ namespace Mirror.EscapeGame
                 {
                     case "LabScene":
                         NetworkServer.Spawn(Instantiate(labManager), roomSlots[0].GetComponent<NetworkIdentity>().connectionToClient);
+                        break;
+                    default:
+                        Debug.Log("Scene not registed yet...");
                         break;
                 }
 
