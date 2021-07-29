@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror.EscapeGame.GameplayerSpace;
 
 namespace Mirror.EscapeGame
 {
@@ -37,7 +38,7 @@ namespace Mirror.EscapeGame
 
     public class GameplayContainer
     {
-        public GameplayPlayer self;
+        public Gameplayer self;
         public int id = 0;
         public int teamID = 0;
         public Vector2 spawnPoint = Vector2.zero;

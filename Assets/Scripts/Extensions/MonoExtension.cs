@@ -49,13 +49,4 @@ public static class MonoExtension
     {
         return UnityEngine.Random.Range(0, source.Count);
     }
-    public static void AbleToDo<T>(this T tweener, float sec, System.Action callback) where T : MonoBehaviour
-    {
-        tweener.StartCoroutine(DelaySec(sec, callback));
-    }
-    public static IEnumerator DelaySec(float sec, System.Action callback)
-    {
-        yield return new WaitForSeconds(sec);
-        callback();
-    }
 }

@@ -94,7 +94,6 @@ namespace Mirror.EscapeGame
         }
         public void SpawnStartItems(List<int> _startItems)
         {
-            Debug.Log("1oqwmropwr");
             for (int i = 0; i < model.starItems.Count; i++)
             {
                 int rnd = _startItems[i];

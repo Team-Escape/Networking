@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Mirror.EscapeGame.GameplayerSpace;
 
 namespace Mirror.EscapeGame
 {
@@ -14,7 +15,7 @@ namespace Mirror.EscapeGame
         public Transform roleUI;
         public Transform mapUI;
         public List<RoomPlayer> roomSlots = new List<RoomPlayer>();
-        public List<GameplayPlayer> gameplayPlayers = new List<GameplayPlayer>();
+        public List<Gameplayer> gameplayPlayers = new List<Gameplayer>();
         TransitionEffect transition;
         GameLogic gameLogic;
 
@@ -135,7 +136,7 @@ namespace Mirror.EscapeGame
                         Quaternion.identity
                     );
 
-                    GameplayPlayer _gameplayer = go.GetComponent<GameplayPlayer>();
+                    Gameplayer _gameplayer = go.GetComponent<Gameplayer>();
                     gameLogic.gameplayContainers[index].self = _gameplayer;
                     gameplayPlayers.Add(_gameplayer);
 

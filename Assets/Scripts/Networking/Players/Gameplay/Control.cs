@@ -1,220 +1,271 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
-namespace Mirror.EscapeGame.Gameplayer
+namespace Mirror.EscapeGame.GameplayerSpace
 {
     public class Control : MonoBehaviour
     {
-        #region Classes
+        public bool IsItemNull() => (itemHandler.GameItemControl == null);
+        public bool IsGoaled() => isGoaled;
+        public CinemachineConfiner GetConfiner() => model.confiner;
+
+        ISlot itemHandler;
         View view;
         Model model;
         Mover mover;
         Combat combat;
-        #endregion
+        bool isInputKeyboard = false;
+        bool ableToMove = true;
+        bool isGoaled = false;
 
-        #region  UnityComponents
-        Rigidbody2D rb;
-        Animator animator;
-        #endregion
+        Camera cam { get { return model.cam; } }
 
-        private void Awake()
+        #region UI render
+        /// <summary>
+        /// Set faceing position with localScaleX.
+        /// </summary>
+        public float SetLocalScaleXByMovement
         {
-            view = GetComponent<View>();
-            model = GetComponent<Model>();
-            rb = GetComponent<Rigidbody2D>();
-            animator = GetComponent<Animator>();
-        }
-
-        private void OnEnable()
-        {
-            mover = new Mover();
-            mover.Init(model, animator, rb, this.AbleToDo);
-            combat = new Combat();
-            combat.Init(model, animator, rb, this.AbleToDo);
-        }
-
-        bool isAttacking = false;
-        bool isHurting = false;
-
-        bool OnDisable
-        {
-            get
+            set
             {
-                if (mover == null || combat == null) return true;
-                else return false;
+                transform.localScale = new Vector2(
+                    transform.localScale.x >= 0 ?
+                    value >= 0 ? model.characterSize : model.characterSize * -1 :
+                    value <= 0 ? model.characterSize * -1 : model.characterSize
+                , model.characterSize);
             }
         }
-
-        public void ChangePlayerState(PlayerState state) => model.CurrentPlayerState = state;
-
-        public void GameSetup(int id, int currentEscaperCount)
+        /// <summary>
+        /// Active UI to hint player press the button.
+        /// </summary>
+        /// <param name="isActive"></param>
+        public void ActiveHintUI(bool isActive) => view.UpdateHintUI(isActive);
+        public void ActiveHintUI(bool isActive, Vector3 pos)
         {
-            switch (id)
+            Vector2 newPos = cam.WorldToScreenPoint(new Vector3(pos.x, pos.y, -10));
+            view.UpdateHintUI(isActive, newPos);
+        }
+        #endregion
+
+        #region GameControl
+        public void Goal(System.Action callback)
+        {
+            combat.Goal();
+            callback();
+        }
+        public void AssignControllerType(bool isKeyboard)
+        {
+            Debug.Log(view);
+            view.Init(isKeyboard);
+            isInputKeyboard = isKeyboard;
+        }
+        public void AssignTeam(int id)
+        {
+            model.teamID = id;
+        }
+        /// <summary>
+        /// Get startitem implement
+        /// </summary>
+        /// <param name="go"></param>
+        /// <param name="callback"></param>
+        public void GetStartItem(GameObject go, System.Action callback)
+        {
+            if (model.hasGotStartItem == false)
             {
-                case 0:
-                    model.CurrentPlayerState = PlayerState.Escaper;
-                    model.MaxHealth = 3;
-                    break;
-                case 1:
-                    model.CurrentPlayerState = PlayerState.Hunter;
-                    model.MaxHealth = 10;
-                    model.CurrentHealth = 10;
-                    model.StateSpeedGain = 1.1f + currentEscaperCount * 0.1f;
-                    model.StateJumpGain = 0.9f + currentEscaperCount * 0.1f;
-                    break;
-                default:
-                    Debug.Log("Player teamID errors");
-                    break;
-            }
-        }
+                model.hasGotStartItem = true;
 
-        public void hunterDebuff(int currentEscaperCount)
-        {
-            model.StateSpeedGain = 1.1f + currentEscaperCount * 0.1f;
-            model.StateJumpGain = 0.9f + currentEscaperCount * 0.1f;
-        }
-        public void Move(float value)
-        {
-            if (OnDisable) return;
-            transform.localScale = new Vector2(
-                transform.localScale.x >= 0 ?
-                value >= 0 ? model.CharacterSize : model.CharacterSize * -1 :
-                value <= 0 ? model.CharacterSize * -1 : model.CharacterSize
-            , model.CharacterSize);
-            mover.SetupInput = value;
-        }
-        public void Jump(bool isJumping)
-        {
-            if (OnDisable) return;
-            mover.Jump(isJumping);
-        }
-        public void Run(bool value)
-        {
-            if (OnDisable) return;
-            mover.Run(value);
-        }
-        public void GetStartItem(string name, System.Action callback)
-        {
-            if (model.IsGetStartItem == false)
-            {
-                model.IsGetStartItem = true;
+                string name = go.name;
+                go.SetActive(false);
 
                 switch (name)
                 {
                     case "IceSkate":
-                        model.IceSkate = true;
+                        model.iceSkate = true;
                         break;
                     case "SlimeShoe":
-                        model.SlimeShoe = true;
+                        model.slimeShoe = true;
                         break;
-                    case "Shield":
-                        model.Shielding = true;
-                        model.Shield = true;
-                        break;
-                    case "EnergyDrink":
-                        model.EnergyDrink = true;
-                        break;
-                    case "Crucifixion":
-
-                        model.Crucifixion = true;
-                        break;
-                    case "Armor":
-                        model.AddItemSpeedGain = -0.1f;
-                        model.AddItemJumpGain = -0.1f;
-                        model.MaxHealth += 2;
-                        model.CurrentHealth += 2;
-                        model.Armor = true;
-                        break;
-                    case "LightnessShoe":
-                        model.LightnessShoe = true;
-                        model.AddItemSpeedGain = 0.1f;
-                        model.AddItemJumpGain = 0.1f;
+                    case "SwiftnessBoot":
+                        model.swiftnessBoot = true;
+                        model.itemSpeedGain += 0.1f;
+                        model.itemJumpGain += 0.1f;
                         break;
                     case "RocketShoe":
-
-                        model.RocketShoe = true;
+                        model.rocketShoe = true;
                         break;
-                    case "DeveloperObsession":
-
-                        model.DeveloperObsession = true;
+                    case "Shield":
+                        model.shield = true;
                         break;
-                    case "Immortal":
-
-                        model.Immortal = true;
+                    case "EnergyDringk":
+                        model.energyDrink = true;
+                        break;
+                    case "ExtralLife":
+                        model.extraLife = true;
+                        break;
+                    case "Armor":
+                        model.armor = true;
+                        model.itemSpeedGain -= 0.1f;
+                        model.itemJumpGain -= 0.1f;
+                        model.maxHealth += 2;
+                        model.health += 2;
+                        break;
+                    case "InspectorChance":
+                        model.inspectorsChance = true;
+                        break;
+                    case "DeathWithStronger":
+                        model.deathWithStronger = true;
                         break;
                     case "Balloon":
-                        model.Balloon = true;
-                        break;
-                    case "Trophy":
-
-                        model.Trophy = true;
-                        break;
-                    case "Detector":
-                        model.Detector = true;
-                        break;
-                    default:
+                        model.balloon = true;
                         break;
                 }
+
                 callback();
             }
         }
-        public void ItemReceived(GameObject target)
-        {
-            if (model.IsGetStartItem == false)
-                target.SetActive(false);
-        }
-        public void CancelItem()
-        {
-            model.IsGetStartItem = false;
-            model.IceSkate = false;
-            model.SlimeShoe = false;
-            model.Shield = false;
-            model.EnergyDrink = false;
-            model.Balloon = false;
-            model.Armor = false;
-            model.LightnessShoe = false;
-            model.Crucifixion = false;
-            model.RocketShoe = false;
-            model.DeveloperObsession = false;
-            model.Immortal = false;
-            model.Trophy = false;
-            model.Detector = false;
-            model.Shielding = false;
-            if (model.LightnessShoe)
-            {
-                model.AddItemSpeedGain = -0.1f;
-                model.AddItemJumpGain = -0.1f;
-            }
-            if (model.Armor)
-            {
-                model.AddItemSpeedGain = 0.1f;
-                model.AddItemJumpGain = 0.1f;
-                model.MaxHealth += 2;
-            }
-        }
-        public void SizeAdjust(float size)
-        {
-            model.CharacterSize *= size;
-            //model.CharacterSize = size;
+        #endregion
 
-        }
-        public void DODash(Vector2 value)
+        #region In-Game Item
+        public void SetGameItem(int id, System.Action callback)
         {
-            Debug.Log(value);
-            mover.DOAddforceImpulse(value * model.DashPower);
-            Debug.Log(model.DashPower);
-        }
+            if (itemHandler.GameItemControl != null)
+                return;
 
-        private void FixedUpdate()
+            ActiveHintUI(false);
+
+            itemHandler.SetGameItem(id, model);
+            view.UpdateGameItemUI(itemHandler.GameItemControl.GetSprite);
+
+            callback();
+        }
+        public void UseGameItem()
         {
-            if (OnDisable) return;
-            mover.FixedUpdate();
+            if (itemHandler.GameItemControl == null) return;
+            itemHandler.GameItemControl.Use();
+            itemHandler.GameItemControl = null;
+            view.UpdateGameItemUI(null);
+        }
+        #endregion
+
+        #region Combat
+        public void Attack()
+        {
+            combat.Attack();
+        }
+        public void Hurt(Vector2 force, System.Action callback)
+        {
+            if (combat.isHurting) return;
+            mover.Inertance(force);
+            combat.Hurt(callback);
+        }
+        #endregion
+
+        #region Mover
+        public void Jump(bool isJumping)
+        {
+            Debug.Log(isJumping);
+            mover.SetJumping(isJumping);
+        }
+        public void Run(bool isRunning)
+        {
+            mover.SetRunning(isRunning);
+        }
+        public void Move(float movement)
+        {
+            SetLocalScaleXByMovement = movement * model.reverseInput;
+            mover.SetInput(movement * model.reverseInput);
+        }
+        public void DoDash(Vector2 force)
+        {
+            mover.DoDash(force * model.dashPower);
+        }
+        #endregion
+
+        #region PlayerState
+        public void OnPlayerStateChaned(PlayerState newState)
+        {
+            switch (newState)
+            {
+                case PlayerState.Dead:
+                    ableToMove = false;
+                    mover.DoForceStop();
+                    break;
+                case PlayerState.Reborn:
+                    ableToMove = false;
+                    break;
+                case PlayerState.Hunter:
+                    ableToMove = true;
+                    break;
+                case PlayerState.Escaper:
+                    ableToMove = true;
+                    break;
+                case PlayerState.Lockblood:
+                    ableToMove = true;
+                    break;
+                case PlayerState.Invincible:
+                    ableToMove = true;
+                    break;
+                case PlayerState.Spectator:
+                    ableToMove = true;
+                    break;
+            }
+        }
+        public void PlayerStateHandler()
+        {
+            if (prePlayerState != playerState)
+                OnPlayerStateChaned(playerState);
+
+            prePlayerState = playerState;
+        }
+        #endregion
+
+        #region Unity Native APIs
+        private void Awake()
+        {
+            view = GetComponent<View>();
+            model = GetComponent<Model>();
+        }
+        private void OnEnable()
+        {
+            mover = new Mover(view, model);
+            combat = new Combat(view, model);
+            itemHandler = new Slot();
+        }
+        void DevInput()
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                combat.Hurt(null);
+            }
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                combat.Dead();
+            }
         }
         private void Update()
         {
-            mover.Update();
-            //transform.localScale = new Vector3(model.CharacterSize, model.CharacterSize, 1);
+            DevInput();
+            PlayerStateHandler();
+
+            if (ableToMove)
+                mover.Update();
+
+            combat.Update();
         }
+        private void FixedUpdate()
+        {
+            if (ableToMove)
+                mover.FixedUpdate();
+
+            combat.FixedUpdate();
+        }
+        #endregion
+
+        #region Getters
+        PlayerState playerState { get { return model.CurrentPlayerState; } }
+        PlayerState prePlayerState = new PlayerState();
+        #endregion
     }
 }

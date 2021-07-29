@@ -2,430 +2,565 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirror.EscapeGame.Gameplayer
+namespace Mirror.EscapeGame.GameplayerSpace
 {
-    public class Mover : IGameplayControl
+    public class Mover : GameplayControl
     {
-        public float SetupInput
-        {
-            set
-            {
-                xInput = value;
-                animator.DoAnimation("movement", Mathf.Abs(xInput));
-            }
-        }
-        [Header("Float")]
-        float xInput = 0;
-        float endurance = 0;
-        float jumpTimeCounter = 0;
-        float wallJumpTimeCounter = 0;
-        float wallJumpPos = 0;
-        [Header("Bool")]
-        bool isRunning = false;
-        bool isAbleToRecoveryEndurance = false;
-        bool isSquating = false;
-        bool isWallJumping = false;
-        bool isInertancing = false;
+        public float xInput = 0;
+        public float jumpTimeCounter = 0f;
+        public float wallJumpTimeCounter = 0f;
+        public float wallJumpPos = 0;
 
-        public bool OnControl
-        {
-            get
-            {
-                if (rb.velocity.magnitude > 20 || isInertancing)
-                    return true;
-                return false;
-            }
-        }
-        public bool OnGround
-        {
-            get
-            {
-                return model.Grounded || model.IceGrounded || model.SlimeGrounded;
-            }
-        }
-        public bool OnWall
-        {
-            get
-            {
-                if (OnGround)
-                    return false;
-                else
-                    return model.Fronted || model.IceFronted || model.SlimeFronted;
-            }
-        }
+        public bool ableToJump = true;
+        public bool isRunning = false;
+        public bool isAbleToRecoveryEndurance = false;
+        public bool isJumping = false;
+        public bool isWallJumping = false;
+        public bool isFalling = false;
+        public bool isInertancing = false;
+        public bool isJumpButtonReleased = true;
+        public bool isDoubleJumping = false;
 
+        float preEndurance = 0;
+
+        GroundState preGroundState = new GroundState();
+
+        #region Const variables. Game balance related.
+        const float RunSpeedGain = 0.2f;
+        const float RunJumpGain = 0.1f;
+
+        const float NormalGroundSpeedGain = 1f;
+        const float NormalGroundJumpGain = 1f;
+
+        const float SlimeGroundSpeedGain = 0.5f;
+        const float SlimeGroundJumpGain = 0.2f;
+
+        const float NormalWallSpeedGain = 1f;
+        const float NormalWallJumpGain = 1f;
+        const float NormalWallSlideGain = 1f;
+
+        const float IceWallSpeedGain = 1.3f;
+        const float IceWallJumpGain = 0f;
+        const float IceWallSlideGain = 10f;
+
+        const float SlimeWallSpeedGain = 0.7f;
+        const float SlimeWallJumpGain = 0.7f;
+        const float SlimeWallSlideGain = 1f;
+        #endregion
+
+        public Mover(View view, Model model)
+        {
+            this.view = view;
+            this.model = model;
+            OnEnable();
+        }
+        #region Unity APIs Imitate
+        public void OnEnable()
+        {
+            model.endurance = model.maxEndurance;
+        }
         public void Update()
         {
-            EnduranceSystem();
-            GroundControl();
-            GroundControl();
-            FrontControl();
+            GroundCheck();
+            FrontCheck();
+            UpdatePreGroundState();
+            EnduranceHandler();
         }
         public void FixedUpdate()
         {
-            DoMove();
-            DoJump();
-        }
-        public void Inertance(Vector2 force)
-        {
-            isInertancing = true;
-            model.CurrentGroundState = GroundState.Controled;
-            rb.AddForce(force, ForceMode2D.Impulse);
-            AbleToDo(0.2f, () => model.CurrentGroundState = GroundState.Normal);
-            AbleToDo(0.2f, () => isInertancing = false);
-        }
-
-        public void DoMove()
-        {
-            switch (model.CurrentGroundState)
+            switch (OnControlled)
             {
-                case GroundState.Controled:
-                    rb.DoControlMove(xInput * 7 + rb.velocity.x * -1.5f);
+                case true:
+                    ControledMoveHandler();
                     break;
-                case GroundState.Air:
-                case GroundState.Normal:
-                case GroundState.Slime:
-                    if (xInput != 0)
-                    {
-                        MoveGainHandle();
-                    }
-                    else rb.DoStopMoveX();
-                    break;
-                case GroundState.Ice:
-
-                    if (xInput != 0)
-                    {
-                        IceMoveGainHandle();
-                        rb.DoSlowDown();
-                    }
-                    else rb.DoSlowDown();
-                    break;
-                default:
+                case false:
+                    DoMove();
+                    DoJump();
                     break;
             }
         }
-        public void Run(bool value)
+        #endregion
+
+        #region Movement Implement
+        public void SetInput(float value)
+        {
+            xInput = value;
+            anim.DoAnimation("movement", Mathf.Abs(xInput));
+        }
+        public void SetRunning(bool value)
+        {
+            if (value && isRunning == false)
+            {
+                isRunning = true;
+                isAbleToRecoveryEndurance = false;
+                model.speedGain += RunSpeedGain;
+                model.jumpGain += RunJumpGain;
+            }
+            else if (value == false && isRunning)
+            {
+                isRunning = false;
+                AbleToDo(1f, () => isAbleToRecoveryEndurance = true);
+                model.speedGain -= RunSpeedGain;
+                model.jumpGain -= RunJumpGain;
+            }
+        }
+        public void SetJumping(bool value)
         {
             switch (value)
             {
                 case true:
-                    isRunning = true;
-                    isAbleToRecoveryEndurance = false;
-                    model.AddSpeedGain = 0.2f;
-                    model.AddJumpGain = 0.1f;
+                    if (OnAnyFronted && OnIceFronted == false && isWallJumping == false && isJumping == false)
+                    {
+                        if (isJumpButtonReleased)
+                        {
+                            isWallJumping = true;
+                            anim.DoAnimation("jump");
+                        }
+                    }
+                    else if (ableToJump && isWallJumping == false)
+                    {
+                        ableToJump = false;
+                        isJumping = true;
+                        anim.DoAnimation("jump");
+                    }
+                    else if (isFalling && isDoubleJumping == false && model.rocketShoe)
+                    {
+                        isDoubleJumping = true;
+                        isJumping = true;
+                        jumpTimeCounter = 0;
+                        anim.DoAnimation("jump");
+                    }
+                    isJumpButtonReleased = false;
                     break;
                 case false:
-                    isRunning = false;
-                    AbleToDo(1f, () => isAbleToRecoveryEndurance = true);
-                    model.SpeedGain = 1f;
-                    model.JumpGain = 1f;
+                    isJumpButtonReleased = true;
+                    isFalling = true;
+                    isJumping = false;
+                    isWallJumping = false;
+                    wallJumpTimeCounter = 0;
+                    anim.DoAnimation("exit");
                     break;
             }
         }
-        public void EnduranceSystem()
+        public void GrounStateChanged(GroundState newState)
         {
-            if (endurance <= 0)
-                Run(false);
-            if (isRunning)
-                endurance -= Time.deltaTime;
-            if (isRunning == false && isAbleToRecoveryEndurance && endurance < model.Endurance)
+            switch (newState)
             {
-                if (model.EnergyDrink) endurance += Time.deltaTime;
-                endurance += Time.deltaTime;
+                case GroundState.Ice:
+                    float force = (rb.velocity.x > 10) ? 10 : 30;
+                    rb.DoAddforceX(transform.localScale.x * force);
+                    break;
+                case GroundState.Slime:
+                    rb.DoMove(Vector2.zero);
+                    break;
             }
         }
-        public void MoveGainHandle()
-        {
-            if (isSquating && rb.velocity.x == 0) model.SlideSpeedGain = 0;
-            else if (isSquating && model.SlideSpeedGain > 0) model.SlideSpeedGain -= 0.015f;
-            else if (isSquating && model.SlideSpeedGain <= 0) model.SlideSpeedGain = 0;
-            else model.SlideSpeedGain = 1f;
-            FrontControl();
-            if (OnWall)
-            {
-                rb.DoMoveX(0);
-            }
-            else
-            {
-                rb.DoMoveX(xInput
-                    * model.WalkSpeed
-                    * model.ItemSpeedGain
-                    * model.GroundSpeedGain
-                    * model.SpeedGain
-                    * model.StateSpeedGain
-                    * model.SlideSpeedGain);
-            }
 
-        }
-        public void IceMoveGainHandle()
+        public void GroundStateContinuous(GroundState newState)
         {
-            FrontControl();
-            if (rb.velocity.x < 15)
+            switch (newState)
             {
-                if (OnWall)
+                case GroundState.Ice:
+                    rb.DoAddforceX(-rb.velocity.x);
+                    break;
+            }
+        }
+
+        public void UpdatePreGroundState()
+        {
+            if (preGroundState != model.CurrentGroundState)
+                GrounStateChanged(model.CurrentGroundState);
+            else
+                GroundStateContinuous(model.CurrentGroundState);
+
+            preGroundState = model.CurrentGroundState;
+        }
+
+        public void GroundCheck()
+        {
+            if (OnGrounded)
+            {
+                CurrentGroundState = GroundState.Normal;
+                model.groundSpeedGain = NormalGroundSpeedGain;
+                model.groundJumpGain = NormalGroundJumpGain;
+            }
+            else if (OnIceGrounded)
+            {
+                if (model.iceSkate)
                 {
-                    rb.DoAddforceX(0);
+                    CurrentGroundState = GroundState.Normal;
                 }
                 else
                 {
-                    rb.DoAddforceX(xInput * 3
-                        * model.WalkSpeed
-                        * model.ItemSpeedGain
-                        * model.GroundSpeedGain
-                        * model.SpeedGain
-                        * model.StateSpeedGain
-                        * model.SlideSpeedGain);
+                    CurrentGroundState = GroundState.Ice;
                 }
+                model.groundSpeedGain = 1f;
+                model.groundJumpGain = 1f;
             }
-        }
-        public void Jump(bool isJumping)
-        {
-            if (isJumping)
+            else if (OnSlimeGrounded)
             {
-                FrontControl();
-                GroundControl();
-                if (OnGround)
+                if (model.slimeShoe)
                 {
-                    model.CurrentJumpState = JumpState.PreJumping;
+                    CurrentGroundState = GroundState.Normal;
+                    model.groundSpeedGain = NormalGroundSpeedGain;
+                    model.groundJumpGain = NormalGroundJumpGain;
                 }
-                else if (OnWall)
+                else
                 {
-                    isWallJumping = true;
-                    model.CurrentJumpState = JumpState.PreWallJumping;
+                    CurrentGroundState = GroundState.Slime;
+                    model.groundSpeedGain = SlimeGroundSpeedGain;
+                    model.groundJumpGain = SlimeGroundJumpGain;
+                    if (isFalling)
+                    {
+                        rb.DoMove(Vector2.zero);
+                    }
                 }
-                else if (!OnGround && !OnWall && model.RocketShoe && !model.RocketJump)
-                {
-                    model.RocketJump = true;
-                    jumpTimeCounter = 0f;
-                    model.GroundJumpGain = 0.5f;
-                    model.CurrentJumpState = JumpState.PreJumping;
-                }
-                animator.DoAnimation("jump");
             }
             else
             {
-                if (model.CurrentJumpState == JumpState.IsJumping)
-                {
-                    model.CurrentJumpState = JumpState.PreFalling;
-                }
+                CurrentGroundState = GroundState.Air;
+                isFalling = true;
+            }
+
+            if (OnAnyGrounded)
+            {
+                Debug.Log("OnGrounded");
+                jumpTimeCounter = 0;
+                isFalling = false;
+                isJumping = false;
+                ableToJump = true;
+                isWallJumping = false;
+                isDoubleJumping = false;
             }
         }
+
+        public void FrontCheck()
+        {
+            if (OnFronted)
+            {
+                model.wallSpeedGain = NormalWallSpeedGain;
+                model.wallJumpGain = NormalWallJumpGain;
+                model.wallSlideGain = NormalWallSlideGain;
+            }
+            else if (OnIceFronted)
+            {
+                if (model.iceSkate)
+                {
+                    model.wallSpeedGain = NormalWallSpeedGain;
+                    model.wallJumpGain = NormalWallJumpGain;
+                    model.wallSlideGain = NormalWallSlideGain;
+                }
+                else
+                {
+                    model.wallSpeedGain = IceWallSpeedGain;
+                    model.wallJumpGain = IceWallJumpGain;
+                    model.wallSlideGain = IceWallSlideGain;
+                }
+            }
+            else if (OnSlimeFronted)
+            {
+                if (model.slimeShoe)
+                {
+                    model.wallSpeedGain = NormalWallSpeedGain;
+                    model.wallJumpGain = NormalWallJumpGain;
+                    model.wallSlideGain = NormalWallSlideGain;
+                }
+                else
+                {
+                    model.wallSpeedGain = SlimeWallSpeedGain;
+                    model.wallJumpGain = SlimeWallJumpGain;
+                    model.wallSlideGain = SlimeWallSlideGain;
+                }
+            }
+            else
+            {
+                CurrentFrontState = FrontState.Air;
+            }
+
+            if (OnAnyFronted)
+            {
+                if (isJumpButtonReleased)
+                    isWallJumping = false;
+
+                wallJumpTimeCounter = 0;
+                wallJumpPos = -xInput;
+            }
+        }
+        public void OnEnduranceChanged(float newVal)
+        {
+            view.UpdateEndurancebar(newVal / model.maxEndurance);
+        }
+        /// <summary>
+        /// Control Endurance
+        /// </summary>
+        public void EnduranceHandler()
+        {
+            if (isRunning && model.endurance > 0)
+            {
+                model.endurance -= Time.deltaTime;
+            }
+            if (isRunning == false && isAbleToRecoveryEndurance && model.endurance < model.maxEndurance)
+            {
+                SetRunning(false);
+                if (model.energyDrink) model.endurance += Time.deltaTime;
+                model.endurance += Time.deltaTime;
+            }
+
+            if (preEndurance != model.endurance)
+                OnEnduranceChanged(model.endurance);
+
+            preEndurance = model.endurance;
+        }
+
+        /// <summary>
+        /// Enforce to move with a force.
+        /// </summary>
+        /// <param name="force"></param>
+        public void Inertance(Vector2 force)
+        {
+            isInertancing = true;
+            CurrentGroundState = GroundState.Controled;
+            rb.DoAddforceImpulse(force);
+            AbleToDo(0.2f, () => CurrentGroundState = GroundState.Normal);
+            AbleToDo(0.2f, () => isInertancing = false);
+        }
+        /// <summary>
+        /// Impluse rigibody with a force.
+        /// </summary>
+        /// <param name="force"></param>
+        public void DoDash(Vector2 force)
+        {
+            rb.DoAddforceImpulse(force);
+        }
+        /// <summary>
+        /// Force veloity to zero
+        /// </summary>
+        public void DoForceStop()
+        {
+            rb.DoMove(Vector2.zero);
+        }
+        /// <summary>
+        /// Jump control handler
+        /// </summary>
         public void DoJump()
         {
-            switch (model.CurrentJumpState)
+            if (isWallJumping)
             {
-                case JumpState.PreWallSliding:
-                    model.CurrentJumpState = JumpState.IsWallSliding;
-                    break;
-                case JumpState.PreWallJumping:
-                    model.CurrentJumpState = JumpState.IsWallJumping;
-                    break;
-                case JumpState.PreJumping:
-                    model.CurrentJumpState = JumpState.IsJumping;
-                    break;
-                case JumpState.PreFalling:
-                    model.CurrentJumpState = JumpState.IsFalling;
-                    break;
-                case JumpState.PreGrounded:
-                    animator.DoAnimation("exit");
-                    model.CurrentJumpState = JumpState.IsGrounded;
-                    break;
+                WallJump();
             }
-            switch (model.CurrentJumpState)
+            else if (isJumping)
             {
-                case JumpState.IsWallSliding:
-                    model.RocketJump = false;
-                    //if (wallJumpTimeCounter > 0) wallJumpTimeCounter = 0;
-                    rb.DoMove(Vector2.down
-                        * model.ItemJumpGain
-                        * (2 - model.GroundJumpGain)
-                        * model.JumpGain
-                        * model.WallSlideGain);
-                    if (OnWall == false || OnGround) model.CurrentJumpState = JumpState.PreFalling;
-                    break;
-                case JumpState.IsWallJumping:
-                    if (wallJumpTimeCounter < model.WallJumpTime && wallJumpPos * xInput < 0)
-                    {
-                        wallJumpTimeCounter += Time.deltaTime;
-                        rb.DoMove(new Vector2(
-                            model.WallJumpForce.x * wallJumpPos
-                            * model.ItemJumpGain
-                            * model.JumpGain
-                            * model.StateJumpGain
-                            * model.WallJumpGain
-                            * (2.2f - wallJumpTimeCounter * 10)
-                        , model.WallJumpForce.y
-                            * model.ItemJumpGain
-                            * model.JumpGain
-                            * model.StateJumpGain
-                            * model.WallJumpGain));
-                    }
-                    else if (wallJumpPos * xInput > 0)
-                    {
-
-                        isWallJumping = false;
-                        model.CurrentJumpState = JumpState.IsJumping;
-                    }
-                    else
-                    {
-                        isWallJumping = false;
-                        model.CurrentJumpState = JumpState.PreFalling;
-                    }
-                    break;
-                case JumpState.IsJumping:
-                    if (jumpTimeCounter < model.JumpTime)
-                    {
-                        jumpTimeCounter += Time.deltaTime;
-                        rb.DoMoveY(Vector2.up.y * model.JumpForce
-                        * model.ItemJumpGain
-                        * model.GroundJumpGain
-                        * model.JumpGain
-                        * model.StateJumpGain);
-                    }
-                    else model.CurrentJumpState = JumpState.PreFalling;
-                    break;
-                case JumpState.IsFalling:
-                    if (OnGround) model.CurrentJumpState = JumpState.PreGrounded;
-                    break;
-                case JumpState.IsGrounded:
-                    jumpTimeCounter = 0;
-                    model.RocketJump = false;
-                    break;
+                Jump();
             }
         }
-        public void GroundControl()
+        /// <summary>
+        /// Implement a jump action.
+        /// </summary>
+        public void Jump()
         {
-            // if (GroundState == GroundState.controled) return;
-            model.Grounded = GroundCheck(model.GetGroundLayer) || GroundCheck(model.GetBoxLayer);
-            model.IceGrounded = GroundCheck(model.GetIceGroundLayer);
-            model.SlimeGrounded = GroundCheck(model.GetSlimeGroundLayer);
-
-            if (OnControl)
+            if (jumpTimeCounter < model.jumpTime)
             {
-                model.CurrentGroundState = GroundState.Controled;
-            }
-            else if (model.Grounded)
-            {
-                model.GroundSpeedGain = 1;
-                model.GroundJumpGain = 1f;
-                model.CurrentGroundState = GroundState.Normal;
-            }
-            else if (model.IceGrounded)
-            {
-                model.GroundSpeedGain = 1;
-                model.GroundJumpGain = 1;
-                if (model.IceSkate == false) model.CurrentGroundState = GroundState.Ice;
-                else model.CurrentGroundState = GroundState.Normal;
-            }
-            else if (model.SlimeGrounded)
-            {
-                if (model.SlimeShoe == false)
+                jumpTimeCounter += Time.deltaTime;
+                float force = Vector2.up.y
+                    * model.jumpForce
+                    * model.itemJumpGain
+                    * model.groundJumpGain
+                    * model.jumpGain
+                    * model.playerStateJumpGain;
+                switch (CurrentGroundState)
                 {
-                    model.GroundSpeedGain = 0.5f;
-                    model.GroundJumpGain = 0.2f;
-                    model.CurrentGroundState = GroundState.Slime;
+                    case GroundState.Ice:
+                        rb.DoMove(new Vector2(rb.velocity.x, force));
+                        break;
+                    default:
+                        rb.DoMoveY(force);
+                        break;
                 }
-                else model.CurrentGroundState = GroundState.Normal;
             }
             else
             {
-                model.CurrentGroundState = GroundState.Air;
+                isJumping = false;
             }
         }
-        public void FrontControl()
+        /// <summary>
+        ///  Impletment a wall jumping action.
+        /// </summary>
+        public void WallJump()
         {
-            if (OnWall) if (wallJumpTimeCounter > 0) wallJumpTimeCounter = 0;
-            if (OnGround)
+            if (wallJumpTimeCounter < model.wallJumpTime && wallJumpPos * xInput < 0)
             {
-                return;
+                wallJumpTimeCounter += Time.deltaTime;
+                rb.DoMove(new Vector2(
+                    model.wallJumpForce.x * wallJumpPos
+                    * model.itemJumpGain
+                    * model.jumpGain
+                    * model.playerStateJumpGain
+                    * model.wallJumpGain
+                    * (2.2f - wallJumpTimeCounter * 10)
+                , model.wallJumpForce.y
+                    * model.itemJumpGain
+                    * model.jumpGain
+                    * model.playerStateJumpGain
+                    * model.wallJumpGain));
+                isJumpButtonReleased = false;
             }
-            // if (FrontState == FrontState.controled) return;
-
-            model.Fronted = FrontCheck(model.GetGroundLayer);
-            model.IceFronted = FrontCheck(model.GetIceGroundLayer);
-            model.SlimeFronted = FrontCheck(model.GetSlimeGroundLayer);
-
-            if (model.Fronted)
+            else
             {
-                model.WallSpeedGain = 1f;
-                model.WallJumpGain = 1f;
-                model.WallSlideGain = 1f;
+                isWallJumping = false;
             }
-            else if (model.IceFronted && OnWall)
-            {
-                if (model.IceSkate == false)
-                {
-                    model.WallSpeedGain = 1.3f;
-                    model.WallJumpGain = 0f;
-                    model.WallSlideGain = 10f;
-                }
-                else
-                {
-                    model.WallSpeedGain = 1f;
-                    model.WallJumpGain = 1f;
-                    model.WallSlideGain = 1f;
-                }
-            }
-            else if (model.SlimeFronted && OnWall)
-            {
-                if (model.SlimeShoe == false)
-                {
-                    model.WallSpeedGain = 0.7f;
-                    model.WallJumpGain = 0.7f;
-                    model.WallSlideGain = 1f;
-                }
-                else
-                {
-                    model.WallSpeedGain = 1f;
-                    model.WallJumpGain = 1f;
-                    model.WallSlideGain = 1f;
-                }
-            }
-
-            if (OnGround == false && isWallJumping == false && model.CurrentJumpState != JumpState.IsJumping && model.CurrentJumpState != JumpState.PreJumping) model.CurrentJumpState = JumpState.PreFalling;
-            if (isWallJumping == false && OnWall && rb.velocity.y < 0 && model.CurrentJumpState != JumpState.PreWallJumping) model.CurrentJumpState = JumpState.PreWallSliding;
         }
-        public bool GroundCheck(LayerMask mask)
+        /// <summary>
+        /// Move control handler
+        /// </summary>
+        public void DoMove()
         {
-            bool detect = false;
-            foreach (var ground in model.GetGroundCheck)
+            if (OnAnyFronted)
             {
-                if (Physics2D.Raycast(
-                    ground.position,
-                    Vector2.down,
-                    model.GroundCheckDistance,
-                    mask
-                ))
-                {
-                    detect = true;
-                    break;
-                }
-            };
-            return detect ? true : false;
-        }
-        public bool FrontCheck(LayerMask mask)
-        {
-            bool detect = false;
-            foreach (var front in model.GetFrontCheck)
+                WallSliding();
+            }
+            else
             {
-                if (Physics2D.Raycast(
-                    front.position,
-                    Vector2.right * xInput,
-                    model.GroundCheckDistance,
-                    mask
-                ))
+                switch (CurrentGroundState)
                 {
-                    detect = true;
-                    break;
+                    case GroundState.Controled:
+                        ControledMoveHandler();
+                        break;
+                    case GroundState.Ice:
+                        IceMoveHandle();
+                        break;
+                    case GroundState.Air:
+                    case GroundState.Normal:
+                    case GroundState.Slime:
+                    default:
+                        MoveHandler();
+                        break;
+
                 }
-            };
-            if (detect) wallJumpPos = -xInput;
-            return detect ? true : false;
+            }
         }
-        public void DOAddforceImpulse(Vector2 power)
+        /// <summary>
+        /// Implemetn a wall sliding action.
+        /// </summary>
+        public void WallSliding()
         {
-            rb.DoAddforceImpulse(power);
+            rb.DoMove(Vector2.down
+                * model.itemJumpGain
+                * (2 - model.groundJumpGain)
+                * model.jumpGain
+                * model.wallSlideGain
+            );
+        }
+        /// <summary>
+        /// Implement move action on controlled state.
+        /// </summary>
+        public void ControledMoveHandler()
+        {
+            if (OnAnyFronted)
+            {
+                DoMove();
+            }
+            else
+            {
+                rb.DoAddforce(-rb.velocity * xInput);
+            }
+        }
+        /// <summary>
+        /// Usual moving action implement.
+        /// </summary>
+        public void MoveHandler()
+        {
+            rb.DoMoveX(xInput
+                * model.moveSpeed
+                * model.itemSpeedGain
+                * model.groundSpeedGain
+                * model.speedGain
+                * model.playerStateSpeedGain
+                * model.slideSpeedGain
+            );
+        }
+        /// <summary>
+        /// Moving action implement on ice material .
+        /// </summary>
+        public void IceMoveHandle()
+        {
+            rb.DoAddforceX(xInput * 3
+                * model.moveSpeed
+                * model.itemSpeedGain
+                * model.groundSpeedGain
+                * model.speedGain
+                * model.playerStateSpeedGain
+                * model.slideSpeedGain
+            );
+        }
+        #endregion
+
+        #region Getters
+        public bool OnControlled
+        {
+            get
+            {
+                return rb.velocity.magnitude > 30f;
+            }
+        }
+        public bool OnAnyGrounded
+        {
+            get
+            {
+                return OnGrounded || OnIceGrounded || OnSlimeGrounded;
+            }
+        }
+        public bool OnGrounded
+        {
+            get
+            {
+                return Physics2D.Raycast(transform.position, -Vector2.up, model.distToGround + model.distToGroundOffset, model.whatIsGround)
+                || Physics2D.Raycast(transform.position, -Vector2.up, model.distToGround + model.distToGroundOffset, model.whatIsBox);
+            }
+        }
+        public bool OnIceGrounded
+        {
+            get
+            {
+                return Physics2D.Raycast(transform.position, -Vector2.up, model.distToGround + model.distToGroundOffset, model.whatIsIceGround);
+            }
+        }
+        public bool OnSlimeGrounded
+        {
+            get
+            {
+                return Physics2D.Raycast(transform.position, -Vector2.up, model.distToGround + model.distToGroundOffset, model.whatIsSlimeGround);
+            }
         }
 
+        public bool OnAnyFronted
+        {
+            get
+            {
+                return OnFronted || OnIceFronted || OnSlimeFronted;
+            }
+        }
+        public bool OnFronted
+        {
+            get
+            {
+                return Physics2D.Raycast(transform.position, Vector2.right * xInput, model.distToGround + model.distToWall, model.whatIsGround)
+                || Physics2D.Raycast(transform.position, Vector2.right * xInput, model.distToGround + model.distToWall, model.whatIsBox);
+            }
+        }
+        public bool OnIceFronted
+        {
+            get
+            {
+                return Physics2D.Raycast(transform.position, Vector2.right * xInput, model.distToGround + model.distToWall, model.whatIsIceGround);
+            }
+        }
+        public bool OnSlimeFronted
+        {
+            get
+            {
+                return Physics2D.Raycast(transform.position, Vector2.right * xInput, model.distToGround + model.distToWall, model.whatIsSlimeGround);
+            }
+        }
+        #endregion
     }
 }

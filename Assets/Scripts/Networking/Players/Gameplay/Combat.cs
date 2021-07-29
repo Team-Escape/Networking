@@ -2,97 +2,174 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirror.EscapeGame.Gameplayer
+namespace Mirror.EscapeGame.GameplayerSpace
 {
-    public class Combat : IGameplayControl
+    public class Combat : GameplayControl
     {
-        public PlayerState CurrenPlayerState { get { return model.CurrentPlayerState; } set { model.CurrentPlayerState = value; } }
+        #region PlayerState Quick Search
+        PlayerState AsWaiting { get { return PlayerState.Waiting; } }
+        PlayerState AsEscaper { get { return PlayerState.Escaper; } }
+        PlayerState AsHunter { get { return PlayerState.Hunter; } }
+        PlayerState AsDead { get { return PlayerState.Dead; } }
+        PlayerState AsInvincible { get { return PlayerState.Invincible; } }
+        PlayerState AsReborn { get { return PlayerState.Reborn; } }
+        PlayerState AsSpectator { get { return PlayerState.Spectator; } }
+        PlayerState AsLockBlood { get { return PlayerState.Lockblood; } }
+        #endregion
 
-        public PlayerState AsWaiting { get { return PlayerState.Waiting; } }
-        public PlayerState AsEscaper { get { return PlayerState.Escaper; } }
-        public PlayerState AsHunter { get { return PlayerState.Hunter; } }
-        public PlayerState AsSpectator { get { return PlayerState.Spectator; } }
+        public bool isAttacking = false;
+        public bool isHurting = false;
+        public bool isShielding = false;
 
+        float preHealth = 0;
 
-        public float GetHealthAmount
+        #region Listener
+        public void HealthBarHandler()
         {
-            get
+            if (preHealth != model.health)
+                OnHealthChanged(model.health);
+
+            preHealth = model.health;
+        }
+        public void OnHealthChanged(float newVal)
+        {
+            view.UpdateHealthbar(newVal / model.maxHealth);
+        }
+        #endregion
+
+        #region Unity Native Imitate
+        public void Update()
+        {
+            HealthBarHandler();
+        }
+        public void FixedUpdate() { }
+        #endregion
+
+        #region Combat Implement
+        public Combat(View view, Model model)
+        {
+            this.view = view;
+            this.model = model;
+            ActiveStartItemVariablesIfEquip();
+        }
+        /// <summary>
+        /// Some variables that would be used of start items. 
+        /// Set boolean to true if equipped
+        /// </summary>
+        public void ActiveStartItemVariablesIfEquip()
+        {
+            if (model.shield)
             {
-                return (float)model.CurrentHealth / (float)model.MaxHealth;
+                isShielding = true;
             }
         }
-
+        /// <summary>
+        /// Player goal func.
+        /// </summary>
+        public void Goal()
+        {
+            CurrentPlayerState = AsLockBlood;
+        }
         public void Attack()
         {
-            if (model.CurrentPlayerState == PlayerState.Hunter)
-                animator.DoAnimation("attack");
+            if (isAttacking) return;
+            if (CurrentPlayerState == AsHunter)
+            {
+                isAttacking = true;
+                anim.DoAnimation("attack");
+                AbleToDo(1f, () => isAttacking = false);
+            }
         }
         public void Hurt(System.Action callback)
         {
-            if (model.CurrentPlayerState == PlayerState.Spectator) return;
-            if (model.Shielding == false)
+            if (isHurting) return;
+            if (isShielding)
             {
-                switch (model.CurrentPlayerState)
-                {
-                    case PlayerState.Invincible:
-                        animator.DoAnimation("invincible");
-                        return;
-                    case PlayerState.Lockblood:
-                        if (model.CurrentHealth > 1)
-                            model.CurrentHealth--;
-                        animator.DoAnimation("hurt");
-                        break;
-                    default:
-                        model.CurrentHealth--;
-                        if (model.CurrentHealth <= 0)
-                        {
-                            model.CurrentHealth = 0;
-                            callback();
-                            return;
-                        }
-                        animator.DoAnimation("hurt");
-                        break;
-                }
+                isShielding = false;
+                AbleToDo(model.sheildColdDuration, () => isShielding = true);
+                return;
             }
-            else model.Shielding = false;
+            switch (CurrentPlayerState)
+            {
+                case PlayerState.Spectator:
+                case PlayerState.Lockblood:
+                    if (model.health > 1)
+                        model.health--;
+                    isHurting = true;
+                    anim.DoAnimation("hurt");
+                    AbleToDo(anim.CurrentAnimationClipLength("Hurt"), () => isHurting = false);
+                    break;
+                case PlayerState.Dead:
+                    if (model.extraLife)
+                    {
+                        model.extraLife = false;
+                        Reborn();
+                        isHurting = true;
+                        AbleToDo(anim.CurrentAnimationClipLength("Reborn") + 1f, () => isHurting = false);
+                    }
+                    else
+                    {
+                        // Got Caught
+                        Mutate();
+                        callback();
+                    }
+                    break;
+                default:
+                    model.health--;
+                    if (model.health <= 0)
+                    {
+                        model.health = 0;
+                        Dead();
+                        return;
+                    }
+                    isHurting = true;
+                    anim.DoAnimation("hurt");
+                    AbleToDo(anim.CurrentAnimationClipLength("Hurt"), () => isHurting = false);
+                    break;
+            }
         }
         public void Dead()
         {
-            CurrenPlayerState = PlayerState.Dead;
-            animator.DoAnimation("dead");
+            CurrentPlayerState = AsDead;
+            anim.DoAnimation("dead");
+            AbleToDo(model.rebornDuration, Reborn);
         }
         public void Reborn()
         {
-            if (CurrenPlayerState != PlayerState.Dead) return;
-            CurrenPlayerState = PlayerState.Reborn;
-            AbleToDo(0.5f,
-                () => CurrenPlayerState = model.teamID == 1
-                ? PlayerState.Escaper
-                : PlayerState.Hunter
+            if (CurrentPlayerState != AsDead) return;
+
+            if (model.deathWithStronger)
+            {
+                model.speedGain += model.deadWithStrongerGain;
+                AbleToDo(model.deadWithStrongerDuration, () => model.speedGain -= model.deadWithStrongerGain);
+            }
+
+            model.health = model.maxHealth;
+            CurrentPlayerState = AsReborn;
+            anim.DoAnimation("reborn");
+            AbleToDo(anim.CurrentAnimationClipLength("Reborn"),
+                () => CurrentPlayerState = (model.teamID == 1)
+                ? AsHunter
+                : AsEscaper
             );
-            model.CurrentHealth = model.MaxHealth;
-            animator.DoAnimation("reborn");
         }
-        public void Mutate(Transform transform)
+        public void Mutate()
         {
-            CurrenPlayerState = PlayerState.Spectator;
+            CurrentPlayerState = AsSpectator;
 
             int playerLayer = LayerMask.NameToLayer("Player");
-            int specatorLayer = LayerMask.NameToLayer("Invisible");
+            int sepecatorLayer = LayerMask.NameToLayer("Invisible");
 
-            // Open all layer on culling mask.
-            Camera cam = transform.parent.GetChild(1).GetComponent<Camera>();
+            Camera cam = model.cam;
             cam.cullingMask = -1;
 
-            animator.DoAnimation("reborn");
+            anim.DoAnimation("reborn");
+            view.UpdateShaderRender("GHOST_ON");
 
-            // Set all layers to invisible
-            SearchForAllChild(transform.parent, playerLayer, specatorLayer);
+            SearchForAllChild(transform, playerLayer, sepecatorLayer);
         }
-
-        void SearchForAllChild(Transform t, int layerToBeChanged, int layerToChange)
+        public void SearchForAllChild(Transform t, int layerToBeChanged, int layerToChange)
         {
-            if (t == null) return;
             foreach (Transform c in t)
             {
                 SearchForAllChild(c, layerToBeChanged, layerToChange);
@@ -102,5 +179,6 @@ namespace Mirror.EscapeGame.Gameplayer
                 }
             }
         }
+        #endregion
     }
 }
