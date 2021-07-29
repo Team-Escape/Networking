@@ -21,7 +21,11 @@ namespace Mirror.EscapeGame.GameplayerSpace
 
         #region Callbacks
         List<Action<Gameplayer>> gameActions = null;
-        void StartItemCallback() => gameActions[0](this);
+        void StartItemCallback(GameObject go)
+        {
+            NetworkServer.Destroy(go);
+            gameActions[0](this);
+        }
         void CaughtCallBack() => gameActions[1](this);
         void GoalCallback() => gameActions[2](this);
 

@@ -20,7 +20,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
         bool ableToMove = true;
         bool isGoaled = false;
 
-        Camera cam { get { return model.cam; } }
+        Camera cam { get { return model.cam; } set { model.cam = value; } }
 
         #region UI render
         /// <summary>
@@ -70,7 +70,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
         /// </summary>
         /// <param name="go"></param>
         /// <param name="callback"></param>
-        public void GetStartItem(GameObject go, System.Action callback)
+        public void GetStartItem(GameObject go, System.Action<GameObject> callback)
         {
             if (model.hasGotStartItem == false)
             {
@@ -122,7 +122,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
                         break;
                 }
 
-                callback();
+                callback(go);
             }
         }
         #endregion
@@ -226,6 +226,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
         {
             view = GetComponent<View>();
             model = GetComponent<Model>();
+            cam = Camera.main;
         }
         private void OnEnable()
         {
