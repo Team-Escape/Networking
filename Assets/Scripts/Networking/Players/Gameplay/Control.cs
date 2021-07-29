@@ -74,10 +74,10 @@ namespace Mirror.EscapeGame.GameplayerSpace
         {
             if (model.hasGotStartItem == false)
             {
+                view.UpdateHintUI(false);
                 model.hasGotStartItem = true;
 
                 string name = go.name;
-                go.SetActive(false);
 
                 switch (name)
                 {
