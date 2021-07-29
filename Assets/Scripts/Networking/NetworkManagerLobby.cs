@@ -51,6 +51,14 @@ namespace Mirror.EscapeGame
             }
         }
 
+        private void Update()
+        {
+            if (NetworkClient.isConnected && !NetworkClient.ready)
+            {
+                NetworkClient.Ready();
+            }
+        }
+
         public string MapPoll()
         {
             var polls = new Dictionary<string, int>();
@@ -118,7 +126,9 @@ namespace Mirror.EscapeGame
                 switch (sceneName)
                 {
                     case "LabScene":
-                        NetworkServer.Spawn(Instantiate(labManager), roomSlots[0].GetComponent<NetworkIdentity>().connectionToClient);
+                        GameObject go = Instantiate(labManager);
+                        NetworkServer.Spawn(go, roomSlots[0].GetComponent<NetworkIdentity>().connectionToClient);
+                        GetComponent<NetworkIdentity>().AssignClientAuthority(roomSlots[0].GetComponent<NetworkIdentity>().connectionToClient);
                         break;
                     default:
                         Debug.Log("Scene not registed yet...");
