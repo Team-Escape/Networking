@@ -73,8 +73,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
         {
             if (model.hasGotStartItem == false)
             {
-                Debug.Log("step one");
-                view.UpdateHintUI(false);
                 model.hasGotStartItem = true;
 
                 string name = go.name;
@@ -121,9 +119,9 @@ namespace Mirror.EscapeGame.GameplayerSpace
                         model.balloon = true;
                         break;
                 }
-
-                Debug.Log("step two");
                 callback(go);
+
+                view.UpdateHintUI(false);
             }
         }
         #endregion

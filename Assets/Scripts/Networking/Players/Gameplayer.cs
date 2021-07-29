@@ -23,7 +23,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
         List<Action<Gameplayer>> gameActions = null;
         void StartItemCallback(GameObject go)
         {
-            Debug.Log(go);
             NetworkServer.Destroy(go);
             gameActions[0](this);
         }
