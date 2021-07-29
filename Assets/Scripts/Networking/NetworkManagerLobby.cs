@@ -18,6 +18,7 @@ namespace Mirror.EscapeGame
         public List<Gameplayer> gameplayPlayers = new List<Gameplayer>();
         TransitionEffect transition;
         GameLogic gameLogic;
+        public List<GameplayContainer> GetGameplayContainers { get { return gameLogic.gameplayContainers; } }
 
         [SerializeField] GameObject labManager;
 

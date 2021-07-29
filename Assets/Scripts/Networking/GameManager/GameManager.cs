@@ -2,12 +2,73 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Cinemachine;
+using Mirror.EscapeGame.GameplayerSpace;
 namespace Mirror.EscapeGame
 {
     public class GameManager : NetworkBehaviour
     {
         Model model;
+
+        public void GetStartItemCallback(Gameplayer role)
+        {
+            Debug.Log("GetItem in gm, is server : " + isServer);
+        }
+        public void GetCaught(Gameplayer role)
+        {
+
+        }
+        public void GetGoal(Gameplayer role)
+        {
+
+        }
+
+        public void ItemTeleportNext(Gameplayer role, CinemachineConfiner confiner)
+        {
+            // role.currentRoomID--;
+            // // MapObjectData m_data = model.blocks[role.currentRoomID].GetComponent<MapObjectData>();
+            // // confiner.m_BoundingShape2D = m_data.polygonCollider2D;
+            // // role.transform.position = m_data.entrance.position;
+        }
+        public void TeleportNext(Gameplayer role, CinemachineConfiner confiner)
+        {
+            // role.currentRoomID++;
+            // MapObjectData m_data = model.blocks[role.currentRoomID].GetComponent<MapObjectData>();
+            // confiner.m_BoundingShape2D = m_data.polygonCollider2D;
+            // role.transform.position = m_data.entrance.position;
+        }
+        public void TeleportPrev(Gameplayer role, CinemachineConfiner confiner)
+        {
+            // role.currentRoomID--;
+            // MapObjectData m_data = model.blocks[role.currentRoomID].GetComponent<MapObjectData>();
+            // confiner.m_BoundingShape2D = m_data.polygonCollider2D;
+            // role.transform.position = m_data.exit.position;
+        }
+
+        #region Gameplayers
+        [Command]
+        public void CmdInitPlayers()
+        {
+            List<System.Action<Gameplayer>> actions = new List<System.Action<Gameplayer>>();
+            actions.Add(GetStartItemCallback);
+            actions.Add(GetCaught);
+            actions.Add(GetGoal);
+
+            List<System.Action<Gameplayer, CinemachineConfiner>> changeLevelActions = new List<System.Action<Gameplayer, CinemachineConfiner>>();
+            changeLevelActions.Add(TeleportNext);
+            changeLevelActions.Add(TeleportPrev);
+            changeLevelActions.Add(ItemTeleportNext);
+
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                foreach (var p in room.GetGameplayContainers)
+                {
+                    p.self.AssignTeam(p.teamID, actions, changeLevelActions);
+                }
+            }
+
+        }
+        #endregion
 
         #region Rooms
         [Command] public void CmdSetupRooms() => SetupRooms();
@@ -116,9 +177,9 @@ namespace Mirror.EscapeGame
 
         private void Start()
         {
-            GetComponent<NetworkIdentity>().AssignClientAuthority(GetComponent<NetworkIdentity>().connectionToClient);
             CmdSetupRooms();
             CmdSetupStartItems();
+            CmdInitPlayers();
         }
         #endregion
     }
