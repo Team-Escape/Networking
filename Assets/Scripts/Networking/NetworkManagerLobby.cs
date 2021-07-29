@@ -128,7 +128,6 @@ namespace Mirror.EscapeGame
                     case "LabScene":
                         GameObject go = Instantiate(labManager);
                         NetworkServer.Spawn(go, roomSlots[0].GetComponent<NetworkIdentity>().connectionToClient);
-                        GetComponent<NetworkIdentity>().AssignClientAuthority(roomSlots[0].GetComponent<NetworkIdentity>().connectionToClient);
                         break;
                     default:
                         Debug.Log("Scene not registed yet...");
