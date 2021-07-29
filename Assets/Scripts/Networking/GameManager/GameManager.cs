@@ -90,7 +90,8 @@ namespace Mirror.EscapeGame
         }
         public List<int> RandomStartItem()
         {
-            return model.startItemContainers.RandomSeedInt(1);
+            int length = 3;
+            return model.startItemContainers.RandomSeedInt(length);
         }
         public void SpawnStartItems(List<int> _startItems)
         {

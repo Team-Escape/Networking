@@ -55,7 +55,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
 
             selfTransform = transform;
             distToGround = GetComponent<Collider2D>().bounds.extents.y;
-            Debug.Log(distToGround);
         }
         #endregion
 

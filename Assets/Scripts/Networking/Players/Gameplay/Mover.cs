@@ -221,9 +221,11 @@ namespace Mirror.EscapeGame.GameplayerSpace
                 CurrentGroundState = GroundState.Air;
                 isFalling = true;
             }
+            Debug.DrawRay(transform.position, -Vector3.up * (model.distToGround + model.distToGroundOffset), Color.red);
 
             if (OnAnyGrounded)
             {
+                Debug.Log("OnAnyGrounded");
                 jumpTimeCounter = 0;
                 isFalling = false;
                 isJumping = false;
