@@ -21,6 +21,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
 
         #region Callbacks
         List<Action<Gameplayer>> gameActions = null;
+        [Command] void CmdStartItemCallback(GameObject go) => StartItemCallback(go);
         void StartItemCallback(GameObject go)
         {
             NetworkServer.Destroy(go);
@@ -156,7 +157,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
                     case "Balloon":
                         if (input.GetButtonDown("Item"))
                         {
-                            control.GetStartItem(other.gameObject, StartItemCallback);
+                            control.GetStartItem(other.gameObject, CmdStartItemCallback);
                         }
                         break;
                     default:
