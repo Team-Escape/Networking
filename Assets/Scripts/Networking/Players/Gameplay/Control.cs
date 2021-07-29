@@ -57,7 +57,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
         }
         public void AssignControllerType(bool isKeyboard)
         {
-            Debug.Log(view);
             view.Init(isKeyboard);
             isInputKeyboard = isKeyboard;
         }
@@ -74,6 +73,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
         {
             if (model.hasGotStartItem == false)
             {
+                Debug.Log("step one");
                 view.UpdateHintUI(false);
                 model.hasGotStartItem = true;
 
@@ -122,6 +122,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
                         break;
                 }
 
+                Debug.Log("step two");
                 callback(go);
             }
         }
@@ -165,7 +166,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
         #region Mover
         public void Jump(bool isJumping)
         {
-            Debug.Log(isJumping);
             mover.SetJumping(isJumping);
         }
         public void Run(bool isRunning)

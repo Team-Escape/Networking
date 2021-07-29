@@ -154,6 +154,16 @@ namespace Mirror.EscapeGame.GameplayerSpace
                     rb.DoMove(Vector2.zero);
                     break;
             }
+
+            if (OnAnyGrounded)
+            {
+                jumpTimeCounter = 0;
+                isFalling = false;
+                isJumping = false;
+                ableToJump = true;
+                isWallJumping = false;
+                isDoubleJumping = false;
+            }
         }
 
         public void GroundStateContinuous(GroundState newState)
@@ -220,17 +230,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
             {
                 CurrentGroundState = GroundState.Air;
                 isFalling = true;
-            }
-            Debug.DrawRay(transform.position, -Vector3.up * (model.distToGround + model.distToGroundOffset), Color.red);
-
-            if (OnAnyGrounded)
-            {
-                jumpTimeCounter = 0;
-                isFalling = false;
-                isJumping = false;
-                ableToJump = true;
-                isWallJumping = false;
-                isDoubleJumping = false;
             }
         }
 
