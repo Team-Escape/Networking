@@ -238,13 +238,13 @@ MonoBehaviour:
   selfTransform: {fileID: 0}
   characterSize: 1
   distToGround: 0
-  distToGroundOffset: 0.05
+  distToGroundOffset: 0.1
   distToWall: 0
-  distToWallOffset: -0.2
+  distToWallOffset: -0.1
   moveSpeed: 10
   jumpTime: 0.3
   jumpForce: 15
-  wallJumpForce: {x: 10, y: 20}
+  wallJumpForce: {x: 7, y: 20}
   wallJumpTime: 0.2
   dashPower: 25
   endurance: 3

@@ -224,7 +224,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
 
             if (OnAnyGrounded)
             {
-                Debug.Log("OnGrounded");
                 jumpTimeCounter = 0;
                 isFalling = false;
                 isJumping = false;
