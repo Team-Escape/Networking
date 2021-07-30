@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Mirror.EscapeGame
 {
@@ -8,6 +9,7 @@ namespace Mirror.EscapeGame
     {
         public List<GameObject> blocksList { get; set; }
         public int roomSize = 5;
+        [HideInInspector]
         public Transform startRoom = null;
         public BlockContainer blocks;
 
@@ -19,6 +21,10 @@ namespace Mirror.EscapeGame
 
         public List<GameObject> starItems;
         public List<StartItemContainer> startItemContainers;
+
+        public Tilemap startRoomTilemap = null;
+        public Vector3Int[] wallDestoryInEscape = null;
+        public Vector3Int[] wallDestoryInHunter = null;
     }
 
     [System.Serializable]

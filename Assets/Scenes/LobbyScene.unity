@@ -566,7 +566,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   folderPaths:
   - Roles
-  - Game/Managers
+  - Game/Lab/Managers
   - Game/Lab/Rooms
   - Game/Lab/Destination
 --- !u!1 &1302591279

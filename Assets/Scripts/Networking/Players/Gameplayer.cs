@@ -15,8 +15,13 @@ namespace Mirror.EscapeGame.GameplayerSpace
         #endregion
 
         #region Classes Variables
-        Player input = null;
+        public Player input = null;
         Control control = null;
+        #endregion
+
+        #region HunterGame
+        public HunterGameSetup hunterGameSetup;
+        public HunterGamePlayer hunterGamePlayer;
         #endregion
 
         #region Callbacks

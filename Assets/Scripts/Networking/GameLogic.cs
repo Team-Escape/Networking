@@ -17,7 +17,7 @@ namespace Mirror.EscapeGame
         public void AddContainers(List<RoomPlayer> players)
         {
             int rnd = players.RandomInt();
-            RoomBlockData roomBlockData = FindObjectOfType<RoomBlockData>();
+            StartRoomData roomBlockData = FindObjectOfType<StartRoomData>();
             for (int i = 0; i < players.Count; i++)
             {
                 GameplayContainer container = new GameplayContainer();
@@ -33,6 +33,7 @@ namespace Mirror.EscapeGame
                 }
                 gameplayContainers.Add(container);
             }
+            Debug.Log(gameplayContainers.Count);
         }
     }
 

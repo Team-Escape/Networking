@@ -137,3 +137,22 @@ MonoBehaviour:
     name: Shield
   - image: {fileID: 21300000, guid: 3247de27544fa49938e810d50a01fa7d, type: 3}
     name: EnergyDringk
+  startRoomTilemap: {fileID: 0}
+  wallDestoryInEscape:
+  - {x: -1, y: -3, z: 0}
+  - {x: -1, y: -2, z: 0}
+  - {x: -1, y: -1, z: 0}
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: -3, z: 0}
+  - {x: 1, y: -2, z: 0}
+  - {x: 1, y: -1, z: 0}
+  - {x: 1, y: 0, z: 0}
+  wallDestoryInHunter:
+  - {x: 18, y: -3, z: 0}
+  - {x: 18, y: -2, z: 0}
+  - {x: 18, y: -1, z: 0}
+  - {x: 18, y: 0, z: 0}
+  - {x: 19, y: -3, z: 0}
+  - {x: 19, y: -2, z: 0}
+  - {x: 19, y: -1, z: 0}
+  - {x: 19, y: 0, z: 0}

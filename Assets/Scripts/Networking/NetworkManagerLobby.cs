@@ -26,6 +26,16 @@ namespace Mirror.EscapeGame
 
         string gameScene = "";
 
+        public Gameplayer GetHunterGameplayer()
+        {
+            foreach (Gameplayer gp in gameplayPlayers)
+            {
+                if (gp.teamID == 1)
+                    return gp;
+            }
+            return null;
+        }
+
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             transition.MaskOut();
@@ -135,11 +145,10 @@ namespace Mirror.EscapeGame
                 }
 
                 int index = 0;
+                gameLogic.Init(roomSlots);
                 foreach (RoomPlayer player in roomSlots)
                 {
                     var _conn = player.connectionToClient;
-
-                    gameLogic.Init(roomSlots);
 
                     GameObject go = Instantiate(
                         Resources.Load("Roles/" + player.selectedRoleName) as GameObject,

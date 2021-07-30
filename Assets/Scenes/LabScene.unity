@@ -39567,7 +39567,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6676021362753122371}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f6156d83487045c0a16ec23610def8c, type: 3}
+  m_Script: {fileID: 11500000, guid: c4f086e6a8cf9451096901f40e14aa7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
@@ -39577,6 +39577,7 @@ MonoBehaviour:
   hunterSpawn: {fileID: 789615053}
   escapeSpawn: {fileID: 1315677341}
   polygonCollider2D: {fileID: 7559501930576553630}
+  startRoomTilemap: {fileID: 6676021362030160016}
 --- !u!1 &6975487865368732745
 GameObject:
   m_ObjectHideFlags: 0

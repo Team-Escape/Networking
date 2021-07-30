@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.Tilemaps;
 
-public class RoomBlockData : MonoBehaviour
+public class StartRoomData : MonoBehaviour
 {
     public int id;
     public Transform endPoint;
@@ -9,4 +10,5 @@ public class RoomBlockData : MonoBehaviour
     public Transform hunterSpawn;
     public Transform escapeSpawn;
     public PolygonCollider2D polygonCollider2D;
+    public Tilemap startRoomTilemap;
 }

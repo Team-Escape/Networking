@@ -4,15 +4,77 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using Mirror.EscapeGame.GameplayerSpace;
+
 namespace Mirror.EscapeGame
 {
     public class GameManager : NetworkBehaviour
     {
         Model model;
+        StartRoomData startRoomData;
+        int gotStartItemPlayers = 0;
+
+        [Command]
+        public void CmdHunterGameInit()
+        {
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                NetworkConnection conn = room.GetHunterGameplayer().connectionToClient;
+                RpcHunterGameInit(conn);
+            }
+        }
+
+        [TargetRpc]
+        public void RpcHunterGameInit(NetworkConnection conn)
+        {
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                Gameplayer p = room.GetHunterGameplayer();
+                p.hunterGameSetup.Generator(p.input, CmdGameStart);
+            }
+        }
+
+        [Command] public void CmdGameStart() => RpcGameStart();
+        [ClientRpc]
+        public void RpcGameStart()
+        {
+            DesroyDoorsTile();
+        }
+
+        public void DesroyDoorsTile()
+        {
+            StartCoroutine(OpenEscaperRoomsDoor());
+            StartCoroutine(OpenHunterRoomsDoor());
+        }
+        public IEnumerator OpenEscaperRoomsDoor()
+        {
+            foreach (Vector3Int pos in model.wallDestoryInEscape)
+            {
+                yield return new WaitForSeconds(0.1f);
+                model.startRoomTilemap.SetTile(pos, null);
+            }
+            yield return null;
+        }
+        public IEnumerator OpenHunterRoomsDoor()
+        {
+            foreach (Vector3Int pos in model.wallDestoryInHunter)
+            {
+                yield return new WaitForSeconds(0.1f);
+                model.startRoomTilemap.SetTile(pos, null);
+            }
+            yield return null;
+        }
 
         public void GetStartItemCallback(Gameplayer role)
         {
-            Debug.Log("GetItem in gm, is server : " + isServer);
+            gotStartItemPlayers++;
+            if (NetworkManager.singleton is NetworkManagerLobby room)
+            {
+                if (gotStartItemPlayers >= (room.roomSlots.Count - 1))
+                {
+                    Gameplayer _game = room.GetHunterGameplayer();
+                    _game.hunterGameSetup.Generator(_game.input, DesroyDoorsTile);
+                }
+            }
         }
         public void GetCaught(Gameplayer role)
         {
@@ -49,6 +111,12 @@ namespace Mirror.EscapeGame
         [Command]
         public void CmdInitPlayers()
         {
+            RpcInitPlayers();
+        }
+
+        [ClientRpc]
+        public void RpcInitPlayers()
+        {
             List<System.Action<Gameplayer>> actions = new List<System.Action<Gameplayer>>();
             actions.Add(GetStartItemCallback);
             actions.Add(GetCaught);
@@ -66,7 +134,6 @@ namespace Mirror.EscapeGame
                     p.self.AssignTeam(p.teamID, actions, changeLevelActions);
                 }
             }
-
         }
         #endregion
 
@@ -134,7 +201,7 @@ namespace Mirror.EscapeGame
             model.blocksList = blocks;
             for (int i = 1; i < model.blocksList.Count; i++)
             {
-                Vector2 pos = (i == 1) ? model.blocksList[i - 1].GetComponent<RoomBlockData>().endPoint.position + new Vector3(100, 100, 0) : model.blocksList[i - 1].GetComponent<MapObjectData>().endpoint.position + new Vector3(100, 100, 0);
+                Vector2 pos = (i == 1) ? model.blocksList[i - 1].GetComponent<StartRoomData>().endPoint.position + new Vector3(100, 100, 0) : model.blocksList[i - 1].GetComponent<MapObjectData>().endpoint.position + new Vector3(100, 100, 0);
                 GameObject go = Instantiate(blocks[i], pos, Quaternion.identity);
                 NetworkServer.Spawn(go);
                 model.blocksList[i] = go;
@@ -156,6 +223,7 @@ namespace Mirror.EscapeGame
         }
         public void SpawnStartItems(List<int> _startItems)
         {
+            Debug.Log(_startItems);
             for (int i = 0; i < model.starItems.Count; i++)
             {
                 int rnd = _startItems[i];
@@ -170,16 +238,20 @@ namespace Mirror.EscapeGame
         private void Awake()
         {
             model = GetComponent<Model>();
-            model.startRoom = FindObjectOfType<RoomBlockData>().transform;
+            startRoomData = FindObjectOfType<StartRoomData>();
+            model.startRoom = startRoomData.transform;
             model.starItems = GameObject.FindGameObjectsWithTag("StartItem").ToList();
-            Debug.Log(model.starItems.Count);
+            model.startRoomTilemap = startRoomData.startRoomTilemap;
         }
 
         private void Start()
         {
-            CmdSetupRooms();
-            CmdSetupStartItems();
-            CmdInitPlayers();
+            if (isServer)
+            {
+                CmdSetupRooms();
+                CmdSetupStartItems();
+                CmdInitPlayers();
+            }
         }
         #endregion
     }
