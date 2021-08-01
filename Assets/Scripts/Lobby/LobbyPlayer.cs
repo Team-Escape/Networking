@@ -38,8 +38,8 @@ namespace Photon.Pun.Escape.Lobby
         }
         private void Update()
         {
-            SelectIndexListener();
             if (pv.IsMine == false) return;
+            SelectIndexListener();
             if (LobbyManager.instance is LobbyManager lobby)
             {
                 if (input.GetButtonDown("SelectR"))
