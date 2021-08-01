@@ -11,14 +11,14 @@ namespace Photon.Pun.Escape.Lobby
         public static LobbyManager instance;
 
         [Header("UI")]
-        [SerializeField] Transform uiContainer;
         [SerializeField] Transform roleContainer;
         [SerializeField] Transform mapContainer;
 
         [Header("Photon Related")]
-        [SerializeField] GameObject lobbyPlayer;
+        [SerializeField] GameObject lobbyPlayerPrefab;
 
         PhotonView pv;
+        List<LobbyPlayer> lobbyPlayers = new List<LobbyPlayer>();
 
         #region IPunObservable implementation
 
@@ -26,13 +26,11 @@ namespace Photon.Pun.Escape.Lobby
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(roleContainer);
-                stream.SendNext(mapContainer);
+                // stream.SendNext(punPlayers);
             }
             else
             {
-                this.roleContainer = (Transform)stream.ReceiveNext();
-                this.mapContainer = (Transform)stream.ReceiveNext();
+                // this.punPlayers = (List<Realtime.Player>)stream.ReceiveNext();
             }
         }
         #endregion
@@ -55,13 +53,38 @@ namespace Photon.Pun.Escape.Lobby
         #endregion
 
         #region Public Methods
-        public void OnNewPlayerJoined(int id)
+        public void SpawnPlayer()
         {
-            pv.RPC("ActiveRoleUI", RpcTarget.All, id, 0, true);
+            PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
         }
+        public void OnNewPlayerJoined(int newPlayer, LobbyPlayer lbbyplayer)
+        {
+            lobbyPlayers.Add(lbbyplayer);
+
+            pv.RPC("SyncUI", RpcTarget.All);
+        }
+        [PunRPC]
         public void SyncUI()
         {
-
+            int index = 0;
+            foreach (var p in lobbyPlayers)
+            {
+                int id = lobbyPlayers[index].id;
+                int selectIndex = p.selectIndex;
+                switch (p.selectState)
+                {
+                    case 0:
+                        ActiveRoleUI(id, selectIndex, true);
+                        break;
+                    case 1:
+                        ActiveMapUI(id, selectIndex, true);
+                        break;
+                    default:
+                        Debug.Log($"State not registered in {p.selectState}");
+                        break;
+                }
+                index++;
+            }
         }
         [PunRPC]
         public void ActiveRoleUI(int id, int index, bool isActive)

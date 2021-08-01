@@ -25,6 +25,11 @@ namespace Photon.Pun.Escape
         {
             PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
         }
+
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            Debug.LogFormat("OnPlayerEnteredRoom() {0}", newPlayer.NickName);
+        }
         #endregion
 
         #region  PhotonCallbacks
@@ -46,7 +51,7 @@ namespace Photon.Pun.Escape
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             if (LobbyManager.instance is LobbyManager lobby)
             {
-                lobby.OnNewPlayerJoined(PhotonNetwork.LocalPlayer.ActorNumber);
+                lobby.SpawnPlayer();
             }
         }
         #endregion
