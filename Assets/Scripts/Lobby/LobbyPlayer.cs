@@ -14,6 +14,10 @@ namespace Photon.Pun.Escape.Lobby
 
         PhotonView pv;
 
+        private void Awake()
+        {
+            pv = GetComponent<PhotonView>();
+        }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
@@ -27,11 +31,6 @@ namespace Photon.Pun.Escape.Lobby
                 this.selectState = (int)stream.ReceiveNext();
                 this.selectIndex = (int)stream.ReceiveNext();
             }
-        }
-
-        private void Awake()
-        {
-            pv = GetComponent<PhotonView>();
         }
 
         public override void OnEnable()

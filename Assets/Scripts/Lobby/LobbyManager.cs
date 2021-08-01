@@ -23,17 +23,7 @@ namespace Photon.Pun.Escape.Lobby
 
         #region IPunObservable implementation
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.IsWriting)
-            {
-                // stream.SendNext(punPlayers);
-            }
-            else
-            {
-                // this.punPlayers = (List<Realtime.Player>)stream.ReceiveNext();
-            }
-        }
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
         #endregion
 
         #region Unity APIs
@@ -61,11 +51,13 @@ namespace Photon.Pun.Escape.Lobby
         public void OnNewPlayerJoined(LobbyPlayer newPlayer)
         {
             lobbyPlayers.Add(newPlayer);
-            pv.RPC("SyncUI", RpcTarget.All);
+            // pv.RPC("SyncUI", RpcTarget.All);
         }
         public override void OnJoinedRoom()
         {
             PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
+            int id = PhotonNetwork.CurrentRoom.PlayerCount;
+            pv.RPC("ActiveRoleUI", RpcTarget.All, id, 0, true);
         }
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
