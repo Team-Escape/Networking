@@ -6,8 +6,10 @@ using Photon.Realtime;
 namespace Photon.Pun.Escape.Lobby
 {
     using static Photon.Pun.Escape.PhotonSettings;
-    public class LobbyManager : MonoBehaviourPunCallbacks
+    public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
     {
+        public static LobbyManager instance;
+
         [Header("UI")]
         [SerializeField] Transform uiContainer;
         [SerializeField] Transform roleContainer;
@@ -16,22 +18,43 @@ namespace Photon.Pun.Escape.Lobby
         [Header("Photon Related")]
         [SerializeField] GameObject lobbyPlayer;
 
+        PhotonView pv;
+
+        #region IPunObservable implementation
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(roleContainer);
+                stream.SendNext(mapContainer);
+            }
+            else
+            {
+                this.roleContainer = (Transform)stream.ReceiveNext();
+                this.mapContainer = (Transform)stream.ReceiveNext();
+            }
+        }
+        #endregion
+
         #region Unity APIs
         private void Awake()
         {
-            PhotonNetwork.AutomaticallySyncScene = true;
-        }
-        private void Start()
-        {
-            PhotonNetwork.ConnectUsingSettings();
+            pv = GetComponent<PhotonView>();
+
+            if (instance != null)
+            {
+                Destroy(this);
+                return;
+            }
+            else
+            {
+                instance = this;
+            }
         }
         #endregion
 
         #region Public Methods
-        public void CreateRoom()
-        {
-            PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
-        }
         public void SyncUI()
         {
 
@@ -43,29 +66,6 @@ namespace Photon.Pun.Escape.Lobby
         public void ActiveMapUI(int id, int index, bool isActive)
         {
             mapContainer.GetChild(index).GetChild(id).gameObject.SetActive(isActive);
-        }
-        #endregion
-
-        #region  PhotonCallbacks
-        public override void OnConnectedToMaster()
-        {
-            Debug.Log("Pun connected");
-        }
-        public override void OnDisconnected(DisconnectCause cause)
-        {
-            Debug.Log("Pun Disconnected");
-        }
-        public override void OnJoinRandomFailed(short returnCode, string message)
-        {
-            Debug.Log("PUN Basics Tutorial/Launcher:OnJoinRandomFailed() was called by PUN. No random room available, so we create one.\nCalling: PhotonNetwork.CreateRoom");
-            CreateRoom();
-        }
-        public override void OnJoinedRoom()
-        {
-            Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
-            Debug.Log(PhotonNetwork.PlayerList.Length);
-            Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber);
-            ActiveRoleUI(PhotonNetwork.LocalPlayer.ActorNumber, 0, true);
         }
         #endregion
     }

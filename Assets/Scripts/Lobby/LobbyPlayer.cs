@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
 
-namespace Photon.Pun.Escape
+namespace Photon.Pun.Escape.Lobby
 {
     public class LobbyPlayer : MonoBehaviour
     {

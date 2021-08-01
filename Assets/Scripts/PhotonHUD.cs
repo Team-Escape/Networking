@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Photon.Pun.Escape.Lobby
 {
     using static PhotonSettings;
-    [RequireComponent(typeof(LobbyManager))]
+    [RequireComponent(typeof(PhotonManager))]
     public class PhotonHUD : MonoBehaviour
     {
         public bool showGUI = true;

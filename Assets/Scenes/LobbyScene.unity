@@ -314,6 +314,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1214829627}
+  - component: {fileID: 1214829628}
   m_Layer: 0
   m_Name: CoreManager
   m_TagString: Untagged
@@ -336,6 +337,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1214829628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214829626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 542e67c07968e46e4867eeca6559e822, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1217879787
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +358,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1217879788}
+  - component: {fileID: 1217879791}
   - component: {fileID: 1217879789}
   - component: {fileID: 1217879790}
   m_Layer: 0
@@ -383,6 +397,7 @@ MonoBehaviour:
   uiContainer: {fileID: 2060020789}
   roleContainer: {fileID: 1871684725}
   mapContainer: {fileID: 286035320}
+  lobbyPlayer: {fileID: 0}
 --- !u!114 &1217879790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,6 +413,28 @@ MonoBehaviour:
   showGUI: 1
   offsetX: 0
   offsetY: 0
+--- !u!114 &1217879791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217879787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1302591279
 GameObject:
   m_ObjectHideFlags: 0
