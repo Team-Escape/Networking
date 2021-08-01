@@ -55,14 +55,20 @@ namespace Photon.Pun.Escape.Lobby
         #endregion
 
         #region Public Methods
+        public void OnNewPlayerJoined(int id)
+        {
+            pv.RPC("ActiveRoleUI", RpcTarget.All, id, 0, true);
+        }
         public void SyncUI()
         {
 
         }
+        [PunRPC]
         public void ActiveRoleUI(int id, int index, bool isActive)
         {
             roleContainer.GetChild(index).GetChild(id).gameObject.SetActive(isActive);
         }
+        [PunRPC]
         public void ActiveMapUI(int id, int index, bool isActive)
         {
             mapContainer.GetChild(index).GetChild(id).gameObject.SetActive(isActive);

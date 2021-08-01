@@ -46,7 +46,7 @@ namespace Photon.Pun.Escape
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             if (LobbyManager.instance is LobbyManager lobby)
             {
-                lobby.ActiveRoleUI(PhotonNetwork.LocalPlayer.ActorNumber, 0, true);
+                lobby.OnNewPlayerJoined(PhotonNetwork.LocalPlayer.ActorNumber);
             }
         }
         #endregion
