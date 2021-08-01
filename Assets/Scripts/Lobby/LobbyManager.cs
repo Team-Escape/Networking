@@ -11,6 +11,8 @@ namespace Photon.Pun.Escape.Lobby
     {
         public static LobbyManager instance;
 
+        public int RoleLength { get { return roleContainer.childCount; } }
+        public int MapLength { get { return mapContainer.childCount; } }
         [Header("UI")]
         [SerializeField] Transform roleContainer;
         [SerializeField] Transform mapContainer;
@@ -105,6 +107,55 @@ namespace Photon.Pun.Escape.Lobby
                     c1.gameObject.SetActive(false);
                 }
                 index++;
+            }
+        }
+        [PunRPC]
+        public void ChangeState(int newState, int id, int newSelect, int oldSelect)
+        {
+            switch (newState)
+            {
+                case 0:
+                    ActiveMapUI(id, oldSelect, false);
+                    ActiveRoleUI(id, newSelect, true);
+                    break;
+                case 1:
+                    ActiveRoleUI(id, oldSelect, false);
+                    ActiveMapUI(id, newSelect, true);
+                    break;
+                default:
+                    Debug.Log("Current state unregistered.");
+                    break;
+            }
+        }
+        public void ActiveNewUI(LobbyPlayer lobbyPlayer, int newVal, int oldVal)
+        {
+            int id = lobbyPlayer.id;
+            int selectState = lobbyPlayer.selectState;
+
+            pv.RPC("ActiveNewUI", RpcTarget.AllViaServer, selectState, id, newVal, oldVal);
+        }
+        [PunRPC]
+        public void ActiveNewUI(int state, int id, int newSelect, int oldSelect)
+        {
+            Debug.Log("old: " + oldSelect);
+            switch (state)
+            {
+                case 0:
+                    Debug.Log("asff");
+                    roleContainer.GetChild(oldSelect).GetChild(id).gameObject.SetActive(false);
+                    roleContainer.GetChild(newSelect).GetChild(id).gameObject.SetActive(true);
+                    // pv.RPC("ActiveRoleUI", RpcTarget.All, id, oldSelect, false);
+                    // pv.RPC("ActiveRoleUI", RpcTarget.All, id, newSelect, true);
+                    // ActiveRoleUI(id, oldSelect, false);
+                    // ActiveRoleUI(id, newSelect, true);
+                    break;
+                case 1:
+                    ActiveMapUI(id, oldSelect, false);
+                    ActiveMapUI(id, newSelect, true);
+                    break;
+                default:
+                    Debug.Log("Current state unregistered.");
+                    break;
             }
         }
         [PunRPC]

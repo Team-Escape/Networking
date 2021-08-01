@@ -9,16 +9,13 @@ namespace Photon.Pun.Escape.Lobby
     {
         Player input;
         public int id = 0;
-        public int selectState;
-        public int selectIndex;
+        public int selectState = 0;
+        public int selectIndex = 0;
+        public int oldSelectIndex = 0;
 
         PhotonView pv;
 
-        private void Awake()
-        {
-            pv = GetComponent<PhotonView>();
-        }
-
+        #region IPunObservable implementation
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
@@ -32,6 +29,59 @@ namespace Photon.Pun.Escape.Lobby
                 this.selectIndex = (int)stream.ReceiveNext();
             }
         }
+        #endregion
+
+        #region Unity APIs
+        private void Awake()
+        {
+            pv = GetComponent<PhotonView>();
+        }
+        private void Update()
+        {
+            SelectIndexListener();
+            if (pv.IsMine == false) return;
+            if (LobbyManager.instance is LobbyManager lobby)
+            {
+                if (input.GetButtonDown("SelectR"))
+                {
+                    if ((selectIndex + 1) >= (selectState == 0 ? lobby.RoleLength : lobby.MapLength))
+                        return;
+                    selectIndex++;
+                }
+                else if (input.GetButtonDown("SelectL"))
+                {
+                    if ((selectIndex - 1) < 0)
+                        return;
+                    selectIndex--;
+                }
+                else if (input.GetButtonDown("Confirm"))
+                {
+
+                }
+                else if (input.GetButtonDown("Cancel"))
+                {
+
+                }
+            }
+        }
+        #endregion
+
+        private void OnSelectIndexChanged()
+        {
+            if (LobbyManager.instance is LobbyManager lobby)
+            {
+                lobby.ActiveNewUI(this, selectIndex, oldSelectIndex);
+                oldSelectIndex = selectIndex;
+            }
+        }
+
+        private void SelectIndexListener()
+        {
+            if (oldSelectIndex != selectIndex)
+            {
+                OnSelectIndexChanged();
+            }
+        }
 
         public override void OnEnable()
         {
@@ -41,8 +91,6 @@ namespace Photon.Pun.Escape.Lobby
             if (LobbyManager.instance is LobbyManager lobby)
             {
                 lobby.OnNewPlayerJoined(this);
-                selectState = 0;
-                selectIndex = 0;
             }
         }
     }
