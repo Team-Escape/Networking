@@ -39,6 +39,12 @@ namespace Photon.Pun.Escape.Lobby
             input = ReInput.players.GetPlayer(0);
 
             id = PhotonNetwork.CurrentRoom.PlayerCount;
+            if (LobbyManager.instance is LobbyManager lobby)
+            {
+                lobby.OnNewPlayerJoined(this);
+                selectState = 0;
+                selectIndex = 0;
+            }
         }
     }
 }

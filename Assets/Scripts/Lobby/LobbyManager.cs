@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
@@ -68,27 +69,48 @@ namespace Photon.Pun.Escape.Lobby
         }
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
-            PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
+            LobbyPlayer lobbyPlayer = lobbyPlayers.Find(x => x.photonView.IsMine);
+            switch (lobbyPlayer.selectState)
+            {
+                case 0:
+                    pv.RPC("ActiveRoleUI", newPlayer, lobbyPlayer.id, lobbyPlayer.selectIndex, true);
+                    break;
+                case 1:
+                    pv.RPC("ActiveMapUI", newPlayer, lobbyPlayer.id, lobbyPlayer.selectIndex, true);
+                    break;
+            }
         }
         [PunRPC]
         public void SyncUI()
         {
-            int index = 0;
-            foreach (var p in lobbyPlayers)
+            CloseAllUI();
+            lobbyPlayers.ForEach(x =>
             {
-                int id = lobbyPlayers[index].id;
-                int selectIndex = p.selectIndex;
-                switch (p.selectState)
+                switch (x.selectState)
                 {
                     case 0:
-                        ActiveRoleUI(id, selectIndex, true);
+                        ActiveRoleUI(x.id, x.selectIndex, true);
                         break;
                     case 1:
-                        ActiveMapUI(id, selectIndex, true);
+                        ActiveMapUI(x.id, x.selectIndex, true);
                         break;
-                    default:
-                        Debug.Log($"State not registered in {p.selectState}");
-                        break;
+                }
+            });
+        }
+        public void CloseAllUI()
+        {
+            CloseUIBySearchingChildren(roleContainer);
+            CloseUIBySearchingChildren(mapContainer);
+        }
+        public void CloseUIBySearchingChildren(Transform t)
+        {
+            foreach (Transform c in t)
+            {
+                int index = 0;
+                foreach (Transform c1 in c)
+                {
+                    if (index == 0) continue;
+                    c1.gameObject.SetActive(false);
                 }
                 index++;
             }
