@@ -38,6 +38,7 @@ namespace Mirror.EscapeGame
         [ClientRpc]
         public void RpcGameStart()
         {
+            Debug.Log("qopfjwopqfjpo");
             DesroyDoorsTile();
         }
 
