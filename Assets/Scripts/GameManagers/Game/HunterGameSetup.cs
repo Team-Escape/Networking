@@ -28,8 +28,8 @@ namespace Mirror.EscapeGame.GameplayerSpace
             float sizeX = 100 * cam.rect.width;
             float sizeY = sizeX;// 100 * cam.rect.height;
 
-            float width = 1920 / 2 * cam.rect.width;
-            float height = 1080 / 2 * cam.rect.height;
+            float width = Screen.width / 2 * cam.rect.width;
+            float height = Screen.height / 2 * cam.rect.height;
             Vector2 screenSize = new Vector2(width, height);
             Vector2 pos = new Vector2(width, height + sizeY);
             // RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, Vector2.zero, cam, out pos);

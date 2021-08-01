@@ -33,6 +33,7 @@ namespace Mirror.EscapeGame
             }
         }
 
+        public void GameStart() => CmdGameStart();
         [Command] public void CmdGameStart() => RpcGameStart();
         [ClientRpc]
         public void RpcGameStart()
@@ -72,7 +73,7 @@ namespace Mirror.EscapeGame
                 if (gotStartItemPlayers >= (room.roomSlots.Count - 1))
                 {
                     Gameplayer _game = room.GetHunterGameplayer();
-                    _game.hunterGameSetup.Generator(_game.input, DesroyDoorsTile);
+                    _game.hunterGameSetup.Generator(_game.input, RpcGameStart);
                 }
             }
         }

@@ -29,7 +29,8 @@ namespace Mirror.EscapeGame.GameplayerSpace
         [Command] void CmdStartItemCallback(GameObject go) => StartItemCallback(go);
         void StartItemCallback(GameObject go)
         {
-            NetworkServer.Destroy(go);
+            NetworkServer.Destroy(go);//ok
+            RpcBroadCastToAll("get item : " + go.name);
             gameActions[0](this);
         }
         void CaughtCallBack() => gameActions[1](this);
@@ -83,6 +84,8 @@ namespace Mirror.EscapeGame.GameplayerSpace
         }
         public void AssignTeam(int id, List<Action<Gameplayer>> callbacks, List<System.Action<Gameplayer, CinemachineConfiner>> changeLevelCallbacks)
         {
+            Debug.Log("callback + " + callbacks.Count);
+            Debug.Log("changeLevelCallback + " + changeLevelCallbacks.Count);
             control.AssignTeam(id);
             gameActions = callbacks;
             changeLevel = changeLevelCallbacks;
@@ -94,10 +97,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
         {
             control = GetComponent<Control>();
             input = ReInput.players.GetPlayer(0);
-        }
-        private void OnEnable()
-        {
-            // Init();
         }
         private void Update()
         {
@@ -170,7 +169,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
                         break;
                 }
             }
-
             if (other.tag == "GameItem")
             {
                 Spawner spawner = other.GetComponent<Spawner>();
@@ -184,7 +182,6 @@ namespace Mirror.EscapeGame.GameplayerSpace
                     control.SetGameItem(spawner.currentItemID, spawner.ResetItem);
                 }
             }
-
             if (other.tag == "Flag")
             {
                 if (control.IsGoaled()) return;
