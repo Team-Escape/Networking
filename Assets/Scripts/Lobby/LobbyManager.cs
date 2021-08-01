@@ -64,9 +64,11 @@ namespace Photon.Pun.Escape.Lobby
         }
         public override void OnJoinedRoom()
         {
-            base.OnJoinedRoom();
-            GameObject go = Instantiate(lobbyPlayerPrefab);
-            OnNewPlayerJoined(go.GetComponent<LobbyPlayer>());
+            PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
+        }
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
         }
         [PunRPC]
         public void SyncUI()
