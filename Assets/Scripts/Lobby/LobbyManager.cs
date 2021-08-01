@@ -137,17 +137,11 @@ namespace Photon.Pun.Escape.Lobby
         [PunRPC]
         public void ActiveNewUI(int state, int id, int newSelect, int oldSelect)
         {
-            Debug.Log("old: " + oldSelect);
             switch (state)
             {
                 case 0:
-                    Debug.Log("asff");
-                    roleContainer.GetChild(oldSelect).GetChild(id).gameObject.SetActive(false);
-                    roleContainer.GetChild(newSelect).GetChild(id).gameObject.SetActive(true);
-                    // pv.RPC("ActiveRoleUI", RpcTarget.All, id, oldSelect, false);
-                    // pv.RPC("ActiveRoleUI", RpcTarget.All, id, newSelect, true);
-                    // ActiveRoleUI(id, oldSelect, false);
-                    // ActiveRoleUI(id, newSelect, true);
+                    ActiveRoleUI(id, oldSelect, false);
+                    ActiveRoleUI(id, newSelect, true);
                     break;
                 case 1:
                     ActiveMapUI(id, oldSelect, false);

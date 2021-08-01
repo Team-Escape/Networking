@@ -22,11 +22,13 @@ namespace Photon.Pun.Escape.Lobby
             {
                 stream.SendNext(selectState);
                 stream.SendNext(selectIndex);
+                stream.SendNext(oldSelectIndex);
             }
             else
             {
                 this.selectState = (int)stream.ReceiveNext();
                 this.selectIndex = (int)stream.ReceiveNext();
+                this.oldSelectIndex = (int)stream.ReceiveNext();
             }
         }
         #endregion
