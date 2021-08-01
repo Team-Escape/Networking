@@ -22,11 +22,11 @@ namespace Photon.Pun.Escape.Lobby
         void OnGUI()
         {
 #pragma warning disable 618
-            if (!showGUI) return;
+            if (!showGUI || !PhotonNetwork.IsConnected) return;
 #pragma warning restore 618
 
             GUILayout.BeginArea(new Rect(10 + offsetX, 40 + offsetY, 215, 9999));
-            if (PhotonNetwork.IsConnected && !PhotonNetwork.InRoom)
+            if (!PhotonNetwork.InRoom)
             {
                 StartButtons();
             }

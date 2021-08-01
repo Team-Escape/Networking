@@ -8,9 +8,13 @@ namespace Photon.Pun.Escape.Lobby
     using static Photon.Pun.Escape.PhotonSettings;
     public class LobbyManager : MonoBehaviourPunCallbacks
     {
+        [Header("UI")]
         [SerializeField] Transform uiContainer;
         [SerializeField] Transform roleContainer;
         [SerializeField] Transform mapContainer;
+
+        [Header("Photon Related")]
+        [SerializeField] GameObject lobbyPlayer;
 
         #region Unity APIs
         private void Awake()
@@ -27,6 +31,18 @@ namespace Photon.Pun.Escape.Lobby
         public void CreateRoom()
         {
             PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+        }
+        public void SyncUI()
+        {
+
+        }
+        public void ActiveRoleUI(int id, int index, bool isActive)
+        {
+            roleContainer.GetChild(index).GetChild(id).gameObject.SetActive(isActive);
+        }
+        public void ActiveMapUI(int id, int index, bool isActive)
+        {
+            mapContainer.GetChild(index).GetChild(id).gameObject.SetActive(isActive);
         }
         #endregion
 
@@ -47,6 +63,9 @@ namespace Photon.Pun.Escape.Lobby
         public override void OnJoinedRoom()
         {
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
+            Debug.Log(PhotonNetwork.PlayerList.Length);
+            Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber);
+            ActiveRoleUI(PhotonNetwork.LocalPlayer.ActorNumber, 0, true);
         }
         #endregion
     }
