@@ -31,7 +31,7 @@ namespace Mirror.EscapeGame.GameplayerSpace
         {
             NetworkServer.Destroy(go);//ok
             RpcBroadCastToAll("get item : " + go.name);
-            gameActions[0](this);
+            // gameActions[0](this);
         }
         void CaughtCallBack() => gameActions[1](this);
         void GoalCallback() => gameActions[2](this);
