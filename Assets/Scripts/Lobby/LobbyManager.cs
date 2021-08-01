@@ -57,11 +57,16 @@ namespace Photon.Pun.Escape.Lobby
         {
             PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
         }
-        public void OnNewPlayerJoined(int newPlayer, LobbyPlayer lbbyplayer)
+        public void OnNewPlayerJoined(LobbyPlayer newPlayer)
         {
-            lobbyPlayers.Add(lbbyplayer);
-
+            lobbyPlayers.Add(newPlayer);
             pv.RPC("SyncUI", RpcTarget.All);
+        }
+        public override void OnJoinedRoom()
+        {
+            base.OnJoinedRoom();
+            GameObject go = Instantiate(lobbyPlayerPrefab);
+            OnNewPlayerJoined(go.GetComponent<LobbyPlayer>());
         }
         [PunRPC]
         public void SyncUI()

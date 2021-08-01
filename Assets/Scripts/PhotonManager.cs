@@ -49,10 +49,6 @@ namespace Photon.Pun.Escape
         public override void OnJoinedRoom()
         {
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
-            if (LobbyManager.instance is LobbyManager lobby)
-            {
-                lobby.SpawnPlayer();
-            }
         }
         #endregion
     }
