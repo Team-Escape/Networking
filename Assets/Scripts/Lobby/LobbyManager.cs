@@ -20,7 +20,7 @@ namespace Photon.Pun.Escape.Lobby
         [Header("Photon Related")]
         [SerializeField] GameObject lobbyPlayerPrefab;
 
-        PhotonView pv;
+        public PhotonView pv;
         List<LobbyPlayer> lobbyPlayers = new List<LobbyPlayer>();
 
         #region IPunObservable implementation
@@ -77,7 +77,31 @@ namespace Photon.Pun.Escape.Lobby
         [PunRPC]
         public void SyncUI()
         {
-            CloseAllUI();
+            foreach (Transform c in roleContainer)
+            {
+                Debug.Log(c.name);
+                int index = 0;
+                foreach (Transform c1 in c)
+                {
+                    index++;
+                    if (index == 1) continue;
+                    Debug.Log(c1.name);
+                    c1.gameObject.SetActive(false);
+                }
+            }
+            foreach (Transform c in mapContainer)
+            {
+                Debug.Log(c.name);
+                int index = 0;
+                foreach (Transform c1 in c)
+                {
+                    index++;
+                    if (index == 1) continue;
+                    Debug.Log(c1.name);
+                    c1.gameObject.SetActive(false);
+                    index++;
+                }
+            }
             lobbyPlayers.ForEach(x =>
             {
                 switch (x.selectState)
@@ -90,24 +114,6 @@ namespace Photon.Pun.Escape.Lobby
                         break;
                 }
             });
-        }
-        public void CloseAllUI()
-        {
-            CloseUIBySearchingChildren(roleContainer);
-            CloseUIBySearchingChildren(mapContainer);
-        }
-        public void CloseUIBySearchingChildren(Transform t)
-        {
-            foreach (Transform c in t)
-            {
-                int index = 0;
-                foreach (Transform c1 in c)
-                {
-                    if (index == 0) continue;
-                    c1.gameObject.SetActive(false);
-                }
-                index++;
-            }
         }
         [PunRPC]
         public void ChangeState(int newState, int id, int newSelect, int oldSelect)

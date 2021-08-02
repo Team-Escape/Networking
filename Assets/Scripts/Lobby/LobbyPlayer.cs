@@ -72,7 +72,7 @@ namespace Photon.Pun.Escape.Lobby
         {
             if (LobbyManager.instance is LobbyManager lobby)
             {
-                lobby.ActiveNewUI(this, selectIndex, oldSelectIndex);
+                lobby.pv.RPC("SyncUI", RpcTarget.All);
                 oldSelectIndex = selectIndex;
             }
         }
