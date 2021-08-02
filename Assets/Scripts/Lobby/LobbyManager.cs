@@ -141,9 +141,7 @@ namespace Photon.Pun.Escape.Lobby
             {
                 case 0:
                     pv.RPC("ActiveRoleUI", RpcTarget.All, id, oldSelect, false);
-                    pv.RPC("ActiveRoleUI", RpcTarget.All, id, newSelect, true);
-                    // ActiveRoleUI(id, oldSelect, false);
-                    // ActiveRoleUI(id, newSelect, true);
+                    // pv.RPC("ActiveRoleUI", RpcTarget.All, id, newSelect, true);
                     break;
                 case 1:
                     ActiveMapUI(id, oldSelect, false);
