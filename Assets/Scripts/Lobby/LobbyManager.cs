@@ -48,6 +48,7 @@ namespace Photon.Pun.Escape.Lobby
         private void Start()
         {
             PhotonNetwork.NetworkingClient.EventReceived += NetworkingClient_EventRecevied_Select;
+            PhotonNetwork.NetworkingClient.EventReceived += NetworkingClient_EventRecevied_State;
         }
 
 
