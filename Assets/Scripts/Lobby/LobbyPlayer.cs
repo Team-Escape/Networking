@@ -72,6 +72,7 @@ namespace Photon.Pun.Escape.Lobby
         {
             if (LobbyManager.instance is LobbyManager lobby)
             {
+                Debug.Log("change check");
                 lobby.pv.RPC("SyncUI", RpcTarget.All);
                 oldSelectIndex = selectIndex;
             }
@@ -79,9 +80,12 @@ namespace Photon.Pun.Escape.Lobby
 
         private void SelectIndexListener()
         {
-            if (oldSelectIndex != selectIndex)
+            if (pv.IsMine)
             {
-                OnSelectIndexChanged();
+                if (oldSelectIndex != selectIndex)
+                {
+                    OnSelectIndexChanged();
+                }
             }
         }
 

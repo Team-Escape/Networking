@@ -79,31 +79,29 @@ namespace Photon.Pun.Escape.Lobby
         {
             foreach (Transform c in roleContainer)
             {
-                Debug.Log(c.name);
                 int index = 0;
                 foreach (Transform c1 in c)
                 {
                     index++;
                     if (index == 1) continue;
-                    Debug.Log(c1.name);
                     c1.gameObject.SetActive(false);
                 }
             }
             foreach (Transform c in mapContainer)
             {
-                Debug.Log(c.name);
                 int index = 0;
                 foreach (Transform c1 in c)
                 {
                     index++;
                     if (index == 1) continue;
-                    Debug.Log(c1.name);
                     c1.gameObject.SetActive(false);
                     index++;
                 }
             }
             lobbyPlayers.ForEach(x =>
             {
+                Debug.Log(x.id);
+                Debug.Log(x.selectIndex);
                 switch (x.selectState)
                 {
                     case 0:
