@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 namespace Photon.Pun.Escape.Lobby
 {
-    using static Photon.Pun.Escape.PhotonSettings;
     public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         public static LobbyManager instance;
@@ -21,7 +21,7 @@ namespace Photon.Pun.Escape.Lobby
         [SerializeField] GameObject lobbyPlayerPrefab;
 
         public PhotonView pv;
-        List<LobbyPlayer> lobbyPlayers = new List<LobbyPlayer>();
+        [SerializeField] List<LobbyPlayer> lobbyPlayers = new List<LobbyPlayer>();
 
         #region IPunObservable implementation
 
@@ -42,6 +42,61 @@ namespace Photon.Pun.Escape.Lobby
             {
                 instance = this;
             }
+        }
+        #endregion
+
+        private void Start()
+        {
+            PhotonNetwork.NetworkingClient.EventReceived += NetworkingClient_EventRecevied_Select;
+        }
+
+
+        #region Raise_Event in Selecting Role/Map
+        public const byte SelectChangeEvent = 0;
+        void NetworkingClient_EventRecevied_Select(EventData obj)
+        {
+            if (obj.Code == SelectChangeEvent)
+            {
+                object[] data = (object[])obj.CustomData;
+                int id = (int)data[0];
+                int state = (int)data[1];
+                int oldVal = (int)data[2];
+                int newVal = (int)data[3];
+
+                ActiveNewUI(id, state, newVal, oldVal);
+            }
+        }
+        public void SelectChange(LobbyPlayer target, int oldVal, int newVal)
+        {
+            ActiveNewUI(target.id, target.selectState, newVal, oldVal);
+
+            object[] data = new object[] { target.id, target.selectState, oldVal, newVal };
+            PhotonNetwork.RaiseEvent(SelectChangeEvent, data, RaiseEventOptions.Default, SendOptions.SendUnreliable);
+        }
+        #endregion
+
+        #region Raise_Event in switching Role/Map
+        public const byte SwitchStateEvent = 1;
+        void NetworkingClient_EventRecevied_State(EventData obj)
+        {
+            if (obj.Code == SwitchStateEvent)
+            {
+                object[] data = (object[])obj.CustomData;
+
+                int id = (int)data[0];
+                int newState = (int)data[1];
+                int selectIndex = (int)data[2];
+                int oldSelectIndex = (int)data[3];
+
+                ChangeState(id, newState, selectIndex, oldSelectIndex);
+            }
+        }
+        public void StateChange(LobbyPlayer target, int newState, int selectIndex, int oldSelectIndex)
+        {
+            ChangeState(target.id, newState, selectIndex, oldSelectIndex);
+
+            object[] data = new object[] { target.id, newState, selectIndex, oldSelectIndex };
+            PhotonNetwork.RaiseEvent(SwitchStateEvent, data, RaiseEventOptions.Default, SendOptions.SendUnreliable);
         }
         #endregion
 
@@ -75,46 +130,7 @@ namespace Photon.Pun.Escape.Lobby
             }
         }
         [PunRPC]
-        public void SyncUI()
-        {
-            foreach (Transform c in roleContainer)
-            {
-                int index = 0;
-                foreach (Transform c1 in c)
-                {
-                    index++;
-                    if (index == 1) continue;
-                    c1.gameObject.SetActive(false);
-                }
-            }
-            foreach (Transform c in mapContainer)
-            {
-                int index = 0;
-                foreach (Transform c1 in c)
-                {
-                    index++;
-                    if (index == 1) continue;
-                    c1.gameObject.SetActive(false);
-                    index++;
-                }
-            }
-            lobbyPlayers.ForEach(x =>
-            {
-                Debug.Log(x.id);
-                Debug.Log(x.selectIndex);
-                switch (x.selectState)
-                {
-                    case 0:
-                        ActiveRoleUI(x.id, x.selectIndex, true);
-                        break;
-                    case 1:
-                        ActiveMapUI(x.id, x.selectIndex, true);
-                        break;
-                }
-            });
-        }
-        [PunRPC]
-        public void ChangeState(int newState, int id, int newSelect, int oldSelect)
+        public void ChangeState(int id, int newState, int newSelect, int oldSelect)
         {
             switch (newState)
             {
@@ -126,26 +142,22 @@ namespace Photon.Pun.Escape.Lobby
                     ActiveRoleUI(id, oldSelect, false);
                     ActiveMapUI(id, newSelect, true);
                     break;
+                case 2:
+                    ActiveMapUI(id, oldSelect, false);
+                    break;
                 default:
                     Debug.Log("Current state unregistered.");
                     break;
             }
         }
-        public void ActiveNewUI(LobbyPlayer lobbyPlayer, int newVal, int oldVal)
-        {
-            int id = lobbyPlayer.id;
-            int selectState = lobbyPlayer.selectState;
-
-            pv.RPC("ActiveNewUI", RpcTarget.AllViaServer, selectState, id, newVal, oldVal);
-        }
         [PunRPC]
-        public void ActiveNewUI(int state, int id, int newSelect, int oldSelect)
+        public void ActiveNewUI(int id, int state, int newSelect, int oldSelect)
         {
             switch (state)
             {
                 case 0:
-                    pv.RPC("ActiveRoleUI", RpcTarget.All, id, oldSelect, false);
-                    // pv.RPC("ActiveRoleUI", RpcTarget.All, id, newSelect, true);
+                    ActiveRoleUI(id, oldSelect, false);
+                    ActiveRoleUI(id, newSelect, true);
                     break;
                 case 1:
                     ActiveMapUI(id, oldSelect, false);
@@ -164,6 +176,7 @@ namespace Photon.Pun.Escape.Lobby
         [PunRPC]
         public void ActiveMapUI(int id, int index, bool isActive)
         {
+            Debug.Log("map : " + id + "," + index + "," + isActive);
             mapContainer.GetChild(index).GetChild(id).gameObject.SetActive(isActive);
         }
         #endregion
