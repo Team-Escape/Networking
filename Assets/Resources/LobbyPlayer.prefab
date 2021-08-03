@@ -47,6 +47,8 @@ MonoBehaviour:
   id: 0
   selectState: 0
   selectIndex: 0
+  oldSelectIndex: 0
+  oldSelectState: 0
 --- !u!114 &5537833756781484399
 MonoBehaviour:
   m_ObjectHideFlags: 0

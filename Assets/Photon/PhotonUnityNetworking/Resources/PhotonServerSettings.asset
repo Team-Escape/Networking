@@ -42,6 +42,10 @@ MonoBehaviour:
   - ActiveMapUI
   - ActiveRoleUI
   - SyncUI
+  - ChangeState
+  - ActiveNewUI
+  - CloseAllUIs
+  - ResetIDs
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

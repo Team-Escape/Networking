@@ -7,6 +7,8 @@ namespace Photon.Pun.Escape.Lobby
 {
     public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
     {
+        public PhotonView pv;
+
         Player input;
         public int id = 0;
         public int selectState = 0;
@@ -15,8 +17,6 @@ namespace Photon.Pun.Escape.Lobby
         public int oldSelectState = 0;
 
         bool isSelecting = false;
-
-        PhotonView pv;
 
         #region IPunObservable implementation
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -42,6 +42,16 @@ namespace Photon.Pun.Escape.Lobby
         private void Awake()
         {
             pv = GetComponent<PhotonView>();
+        }
+        private void Start()
+        {
+            input = ReInput.players.GetPlayer(0);
+            id = PhotonNetwork.CurrentRoom.PlayerCount;
+
+            if (LobbyManager.instance is LobbyManager lobby)
+            {
+                lobby.OnNewPlayerJoined(this);
+            }
         }
         private void Update()
         {
@@ -73,6 +83,7 @@ namespace Photon.Pun.Escape.Lobby
         }
         #endregion
 
+        #region Raise_Event
         private void OnSelectStateChanged(int newVal)
         {
             if (LobbyManager.instance is LobbyManager lobby)
@@ -91,7 +102,6 @@ namespace Photon.Pun.Escape.Lobby
                 oldSelectIndex = newVal;
             }
         }
-
         private void Listener()
         {
             if (oldSelectState != selectState)
@@ -103,16 +113,6 @@ namespace Photon.Pun.Escape.Lobby
                 OnSelectIndexChanged(selectIndex);
             }
         }
-
-        public override void OnEnable()
-        {
-            input = ReInput.players.GetPlayer(0);
-
-            id = PhotonNetwork.CurrentRoom.PlayerCount;
-            if (LobbyManager.instance is LobbyManager lobby)
-            {
-                lobby.OnNewPlayerJoined(this);
-            }
-        }
+        #endregion
     }
 }

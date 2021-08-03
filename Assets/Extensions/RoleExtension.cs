@@ -67,10 +67,6 @@ public static class RoleExtension
         yield return new WaitForSeconds(sec);
         callback();
     }
-    public static bool StateCompare<T>(this T source, string name) where T : System.Enum
-    {
-        return ((System.Enum)source == System.Enum.Parse(typeof(T), name, true));
-    }
 }
 public static class RoleAnimationExtension
 {
