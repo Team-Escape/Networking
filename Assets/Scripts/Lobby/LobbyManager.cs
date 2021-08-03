@@ -107,30 +107,77 @@ namespace Photon.Pun.Escape.Lobby
         }
         public void OnNewPlayerJoined(LobbyPlayer newPlayer)
         {
-            Debug.Log(newPlayer.id + " id");
             lobbyPlayers.Add(newPlayer);
-
+            pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
             if (PhotonNetwork.IsMasterClient)
             {
-                pv.RPC("AssignID", RpcTarget.All, new object[] { });
+                SyncAll();
             }
         }
         public void OnPlayerLeft(LobbyPlayer leftPlayer)
         {
-            Debug.Log(leftPlayer.id + " id");
             lobbyPlayers.Remove(leftPlayer);
-
+            pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
             if (PhotonNetwork.IsMasterClient)
             {
-                if (PhotonNetwork.IsMasterClient)
+                SyncAll();
+            }
+        }
+        /// <summary>
+        /// To sync UI and ID 
+        /// </summary>
+        public void SyncAll()
+        {
+            ChangeMineID();
+        }
+        public void ChangeMineID()
+        {
+            int index = 1;
+            foreach (LobbyPlayer p in lobbyPlayers)
+            {
+                p.id = index;
+                pv.RPC("AssignIDToMine", RpcTarget.All, index);
+                index++;
+            }
+            SyncUI();
+        }
+        public void SyncUI()
+        {
+            pv.RPC("CloseAllUIs", RpcTarget.All, new object[] { });
+
+            foreach (Player pp in PhotonNetwork.PlayerList)
+            {
+                LobbyPlayer p = lobbyPlayers.Find(x => x.id == pp.ActorNumber);
+                switch (p.selectState)
                 {
-                    pv.RPC("AssignID", RpcTarget.All, new object[] { });
+                    case 0:
+                        pv.RPC("ActiveRoleUI", RpcTarget.All, p.id, p.selectIndex, true);
+                        // ActiveRoleUI(p.id, p.selectIndex, true);
+                        break;
+                    case 1:
+                        pv.RPC("ActiveMapUI", RpcTarget.All, p.id, p.selectIndex, true);
+                        // ActiveMapUI(p.id, p.selectIndex, true);
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        Debug.Log("Current state unregistered.");
+                        break;
                 }
             }
         }
         #endregion
 
         #region Virtual Methods
+        public override void OnMasterClientSwitched(Player newMasterClient)
+        {
+            base.OnMasterClientSwitched(newMasterClient);
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                SyncAll();
+            }
+        }
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
@@ -162,30 +209,10 @@ namespace Photon.Pun.Escape.Lobby
 
         #region RPCs
         [PunRPC]
-        public void AssignID()
+        public void AssignIDToMine(int id)
         {
-            CloseAllUIs();
-            int index = 1;
-            foreach (LobbyPlayer p in lobbyPlayers)
-            {
-                Debug.Log(p.photonView.IsMine);
-                p.id = index;
-                switch (p.selectState)
-                {
-                    case 0:
-                        ActiveRoleUI(p.id, p.selectIndex, true);
-                        break;
-                    case 1:
-                        ActiveMapUI(p.id, p.selectIndex, true);
-                        break;
-                    case 2:
-                        break;
-                    default:
-                        Debug.Log("Current state unregistered.");
-                        break;
-                }
-                index++;
-            }
+            LobbyPlayer p = lobbyPlayers.Find(x => x.pv.IsMine);
+            p.SyncMyID(id);
         }
         [PunRPC]
         public void CloseAllUIs()

@@ -34,18 +34,17 @@ MonoBehaviour:
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
+  - ActiveMapUI
+  - ActiveNewUI
+  - ActiveRoleUI
+  - AssignIDToMine
+  - ChangeState
   - ClickRpc
+  - CloseAllUIs
   - DestroyRpc
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
-  - ActiveMapUI
-  - ActiveRoleUI
-  - SyncUI
-  - ChangeState
-  - ActiveNewUI
-  - CloseAllUIs
-  - ResetIDs
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

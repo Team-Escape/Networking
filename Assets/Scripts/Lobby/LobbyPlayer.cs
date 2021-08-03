@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 namespace Photon.Pun.Escape.Lobby
 {
@@ -9,8 +11,9 @@ namespace Photon.Pun.Escape.Lobby
     {
         public PhotonView pv;
 
-        Player input;
+        Rewired.Player input;
         public int id = 0;
+
         public int selectState = 0;
         public int selectIndex = 0;
         public int oldSelectIndex = 0;
@@ -36,6 +39,23 @@ namespace Photon.Pun.Escape.Lobby
                 this.oldSelectState = (int)stream.ReceiveNext();
             }
         }
+        public override void OnPlayerPropertiesUpdate(Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+        {
+            base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+            if (!pv.IsMine && targetPlayer == pv.Owner)
+            {
+                id = (int)changedProps["NewID"];
+            }
+        }
+        public void SyncMyID(int id)
+        {
+            if (pv.IsMine)
+            {
+                Hashtable hash = new Hashtable();
+                hash.Add("NewID", PhotonNetwork.LocalPlayer.ActorNumber);
+                PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+            }
+        }
         #endregion
 
         #region Unity APIs
@@ -46,7 +66,11 @@ namespace Photon.Pun.Escape.Lobby
         private void Start()
         {
             input = ReInput.players.GetPlayer(0);
-            id = PhotonNetwork.CurrentRoom.PlayerCount;
+            if (pv.IsMine)
+            {
+                id = PhotonNetwork.LocalPlayer.ActorNumber;
+                Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber);
+            }
 
             if (LobbyManager.instance is LobbyManager lobby)
             {
