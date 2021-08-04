@@ -26,8 +26,6 @@ namespace Photon.Pun.Escape.GM
                 DontDestroyOnLoad(gameObject);
 
                 currentScene = new SceneState();
-                currentScene.Change(SceneManager.GetActiveScene().name);
-                SceneStateManagement();
             }
         }
         void OnEnable()

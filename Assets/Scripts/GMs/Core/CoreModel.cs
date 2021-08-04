@@ -32,7 +32,7 @@ namespace Photon.Pun.Escape.GM
         /// <summary>
         /// Prefabs of players' roles.
         /// </summary>
-        public List<GameObject> playerAvatars { get; set; }
+        public List<Role> playerAvatars { get; set; }
         public GameObject winnersAvatar { get; set; }
         /// <summary>
         /// Store each player's total score.
@@ -43,5 +43,10 @@ namespace Photon.Pun.Escape.GM
         /// </summary>
         public List<int> additiveScores { get; set; }
         #endregion
+    }
+    public struct Role
+    {
+        public Photon.Realtime.Player player;
+        public GameObject avatars;
     }
 }

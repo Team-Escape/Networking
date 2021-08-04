@@ -104,11 +104,39 @@ namespace Photon.Pun.Escape.Lobby
 
             if (PhotonNetwork.IsMasterClient)
             {
+                LoadPlayerAvatars();
                 if (numOfReady >= lobbyPlayers.Count && lobbyPlayers.Count >= minPlayersToStartGame)
                 {
-                    CoreView.instance.ChangeSceneWithMask(() => PhotonNetwork.LoadLevel(MapPoll()));
                 }
             }
+        }
+        public void LoadPlayerAvatars()
+        {
+            List<Role> avatars = new List<Role>();
+
+            foreach (LobbyPlayer p in lobbyPlayers)
+            {
+                if (p.selectState == 2)
+                {
+                    Role r = new Role();
+                    string path = "Game/Gameplayers/" + roleContainer.GetChild(p.roleSelection).name;
+                    r.player = p.pv.Owner;
+                    r.avatars = Resources.Load(path) as GameObject;
+                    avatars.Add(r);
+                }
+                else
+                {
+                    avatars.Add(new Role());
+                }
+            }
+
+            CoreModel.instance.playerAvatars = avatars;
+            foreach (var a in CoreModel.instance.playerAvatars)
+            {
+                Debug.Log(a.avatars + "," + a.player);
+            }
+
+            // PhotonNetwork.LoadLevel(MapPoll());
         }
         public string MapPoll()
         {
