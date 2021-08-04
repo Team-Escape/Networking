@@ -6,7 +6,6 @@ using UnityEngine;
 namespace Photon.Pun.Escape
 {
     using static PhotonSettings;
-    using Lobby;
     public class PhotonManager : MonoBehaviourPunCallbacks
     {
         #region Unity APIs

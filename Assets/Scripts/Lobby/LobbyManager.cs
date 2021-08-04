@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Realtime;
-using ExitGames.Client.Photon;
-using Photon.Pun.Escape.GM;
 
 namespace Photon.Pun.Escape.Lobby
 {
+    using static PhotonSettings;
+    using Photon.Realtime;
+    using Photon.Pun.Escape.GM;
+    using ExitGames.Client.Photon;
     public class LobbyManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         public static LobbyManager instance;
@@ -20,9 +21,9 @@ namespace Photon.Pun.Escape.Lobby
         [SerializeField] Transform mapContainer;
 
         [Header("Photon Related")]
-        [SerializeField] GameObject lobbyPlayerPrefab;
+        [SerializeField] string lobbyPlayerPath = "Lobby/LobbyPlayer";
 
-        public PhotonView pv;
+        PhotonView pv;
         [SerializeField] List<LobbyPlayer> lobbyPlayers = new List<LobbyPlayer>();
 
         #region IPunObservable implementation
@@ -100,9 +101,13 @@ namespace Photon.Pun.Escape.Lobby
         {
             int numOfReady = lobbyPlayers.Where(x => x.selectState == 2).ToList().Count;
             Debug.Log(numOfReady + " players is Ready");
-            if (numOfReady >= lobbyPlayers.Count)
+
+            if (PhotonNetwork.IsMasterClient)
             {
-                CoreView.instance.ChangeSceneWithMask(() => PhotonNetwork.LoadLevel(MapPoll()));
+                if (numOfReady >= lobbyPlayers.Count && lobbyPlayers.Count >= minPlayersToStartGame)
+                {
+                    CoreView.instance.ChangeSceneWithMask(() => PhotonNetwork.LoadLevel(MapPoll()));
+                }
             }
         }
         public string MapPoll()
@@ -127,7 +132,7 @@ namespace Photon.Pun.Escape.Lobby
         }
         public void SpawnPlayer()
         {
-            PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
+            PhotonNetwork.Instantiate(lobbyPlayerPath, Vector3.zero, Quaternion.identity, 0);
         }
         public void DestroyPlayer(Player targetPlayer)
         {
