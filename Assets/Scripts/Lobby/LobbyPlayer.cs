@@ -12,12 +12,15 @@ namespace Photon.Pun.Escape.Lobby
         public PhotonView pv;
 
         Rewired.Player input;
-        public int id = 0;
+        public int id = 1;
 
         public int selectState = 0;
         public int selectIndex = 0;
         public int oldSelectIndex = 0;
         public int oldSelectState = 0;
+
+        public int roleSelection = 0;
+        public int mapSelection = 0;
 
         bool isSelecting = false;
 
@@ -30,6 +33,8 @@ namespace Photon.Pun.Escape.Lobby
                 stream.SendNext(selectIndex);
                 stream.SendNext(oldSelectIndex);
                 stream.SendNext(oldSelectState);
+                stream.SendNext(roleSelection);
+                stream.SendNext(mapSelection);
             }
             else
             {
@@ -37,22 +42,27 @@ namespace Photon.Pun.Escape.Lobby
                 this.selectIndex = (int)stream.ReceiveNext();
                 this.oldSelectIndex = (int)stream.ReceiveNext();
                 this.oldSelectState = (int)stream.ReceiveNext();
+                this.roleSelection = (int)stream.ReceiveNext();
+                this.mapSelection = (int)stream.ReceiveNext();
             }
         }
         public override void OnPlayerPropertiesUpdate(Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
         {
-            base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
             if (!pv.IsMine && targetPlayer == pv.Owner)
             {
                 id = (int)changedProps["NewID"];
+                OnSelectIndexChanged(selectIndex);
             }
         }
         public void SyncMyID(int id)
         {
             if (pv.IsMine)
             {
+                this.id = id;
+                OnSelectIndexChanged(selectIndex);
+
                 Hashtable hash = new Hashtable();
-                hash.Add("NewID", PhotonNetwork.LocalPlayer.ActorNumber);
+                hash.Add("NewID", id);
                 PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
             }
         }
@@ -66,11 +76,6 @@ namespace Photon.Pun.Escape.Lobby
         private void Start()
         {
             input = ReInput.players.GetPlayer(0);
-            if (pv.IsMine)
-            {
-                id = PhotonNetwork.LocalPlayer.ActorNumber;
-                Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber);
-            }
 
             if (LobbyManager.instance is LobbyManager lobby)
             {
@@ -80,6 +85,7 @@ namespace Photon.Pun.Escape.Lobby
         private void Update()
         {
             if (pv.IsMine == false) return;
+
             Listener();
             if (LobbyManager.instance is LobbyManager lobby)
             {
@@ -105,6 +111,14 @@ namespace Photon.Pun.Escape.Lobby
                 }
             }
         }
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            if (LobbyManager.instance is LobbyManager lobby)
+            {
+                lobby.OnPlayerLeft(this);
+            }
+        }
         #endregion
 
         #region Raise_Event
@@ -112,6 +126,19 @@ namespace Photon.Pun.Escape.Lobby
         {
             if (LobbyManager.instance is LobbyManager lobby)
             {
+                switch (newVal)
+                {
+                    case 0:
+                        roleSelection = 0;
+                        break;
+                    case 1:
+                        roleSelection = selectIndex;
+                        mapSelection = 0;
+                        break;
+                    case 2:
+                        mapSelection = selectIndex;
+                        break;
+                }
                 selectIndex = 0;
                 lobby.StateChange(this, newVal, selectIndex, oldSelectIndex);
                 oldSelectState = newVal;

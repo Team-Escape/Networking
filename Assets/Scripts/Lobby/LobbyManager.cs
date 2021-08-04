@@ -25,7 +25,6 @@ namespace Photon.Pun.Escape.Lobby
         [SerializeField] List<LobbyPlayer> lobbyPlayers = new List<LobbyPlayer>();
 
         #region IPunObservable implementation
-
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
         #endregion
 
@@ -96,6 +95,40 @@ namespace Photon.Pun.Escape.Lobby
         #endregion
 
         #region Public Methods
+        public void CheckAllPlayerReady()
+        {
+            int numOfReady = lobbyPlayers.Where(x => x.selectState == 2).ToList().Count;
+            Debug.Log(numOfReady + " players is Ready");
+            if (numOfReady >= lobbyPlayers.Count)
+            {
+                PhotonNetwork.LoadLevel(MapPoll());
+            }
+        }
+        // public void ExchangeRolePrefab()
+        // {
+        //     List<>
+        //     foreach(LobbyPlayer)
+        // }
+        public string MapPoll()
+        {
+            var polls = new Dictionary<string, int>();
+            List<string> maps = new List<string>();
+
+            foreach (LobbyPlayer p in lobbyPlayers)
+            {
+                maps.Add(mapContainer.GetChild(p.mapSelection).name);
+            }
+
+            foreach (string s in maps)
+            {
+                string key = s;
+                if (polls.ContainsKey(key)) continue;
+                polls.Add(key, maps.FindAll(x => x == key).Count);
+            }
+
+            string mapName = polls.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            return mapName;
+        }
         public void SpawnPlayer()
         {
             PhotonNetwork.Instantiate(lobbyPlayerPrefab.name, Vector3.zero, Quaternion.identity, 0);
@@ -103,21 +136,19 @@ namespace Photon.Pun.Escape.Lobby
         public void DestroyPlayer(Player targetPlayer)
         {
             PhotonNetwork.DestroyPlayerObjects(targetPlayer);
-            OnPlayerLeft(lobbyPlayers.Find(x => x.id == targetPlayer.ActorNumber));
         }
         public void OnNewPlayerJoined(LobbyPlayer newPlayer)
         {
             lobbyPlayers.Add(newPlayer);
-            // pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
             if (PhotonNetwork.IsMasterClient)
             {
                 SyncAll();
             }
         }
-        public void OnPlayerLeft(LobbyPlayer leftPlayer)
+        public void OnPlayerLeft(LobbyPlayer _player)
         {
-            lobbyPlayers.Remove(leftPlayer);
-            // pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
+            lobbyPlayers.Remove(_player);
+
             if (PhotonNetwork.IsMasterClient)
             {
                 SyncAll();
@@ -128,6 +159,7 @@ namespace Photon.Pun.Escape.Lobby
         /// </summary>
         public void SyncAll()
         {
+            pv.RPC("CloseAllUIs", RpcTarget.All, new object[] { });
             ChangeMineID();
         }
         public void ChangeMineID()
@@ -136,34 +168,8 @@ namespace Photon.Pun.Escape.Lobby
             foreach (LobbyPlayer p in lobbyPlayers)
             {
                 p.id = index;
-                pv.RPC("AssignIDToMine", RpcTarget.All, index);
+                pv.RPC("AssignIDToMine", p.pv.Owner, index);
                 index++;
-            }
-            SyncUI();
-        }
-        public void SyncUI()
-        {
-            pv.RPC("CloseAllUIs", RpcTarget.All, new object[] { });
-
-            foreach (Player pp in PhotonNetwork.PlayerList)
-            {
-                LobbyPlayer p = lobbyPlayers.Find(x => x.id == pp.ActorNumber);
-                switch (p.selectState)
-                {
-                    case 0:
-                        pv.RPC("ActiveRoleUI", RpcTarget.All, p.id, p.selectIndex, true);
-                        // ActiveRoleUI(p.id, p.selectIndex, true);
-                        break;
-                    case 1:
-                        pv.RPC("ActiveMapUI", RpcTarget.All, p.id, p.selectIndex, true);
-                        // ActiveMapUI(p.id, p.selectIndex, true);
-                        break;
-                    case 2:
-                        break;
-                    default:
-                        Debug.Log("Current state unregistered.");
-                        break;
-                }
             }
         }
         #endregion
@@ -260,6 +266,7 @@ namespace Photon.Pun.Escape.Lobby
                     break;
                 case 2:
                     ActiveMapUI(id, oldSelect, false);
+                    CheckAllPlayerReady();
                     break;
                 default:
                     Debug.Log("Current state unregistered.");
