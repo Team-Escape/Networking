@@ -108,7 +108,7 @@ namespace Photon.Pun.Escape.Lobby
         public void OnNewPlayerJoined(LobbyPlayer newPlayer)
         {
             lobbyPlayers.Add(newPlayer);
-            pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
+            // pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
             if (PhotonNetwork.IsMasterClient)
             {
                 SyncAll();
@@ -117,7 +117,7 @@ namespace Photon.Pun.Escape.Lobby
         public void OnPlayerLeft(LobbyPlayer leftPlayer)
         {
             lobbyPlayers.Remove(leftPlayer);
-            pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
+            // pv.RPC("ChangeMineID", RpcTarget.All, new object[] { });
             if (PhotonNetwork.IsMasterClient)
             {
                 SyncAll();
