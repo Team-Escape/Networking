@@ -18,11 +18,8 @@ namespace Photon.Pun.Escape.Lobby
         public int selectIndex = 0;
         public int oldSelectIndex = 0;
         public int oldSelectState = 0;
-
         public int roleSelection = 0;
         public int mapSelection = 0;
-
-        bool isSelecting = false;
 
         #region IPunObservable implementation
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
+using Photon.Pun.Escape.GM;
 
 namespace Photon.Pun.Escape.Lobby
 {
@@ -101,14 +102,9 @@ namespace Photon.Pun.Escape.Lobby
             Debug.Log(numOfReady + " players is Ready");
             if (numOfReady >= lobbyPlayers.Count)
             {
-                PhotonNetwork.LoadLevel(MapPoll());
+                CoreView.instance.ChangeSceneWithMask(() => PhotonNetwork.LoadLevel(MapPoll()));
             }
         }
-        // public void ExchangeRolePrefab()
-        // {
-        //     List<>
-        //     foreach(LobbyPlayer)
-        // }
         public string MapPoll()
         {
             var polls = new Dictionary<string, int>();

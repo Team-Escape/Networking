@@ -25,14 +25,13 @@ namespace Photon.Pun.Escape
         {
             PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
         }
+        #endregion
 
+        #region  PhotonCallbacks
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             Debug.LogFormat("OnPlayerEnteredRoom() {0}", newPlayer.NickName);
         }
-        #endregion
-
-        #region  PhotonCallbacks
         public override void OnConnectedToMaster()
         {
             Debug.Log("Pun connected");

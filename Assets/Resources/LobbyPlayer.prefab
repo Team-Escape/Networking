@@ -50,6 +50,8 @@ MonoBehaviour:
   selectIndex: 0
   oldSelectIndex: 0
   oldSelectState: 0
+  roleSelection: 0
+  mapSelection: 0
 --- !u!114 &5537833756781484399
 MonoBehaviour:
   m_ObjectHideFlags: 0
