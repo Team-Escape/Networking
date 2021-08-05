@@ -154,6 +154,16 @@ namespace PlayerSpace.Gameplayer
                     rb.DoMove(Vector2.zero);
                     break;
             }
+
+            if (OnAnyGrounded)
+            {
+                jumpTimeCounter = 0;
+                isFalling = false;
+                isJumping = false;
+                ableToJump = true;
+                isWallJumping = false;
+                isDoubleJumping = false;
+            }
         }
 
         public void GroundStateContinuous(GroundState newState)
@@ -221,16 +231,6 @@ namespace PlayerSpace.Gameplayer
                 CurrentGroundState = GroundState.Air;
                 isFalling = true;
             }
-
-            if (OnAnyGrounded)
-            {
-                jumpTimeCounter = 0;
-                isFalling = false;
-                isJumping = false;
-                ableToJump = true;
-                isWallJumping = false;
-                isDoubleJumping = false;
-            }
         }
 
         public void FrontCheck()
@@ -287,7 +287,6 @@ namespace PlayerSpace.Gameplayer
         }
         public void OnEnduranceChanged(float newVal)
         {
-            Debug.Log(newVal / model.maxEndurance);
             view.UpdateEndurancebar(newVal / model.maxEndurance);
         }
         /// <summary>

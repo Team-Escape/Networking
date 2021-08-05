@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PlayerWeapon
+  - StartItem
+  - RoomTeleport
   layers:
   - Default
   - TransparentFX
@@ -13,22 +16,22 @@ TagManager:
   - UI
   - 
   - 
+  - Player
+  - PlayerCollider
+  - P1Cam
+  - P2Cam
+  - P3Cam
+  - P4Cam
+  - HunterGame
+  - Confier
   - 
+  - Ground
+  - IceGround
+  - SlimeGround
+  - Box
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - StartItem
+  - Invisible
   - 
   - 
   - 

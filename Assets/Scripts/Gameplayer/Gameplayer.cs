@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
 using Cinemachine;
+using Photon.Pun;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 namespace PlayerSpace.Gameplayer
 {
-    public class Gameplayer : MonoBehaviour
+    public class Gameplayer : MonoBehaviourPunCallbacks, IPunObservable
     {
         [SerializeField] bool testMode = false;
         #region ID Variables
@@ -16,8 +19,9 @@ namespace PlayerSpace.Gameplayer
         #endregion
 
         #region Classes Variables
-        Player input = null;
+        Rewired.Player input = null;
         Control control = null;
+        PhotonView pv;
         #endregion
 
         #region Callbacks
@@ -49,20 +53,44 @@ namespace PlayerSpace.Gameplayer
         }
         #endregion
 
+        #region IPunObservable implementation
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+            }
+            else
+            {
+            }
+        }
+        public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
+        {
+            if (!pv.IsMine && targetPlayer == pv.Owner)
+            {
+                // id = (int)changedProps["NewID"];
+                // OnSelectIndexChanged(selectIndex);
+            }
+        }
+        #endregion
+
         #region Unity Native APIs
         private void Awake()
         {
             control = GetComponent<Control>();
+            pv = transform.parent.gameObject.GetComponent<PhotonView>();
         }
-        private void OnEnable()
+        public override void OnEnable()
         {
             if (testMode) AssignController(0);
         }
         private void Update()
         {
-            ItemHandler();
-            MoveHandler();
-            CombatHandler();
+            if (pv.IsMine)
+            {
+                ItemHandler();
+                MoveHandler();
+                CombatHandler();
+            }
         }
         #region OnTriggerFuncs
         private void OnTriggerEnter2D(Collider2D other)

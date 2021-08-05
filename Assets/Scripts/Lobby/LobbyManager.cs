@@ -104,13 +104,13 @@ namespace Photon.Pun.Escape.Lobby
 
             if (PhotonNetwork.IsMasterClient)
             {
-                LoadPlayerAvatars();
                 if (numOfReady >= lobbyPlayers.Count && lobbyPlayers.Count >= minPlayersToStartGame)
                 {
+                    LoadGame();
                 }
             }
         }
-        public void LoadPlayerAvatars()
+        public void LoadGame()
         {
             List<Role> avatars = new List<Role>();
 
@@ -119,9 +119,8 @@ namespace Photon.Pun.Escape.Lobby
                 if (p.selectState == 2)
                 {
                     Role r = new Role();
-                    string path = "Game/Gameplayers/" + roleContainer.GetChild(p.roleSelection).name;
                     r.player = p.pv.Owner;
-                    r.avatars = Resources.Load(path) as GameObject;
+                    r.avatars = "Game/Gameplayers/" + roleContainer.GetChild(p.roleSelection).name;
                     avatars.Add(r);
                 }
                 else
@@ -130,13 +129,13 @@ namespace Photon.Pun.Escape.Lobby
                 }
             }
 
-            CoreModel.instance.playerAvatars = avatars;
-            foreach (var a in CoreModel.instance.playerAvatars)
+            CoreModel.instance.avatarsDataStorage = avatars;
+            foreach (var a in CoreModel.instance.avatarsDataStorage)
             {
-                Debug.Log(a.avatars + "," + a.player);
+                Debug.Log("Data storage :\n" + a.avatars + ",\n" + a.player);
             }
 
-            // PhotonNetwork.LoadLevel(MapPoll());
+            PhotonNetwork.LoadLevel(MapPoll());
         }
         public string MapPoll()
         {

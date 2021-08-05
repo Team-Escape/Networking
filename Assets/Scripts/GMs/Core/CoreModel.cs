@@ -30,9 +30,15 @@ namespace Photon.Pun.Escape.GM
 
         #region In-Game datas
         /// <summary>
+        /// Before we instantiate and get gameplayers.
+        /// We storage the player of Pun.Realteim and the avatars name.
+        /// In that case, we would be able to send RPC to target player and instantiate gameplayer.
+        /// </summary>
+        public List<Role> avatarsDataStorage { get; set; }
+        /// <summary>
         /// Prefabs of players' roles.
         /// </summary>
-        public List<Role> playerAvatars { get; set; }
+        public List<GameObject> playerAvatars { get; set; }
         public GameObject winnersAvatar { get; set; }
         /// <summary>
         /// Store each player's total score.
@@ -47,6 +53,6 @@ namespace Photon.Pun.Escape.GM
     public struct Role
     {
         public Photon.Realtime.Player player;
-        public GameObject avatars;
+        public string avatars;
     }
 }

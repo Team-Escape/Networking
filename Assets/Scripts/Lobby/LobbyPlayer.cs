@@ -55,6 +55,7 @@ namespace Photon.Pun.Escape.Lobby
         {
             if (pv.IsMine)
             {
+                Debug.Log("id syncing : " + id);
                 this.id = id;
                 OnSelectIndexChanged(selectIndex);
 
