@@ -7,17 +7,17 @@ namespace Photon.Pun.Escape.GM.Game
 {
     public class Model : MonoBehaviour
     {
-        public List<GameObject> blocksList { get; set; }
+        public List<GameObject> currentGameBlocks { get; set; }
         public int roomSize = 5;
-        [HideInInspector]
-        public Transform startRoom = null;
-        public BlockContainer blocks;
 
+        #region Room Prefabs
+        public BlockContainer blockContainer;
         public Transform destinationRoomUp = null;
         public Transform destinationRoomDown = null;
         public Transform destinationRoomRight = null;
         public Transform destinationRoomLeft = null;
         public Transform destination = null;
+        #endregion
 
         public List<GameObject> starItems;
         public List<StartItemContainer> startItemContainers;

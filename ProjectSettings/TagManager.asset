@@ -4,9 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - MapObject
+  - Flag
   - PlayerWeapon
-  - StartItem
+  - GadgetSpawner
   - RoomTeleport
+  - StartItem
+  - Confiner
+  - DashItem
+  - Fields
   layers:
   - Default
   - TransparentFX

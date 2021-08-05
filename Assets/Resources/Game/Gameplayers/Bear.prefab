@@ -632,8 +632,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 5256499349845889173}
-  - {fileID: 3853175554456445039}
+  - {fileID: 2814354557265937206}
+  - {fileID: 4637877989019730332}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1345,12 +1345,12 @@ GameObject:
   - component: {fileID: 5256499349845889192}
   - component: {fileID: 5256499349845889175}
   - component: {fileID: 5256499349845889174}
-  - component: {fileID: 5256499349845889173}
   - component: {fileID: 5256499349845889172}
   - component: {fileID: 5256499349845889171}
   - component: {fileID: 5256499349845889170}
   - component: {fileID: 5256499349845889194}
-  - component: {fileID: 3853175554456445039}
+  - component: {fileID: 2814354557265937206}
+  - component: {fileID: 4637877989019730332}
   m_Layer: 10
   m_Name: Body
   m_TagString: Player
@@ -1481,22 +1481,6 @@ CapsuleCollider2D:
   m_Offset: {x: -0.09062159, y: -0.19131231}
   m_Size: {x: 1.285388, y: 2.389533}
   m_Direction: 0
---- !u!114 &5256499349845889173
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5256499349845889168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31ca91f361fa740178f4966fc6fc956b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testMode: 1
-  playerID: 0
-  teamID: 0
-  currentRoomID: 0
 --- !u!114 &5256499349845889172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1525,11 +1509,11 @@ MonoBehaviour:
   cam: {fileID: 7574709689565191421}
   rb: {fileID: 0}
   anim: {fileID: 0}
-  confiner: {fileID: 0}
+  confiner: {fileID: 4695792828405419153}
   selfTransform: {fileID: 0}
   characterSize: 1
   distToGround: 0
-  distToGroundOffset: 0.1
+  distToGroundOffset: 0.2
   distToWall: 0
   distToWallOffset: -0.1
   moveSpeed: 10
@@ -1622,7 +1606,7 @@ MonoBehaviour:
   normalStrenght: 5
   normalSmoothing: 1
   computingNormal: 0
---- !u!114 &3853175554456445039
+--- !u!114 &2814354557265937206
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1638,6 +1622,22 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
   m_UseLocal: 1
+--- !u!114 &4637877989019730332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5256499349845889168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31ca91f361fa740178f4966fc6fc956b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testMode: 0
+  playerID: 0
+  teamID: 0
+  currentRoomID: 0
 --- !u!1 &5784030114299952263
 GameObject:
   m_ObjectHideFlags: 0

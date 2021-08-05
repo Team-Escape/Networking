@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PlayerSpace.Gameplayer;
 
 namespace Photon.Pun.Escape.GM.Game
 {
@@ -14,6 +15,18 @@ namespace Photon.Pun.Escape.GM.Game
 
         List<Gameplayer> gameplayers = new List<Gameplayer>();
 
+        public void TeleportNext(Gameplayer role)
+        {
+            role.currentRoomID++;
+            MapObjectData m_data = model.currentGameBlocks[role.currentRoomID].GetComponent<MapObjectData>();
+            role.transform.position = m_data.entrance.position;
+        }
+        public void TeleportPrev(Gameplayer role)
+        {
+            role.currentRoomID--;
+            MapObjectData m_data = model.currentGameBlocks[role.currentRoomID].GetComponent<MapObjectData>();
+            role.transform.position = m_data.entrance.position;
+        }
         #region Unity APIs
         private void Awake()
         {

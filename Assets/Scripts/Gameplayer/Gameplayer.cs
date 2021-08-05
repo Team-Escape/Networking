@@ -13,9 +13,9 @@ namespace PlayerSpace.Gameplayer
     {
         [SerializeField] bool testMode = false;
         #region ID Variables
-        public int playerID = 0;
-        public int teamID = 0;
-        public int currentRoomID = 0;
+        public byte playerID = 0;
+        public byte teamID = 0;
+        public byte currentRoomID = 0;
         #endregion
 
         #region Classes Variables
@@ -36,31 +36,20 @@ namespace PlayerSpace.Gameplayer
         bool isTeleporting = false;
         #endregion
 
-        #region OuterCall
-        public void AssignController(int id)
-        {
-            playerID = id;
-            input = ReInput.players.GetPlayer(playerID);
-
-            bool isKeyboard = input.controllers.joystickCount > 0 ? false : true;
-            control.AssignControllerType(isKeyboard);
-        }
-        public void AssignTeam(int id, List<Action<Gameplayer>> callbacks, List<System.Action<Gameplayer, CinemachineConfiner>> changeLevelCallbacks)
-        {
-            control.AssignTeam(id);
-            gameActions = callbacks;
-            changeLevel = changeLevelCallbacks;
-        }
-        #endregion
-
         #region IPunObservable implementation
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
+                stream.SendNext(playerID);
+                stream.SendNext(teamID);
+                stream.SendNext(currentRoomID);
             }
             else
             {
+                this.playerID = (byte)stream.ReceiveNext();
+                this.teamID = (byte)stream.ReceiveNext();
+                this.currentRoomID = (byte)stream.ReceiveNext();
             }
         }
         public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
@@ -73,15 +62,41 @@ namespace PlayerSpace.Gameplayer
         }
         #endregion
 
+        #region Public Methods
+        public void SetCamera()
+        {
+            Camera.main.enabled = false;
+        }
+        public void AssignController(int controllerID)
+        {
+            input = ReInput.players.GetPlayer(controllerID);
+
+            bool isKeyboard = input.controllers.joystickCount > 0 ? false : true;
+            control.AssignControllerType(isKeyboard);
+        }
+        public void AssignTeam(byte id, List<Action<Gameplayer>> callbacks, List<System.Action<Gameplayer, CinemachineConfiner>> changeLevelCallbacks)
+        {
+            teamID = id;
+            control.AssignTeam(id);
+            gameActions = callbacks;
+            changeLevel = changeLevelCallbacks;
+        }
+        #endregion
+
         #region Unity Native APIs
         private void Awake()
         {
             control = GetComponent<Control>();
-            pv = transform.parent.gameObject.GetComponent<PhotonView>();
+            pv = GetComponentInParent<PhotonView>();
+            SetCamera();
         }
         public override void OnEnable()
         {
             if (testMode) AssignController(0);
+            if (pv.IsMine)
+            {
+                AssignController(0);
+            }
         }
         private void Update()
         {
@@ -97,6 +112,9 @@ namespace PlayerSpace.Gameplayer
         {
             switch (other.tag)
             {
+                case "Confiner":
+                    control.MyConfiner().m_BoundingShape2D = other.GetComponent<PolygonCollider2D>();
+                    break;
                 case "PlayerWeapon":
                     Vector2 force = (transform.position - other.transform.parent.position);
                     control.Hurt(force, CaughtCallBack);

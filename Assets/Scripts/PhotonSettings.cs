@@ -8,6 +8,6 @@ namespace Photon.Pun.Escape
     {
         public static string GameVersion = "0.1.0";
         public static byte maxPlayersPerRoom = 4;
-        public static byte minPlayersToStartGame = 2;
+        public static byte minPlayersToStartGame = 0;
     }
 }

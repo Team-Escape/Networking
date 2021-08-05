@@ -658,7 +658,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 7167425649273878179}
+  - {fileID: 0}
+  - {fileID: 3222048809581130184}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1538,12 +1539,12 @@ GameObject:
   - component: {fileID: 7167425649273878174}
   - component: {fileID: 7167425649273878177}
   - component: {fileID: 7167425649273878176}
-  - component: {fileID: 7167425649273878179}
   - component: {fileID: 7167425649273878178}
   - component: {fileID: 7167425649273878181}
   - component: {fileID: 7167425649273878180}
   - component: {fileID: 7167425649273878172}
   - component: {fileID: 3222048809581130184}
+  - component: {fileID: 9099773966973433945}
   m_Layer: 10
   m_Name: Body
   m_TagString: Player
@@ -1675,22 +1676,6 @@ CapsuleCollider2D:
   m_Offset: {x: -0.09062159, y: -0.19131231}
   m_Size: {x: 1.285388, y: 2.389533}
   m_Direction: 0
---- !u!114 &7167425649273878179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7167425649273878182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31ca91f361fa740178f4966fc6fc956b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testMode: 1
-  playerID: 0
-  teamID: 0
-  currentRoomID: 0
 --- !u!114 &7167425649273878178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1719,7 +1704,7 @@ MonoBehaviour:
   cam: {fileID: 4799675831748328139}
   rb: {fileID: 0}
   anim: {fileID: 0}
-  confiner: {fileID: 0}
+  confiner: {fileID: 7687599874999741095}
   selfTransform: {fileID: 0}
   characterSize: 1
   distToGround: 0
@@ -1832,6 +1817,22 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
   m_UseLocal: 1
+--- !u!114 &9099773966973433945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7167425649273878182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31ca91f361fa740178f4966fc6fc956b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testMode: 0
+  playerID: 0
+  teamID: 0
+  currentRoomID: 0
 --- !u!1 &7846068064431350307
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ namespace PlayerSpace.Gameplayer
 {
     public class Control : MonoBehaviour
     {
+        public CinemachineConfiner MyConfiner() => model.confiner;
         public bool IsItemNull() => (itemHandler.GameItemControl == null);
         public bool IsGoaled() => isGoaled;
         public CinemachineConfiner GetConfiner() => model.confiner;
