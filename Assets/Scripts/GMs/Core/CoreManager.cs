@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Rewired;
+using Photon.Pun.Escape.GM.Game;
 
 namespace Photon.Pun.Escape.GM
 {
+    using Photon.Pun.Escape.Lobby;
     public enum SceneState { LobbyScene, LabScene, ScoreScene, AwardScene };
     public class CoreManager : MonoBehaviour
     {
@@ -52,6 +54,8 @@ namespace Photon.Pun.Escape.GM
                     ChangeInputMap("Default");
                     break;
                 case SceneState.LabScene:
+                    Debug.Log("loaded on core");
+                    GameManager.instance.Loaded(currentScene.ToString());
                     ChangeInputMap("Gameplay");
                     break;
                 case SceneState.ScoreScene:

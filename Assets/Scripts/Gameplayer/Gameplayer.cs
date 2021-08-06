@@ -69,10 +69,13 @@ namespace PlayerSpace.Gameplayer
         }
         public void AssignController(int controllerID)
         {
-            input = ReInput.players.GetPlayer(controllerID);
+            if (pv.IsMine)
+            {
+                input = ReInput.players.GetPlayer(controllerID);
 
-            bool isKeyboard = input.controllers.joystickCount > 0 ? false : true;
-            control.AssignControllerType(isKeyboard);
+                bool isKeyboard = input.controllers.joystickCount > 0 ? false : true;
+                control.AssignControllerType(isKeyboard);
+            }
         }
         public void AssignTeam(byte id, List<Action<Gameplayer>> callbacks, List<System.Action<Gameplayer, CinemachineConfiner>> changeLevelCallbacks)
         {
@@ -93,14 +96,10 @@ namespace PlayerSpace.Gameplayer
         public override void OnEnable()
         {
             if (testMode) AssignController(0);
-            if (pv.IsMine)
-            {
-                AssignController(0);
-            }
         }
         private void Update()
         {
-            if (pv.IsMine)
+            if (pv.IsMine && input != null)
             {
                 ItemHandler();
                 MoveHandler();

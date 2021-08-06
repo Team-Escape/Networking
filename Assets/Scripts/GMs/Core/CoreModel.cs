@@ -35,10 +35,6 @@ namespace Photon.Pun.Escape.GM
         /// In that case, we would be able to send RPC to target player and instantiate gameplayer.
         /// </summary>
         public List<Role> avatarsDataStorage { get; set; }
-        /// <summary>
-        /// Prefabs of players' roles.
-        /// </summary>
-        public List<GameObject> playerAvatars { get; set; }
         public GameObject winnersAvatar { get; set; }
         /// <summary>
         /// Store each player's total score.
