@@ -264,18 +264,15 @@ namespace Photon.Pun.Escape.GM.Game
         [PunRPC]
         public void SpawnRoomBlock(object[] data)
         {
-            if (pv.IsMine)
-            {
-                string name = (string)data[0];
-                int id = (int)data[1];
-                float x = (float)data[2];
-                float y = (float)data[3];
+            string name = (string)data[0];
+            int id = (int)data[1];
+            float x = (float)data[2];
+            float y = (float)data[3];
 
-                GameObject go = Instantiate(Resources.Load(name) as GameObject);
-                go.transform.position = new Vector3(x, y, 0);
-                go.GetComponent<MapObjectData>().id = id;
-                model.currentGameBlocks[id] = go;
-            }
+            GameObject go = Instantiate(Resources.Load(name) as GameObject);
+            go.transform.position = new Vector3(x, y, 0);
+            go.GetComponent<MapObjectData>().id = id;
+            model.currentGameBlocks[id] = go;
         }
         [PunRPC]
         public void AssignStartItems(object[] data)
