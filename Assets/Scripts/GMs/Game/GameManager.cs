@@ -136,8 +136,8 @@ namespace Photon.Pun.Escape.GM.Game
         IEnumerator GameSetupCoroutine()
         {
             yield return StartCoroutine(RandomStartItems());
-            // yield return StartCoroutine(RandomRoomsList());
-            // yield return StartCoroutine(RoomsInstantiate());
+            yield return StartCoroutine(RandomRoomsList());
+            yield return StartCoroutine(RoomsInstantiate());
             yield return StartCoroutine(SpawnPlayerCoroutine());
         }
         IEnumerator RandomStartItems()
@@ -232,8 +232,8 @@ namespace Photon.Pun.Escape.GM.Game
         {
             foreach (Role r in CoreModel.instance.avatarsDataStorage)
             {
-                object[] data = new object[] { r.avatars };
-                pv.RPC("SpawnMyGameplayer", r.player, data);
+                // object[] data = new object[] { r.avatars };
+                pv.RPC("SpawnMyGameplayer", r.player, r.avatars);
                 yield return null;
             }
         }
@@ -288,12 +288,12 @@ namespace Photon.Pun.Escape.GM.Game
             }
         }
         [PunRPC]
-        public void SpawnMyGameplayer(object[] data)
+        public void SpawnMyGameplayer(string go)
         {
             Debug.Log("mine player is here");
 
-            string go = (string)data[0];
-            Vector2 spawn = Vector2.zero;
+            // string go = (string)data[0];
+            Vector2 spawn = model.escaperSpawn.position; //Vector2.zero;
             PhotonNetwork.Instantiate(go, spawn, Quaternion.identity);
         }
         #endregion

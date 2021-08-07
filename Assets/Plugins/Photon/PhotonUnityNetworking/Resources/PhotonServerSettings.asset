@@ -38,15 +38,18 @@ MonoBehaviour:
   - ActiveNewUI
   - ActiveRoleUI
   - AssignIDToMine
+  - AssignStartItems
   - ChangeState
   - ClickRpc
   - CloseAllUIs
   - DestroyRpc
   - DestroySpaceship
   - Fire
+  - GameSetup
   - RespawnSpaceship
+  - RpcLoaded
   - SpawnMyGameplayer
-  - AssignStartItems
+  - SpawnRoomBlock
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -54,7 +54,6 @@ namespace Photon.Pun.Escape.GM
                     ChangeInputMap("Default");
                     break;
                 case SceneState.LabScene:
-                    Debug.Log("loaded on core");
                     GameManager.instance.Loaded(currentScene.ToString());
                     ChangeInputMap("Gameplay");
                     break;
