@@ -288,9 +288,11 @@ namespace Photon.Pun.Escape.GM.Game
             }
         }
         [PunRPC]
-        public void SpawnMyGameplayer(string go)
+        public void SpawnMyGameplayer(object[] data)
         {
             Debug.Log("mine player is here");
+
+            string go = (string)data[0];
             Vector2 spawn = Vector2.zero;
             PhotonNetwork.Instantiate(go, spawn, Quaternion.identity);
         }
