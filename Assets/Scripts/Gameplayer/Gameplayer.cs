@@ -6,6 +6,7 @@ using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
+using Photon.Pun.Escape.GM.Game;
 
 namespace PlayerSpace.Gameplayer
 {
@@ -30,9 +31,9 @@ namespace PlayerSpace.Gameplayer
         void CaughtCallBack() => gameActions[1](this);
         void GoalCallback() => gameActions[2](this);
 
-        List<Action<Gameplayer, CinemachineConfiner>> changeLevel = null;
-        void GoNextRoom() => changeLevel[0](this, control.GetConfiner());
-        void GoPrevRoom() => changeLevel[1](this, control.GetConfiner());
+        List<Action<Gameplayer>> changeLevel = null;
+        void GoNextRoom() => changeLevel[0](this);
+        void GoPrevRoom() => changeLevel[1](this);
         bool isTeleporting = false;
         #endregion
 
@@ -62,7 +63,25 @@ namespace PlayerSpace.Gameplayer
         }
         #endregion
 
+        #region RPCs
+        [PunRPC]
+        public void RpcAssignTeam(object[] data)
+        {
+            byte id = (byte)data[0];
+            byte teamID = (byte)data[1];
+
+            this.playerID = id;
+            this.teamID = teamID;
+
+            AssignController(0);
+        }
+        #endregion
+
         #region Public Methods
+        public void HunterDebuff(int playerNum)
+        {
+            control.HunterDebuff(playerNum);
+        }
         public void SetCamera()
         {
             Camera.main.enabled = false;
@@ -77,12 +96,15 @@ namespace PlayerSpace.Gameplayer
                 control.AssignControllerType(isKeyboard);
             }
         }
-        public void AssignTeam(byte id, List<Action<Gameplayer>> callbacks, List<System.Action<Gameplayer, CinemachineConfiner>> changeLevelCallbacks)
+        public void AssignTeam(byte id, List<Action<Gameplayer>> callbacks, List<System.Action<Gameplayer>> changeLevelCallbacks)
         {
             teamID = id;
             control.AssignTeam(id);
             gameActions = callbacks;
             changeLevel = changeLevelCallbacks;
+
+            object[] data = new object[] { playerID, teamID };
+            pv.RPC("RpcAssignTeam", pv.Owner, data);
         }
         #endregion
 
@@ -96,6 +118,7 @@ namespace PlayerSpace.Gameplayer
         public override void OnEnable()
         {
             if (testMode) AssignController(0);
+            GameManager.instance.OnPlayerSpawned(this);
         }
         private void Update()
         {

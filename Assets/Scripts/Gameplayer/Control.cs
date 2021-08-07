@@ -51,6 +51,11 @@ namespace PlayerSpace.Gameplayer
         #endregion
 
         #region GameControl
+        public void HunterDebuff(int playersNum)
+        {
+            model.playerStateSpeedGain = 1.1f + playersNum * 0.1f;
+            model.playerStateJumpGain = 0.9f + playersNum * 0.1f;
+        }
         public void Goal(System.Action callback)
         {
             combat.Goal();

@@ -130,10 +130,6 @@ namespace Photon.Pun.Escape.Lobby
             }
 
             CoreModel.instance.avatarsDataStorage = avatars;
-            foreach (var a in CoreModel.instance.avatarsDataStorage)
-            {
-                Debug.Log("Data storage :\n" + a.avatars + ",\n" + a.player);
-            }
 
             PhotonNetwork.LoadLevel(MapPoll());
         }

@@ -6,6 +6,7 @@ using PlayerSpace.Gameplayer;
 
 namespace Photon.Pun.Escape.GM.Game
 {
+    public enum GameState { Loading, Setting, Gaming, Ending }
     public class Model : MonoBehaviour
     {
         public string gameScene = "";
@@ -18,10 +19,11 @@ namespace Photon.Pun.Escape.GM.Game
 
         #region Gameplayers
         public List<Gameplayer> gameplayers { get; set; }
+        public Gameplayer hunter { get; set; }
         public List<Gameplayer> hunters { get; set; }
         public List<Gameplayer> escapers { get; set; }
         public List<Gameplayer> gotStartItemPlayers { get; set; }
-        public List<Gameplayer> goaledPlayers { get; set; }
+        public List<Gameplayer> goalPlayers { get; set; }
         public List<Gameplayer> caughtPlayers { get; set; }
         #endregion
 

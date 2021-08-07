@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PlayerSpace.Gameplayer;
@@ -11,8 +13,8 @@ namespace Photon.Pun.Escape.GM.Game
         public static GameManager instance;
 
         #region Player Getter/Setter in model
-        List<Gameplayer> GetGameplayers { get { return model.gameplayers; } }
-        Gameplayer SetGameplayers
+        List<Gameplayer> Gameplayers { get { return model.gameplayers; } set { model.gameplayers = value; } }
+        Gameplayer SetGameplayer
         {
             set
             {
@@ -21,8 +23,9 @@ namespace Photon.Pun.Escape.GM.Game
                 model.gameplayers.Add(value);
             }
         }
-        List<Gameplayer> GetHunters { get { return model.hunters; } }
-        Gameplayer SetHunters
+        Gameplayer Hunter { get { return model.hunter; } set { model.hunter = value; } }
+        List<Gameplayer> Hunters { get { return model.hunters; } set { model.hunters = value; } }
+        Gameplayer SetHunter
         {
             set
             {
@@ -31,8 +34,8 @@ namespace Photon.Pun.Escape.GM.Game
                 model.hunters.Add(value);
             }
         }
-        List<Gameplayer> GetEscapers { get { return model.escapers; } }
-        Gameplayer SetEscapers
+        List<Gameplayer> Escapers { get { return model.escapers; } set { model.escapers = value; } }
+        Gameplayer SetEscaper
         {
             set
             {
@@ -41,8 +44,8 @@ namespace Photon.Pun.Escape.GM.Game
                 model.escapers.Add(value);
             }
         }
-        List<Gameplayer> GetGotStartItemPlayers { get { return model.gotStartItemPlayers; } }
-        Gameplayer SetGotStartItemPlayers
+        List<Gameplayer> GotStartItemPlayers { get { return model.gotStartItemPlayers; } set { model.gotStartItemPlayers = value; } }
+        Gameplayer SetGotStartItemPlayer
         {
             set
             {
@@ -51,18 +54,18 @@ namespace Photon.Pun.Escape.GM.Game
                 model.gotStartItemPlayers.Add(value);
             }
         }
-        List<Gameplayer> GetGoledPlayers { get { return model.goaledPlayers; } }
-        Gameplayer SetGoledPlayers
+        List<Gameplayer> GoalPlayers { get { return model.goalPlayers; } set { model.goalPlayers = value; } }
+        Gameplayer SetGoalPlayer
         {
             set
             {
-                if (model.goaledPlayers == null)
-                    model.goaledPlayers = new List<Gameplayer>();
-                model.goaledPlayers.Add(value);
+                if (model.goalPlayers == null)
+                    model.goalPlayers = new List<Gameplayer>();
+                model.goalPlayers.Add(value);
             }
         }
-        List<Gameplayer> GetCaughtPlayers { get { return model.caughtPlayers; } }
-        Gameplayer SetCaughtPlayers
+        List<Gameplayer> CaughtPlayers { get { return model.caughtPlayers; } set { model.caughtPlayers = value; } }
+        Gameplayer SetCaughtPlayer
         {
             set
             {
@@ -75,21 +78,57 @@ namespace Photon.Pun.Escape.GM.Game
 
         Model model;
         PhotonView pv;
+        GameState gameState = new GameState();
 
+        int ActivePlayerCounts { get { return model.gameplayers.Count; } }
         int joinedPlayer = 0;
+        int playerGotStartItemCounts = 0;
 
-        public void TeleportNext(Gameplayer role)
+        bool isStarted = false;
+        bool isGoaled = false;
+
+        #region Actions
+        public void TeleportNextAction(Gameplayer role)
         {
             role.currentRoomID++;
             MapObjectData m_data = model.currentGameBlocks[role.currentRoomID].GetComponent<MapObjectData>();
             role.transform.position = m_data.entrance.position;
         }
-        public void TeleportPrev(Gameplayer role)
+        public void TeleportPrevAction(Gameplayer role)
         {
             role.currentRoomID--;
             MapObjectData m_data = model.currentGameBlocks[role.currentRoomID].GetComponent<MapObjectData>();
             role.transform.position = m_data.entrance.position;
         }
+        public void GetStartItemAction(Gameplayer role)
+        {
+            if (isStarted) return;
+            playerGotStartItemCounts++;
+            if (playerGotStartItemCounts >= ActivePlayerCounts - 1)
+            {
+                GameLogic("Gaming");
+            }
+        }
+        public void CaughtAction(Gameplayer role)
+        {
+            SetCaughtPlayer = role;
+            if (CaughtPlayers.Count >= ActivePlayerCounts - 1)
+            {
+                GameLogic("Ending");
+            }
+            else Hunter.HunterDebuff(ActivePlayerCounts - 1);
+        }
+        public void GoalAction(Gameplayer role)
+        {
+            if (GoalPlayers.Any(x => x.playerID == role.playerID) == false)
+                SetGoalPlayer = role;
+
+            if (isGoaled) return;
+
+            StartCoroutine(GoalCountDownCoroutine());
+        }
+        #endregion
+
         #region Unity APIs
         private void Awake()
         {
@@ -103,6 +142,7 @@ namespace Photon.Pun.Escape.GM.Game
                 instance = this;
                 model = GetComponent<Model>();
                 pv = GetComponent<PhotonView>();
+                GameLogic("Loading");
             }
         }
         public override void OnEnable()
@@ -112,17 +152,37 @@ namespace Photon.Pun.Escape.GM.Game
         #endregion
 
         #region Public Methods
-        public void Init()
+        public void GameLogic(string state)
         {
-            Debug.Log("my scene is : " + name);
-            if (PhotonNetwork.IsMasterClient)
-                GameSetup();
+            gameState.Change(state);
+            switch (gameState)
+            {
+                case GameState.Loading:
+                    // Pending feature, loading coroutine.
+                    break;
+                case GameState.Setting:
+                    GameSetup();
+                    break;
+                case GameState.Gaming:
+                    break;
+                case GameState.Ending:
+                    break;
+                default:
+                    break;
+            }
+        }
+        public void GameSetup()
+        {
+            if (PhotonNetwork.IsMasterClient == false)
+                return;
+
+            StartCoroutine(GameSetupCoroutine());
         }
         public void OnPlayerSpawned(Gameplayer gameplayer)
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                SetGameplayers = gameplayer;
+                SetGameplayer = gameplayer;
             }
         }
         public void Loaded(string name)
@@ -133,12 +193,39 @@ namespace Photon.Pun.Escape.GM.Game
         #endregion
 
         #region Coroutine
+        IEnumerator GoalCountDownCoroutine()
+        {
+            yield return null;
+        }
         IEnumerator GameSetupCoroutine()
         {
             yield return StartCoroutine(RandomStartItems());
             yield return StartCoroutine(RandomRoomsList());
             yield return StartCoroutine(RoomsInstantiate());
             yield return StartCoroutine(SpawnPlayerCoroutine());
+            yield return StartCoroutine(RadnomTeam());
+        }
+        IEnumerator RadnomTeam()
+        {
+            List<Action<Gameplayer>> gameActions = new List<Action<Gameplayer>>();
+            gameActions.Add(GetStartItemAction);
+            gameActions.Add(CaughtAction);
+            gameActions.Add(GoalAction);
+
+            List<Action<Gameplayer>> teleportActions = new List<Action<Gameplayer>>();
+            teleportActions.Add(TeleportNextAction);
+            teleportActions.Add(TeleportPrevAction);
+
+            yield return null;
+
+            Hunter = Gameplayers.Random();
+            Hunter.transform.position = model.hunterSpawn.position;
+            Hunter.AssignTeam(1, gameActions, teleportActions);
+
+            yield return null;
+
+            Escapers = Gameplayers.FindAll(x => (x != Hunter));
+            Escapers.ForEach(x => x.AssignTeam(0, gameActions, teleportActions));
         }
         IEnumerator RandomStartItems()
         {
@@ -203,7 +290,6 @@ namespace Photon.Pun.Escape.GM.Game
             blocks.Add(go1);
 
             model.currentGameBlocks = blocks;
-            Debug.Log(model.currentGameBlocks.Count);
         }
         IEnumerator RoomsInstantiate()
         {
@@ -232,7 +318,6 @@ namespace Photon.Pun.Escape.GM.Game
         {
             foreach (Role r in CoreModel.instance.avatarsDataStorage)
             {
-                // object[] data = new object[] { r.avatars };
                 pv.RPC("SpawnMyGameplayer", r.player, r.avatars);
                 yield return null;
             }
@@ -246,20 +331,11 @@ namespace Photon.Pun.Escape.GM.Game
             joinedPlayer++;
             if (PhotonNetwork.IsMasterClient)
             {
-                Debug.Log(joinedPlayer);
                 if (joinedPlayer == CoreModel.instance.avatarsDataStorage.Count)
                 {
-                    Init();
+                    GameLogic("Setting");
                 }
             }
-        }
-        [PunRPC]
-        public void GameSetup()
-        {
-            if (PhotonNetwork.IsMasterClient == false)
-                return;
-
-            StartCoroutine(GameSetupCoroutine());
         }
         [PunRPC]
         public void SpawnRoomBlock(object[] data)
@@ -287,10 +363,7 @@ namespace Photon.Pun.Escape.GM.Game
         [PunRPC]
         public void SpawnMyGameplayer(string go)
         {
-            Debug.Log("mine player is here");
-
-            // string go = (string)data[0];
-            Vector2 spawn = model.escaperSpawn.position; //Vector2.zero;
+            Vector2 spawn = model.escaperSpawn.position;
             PhotonNetwork.Instantiate(go, spawn, Quaternion.identity);
         }
         #endregion

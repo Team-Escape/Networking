@@ -13,6 +13,7 @@ namespace Photon.Pun.Escape.GM
     {
         public static CoreManager instance;
         SceneState currentScene;
+        Camera mainCam;
 
         #region Unity APIs
         private void Awake()
@@ -28,6 +29,7 @@ namespace Photon.Pun.Escape.GM
                 DontDestroyOnLoad(gameObject);
 
                 currentScene = new SceneState();
+                mainCam = GetComponentInChildren<Camera>();
             }
         }
         void OnEnable()
@@ -48,6 +50,8 @@ namespace Photon.Pun.Escape.GM
         #region Public Methods
         public void SceneStateManagement()
         {
+            if (Camera.main != mainCam)
+                Destroy(Camera.main.gameObject);
             switch (currentScene)
             {
                 case SceneState.LobbyScene:
